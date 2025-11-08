@@ -20,10 +20,32 @@
     }
     *{box-sizing:border-box}
     html,body{height:100%}
-    body{margin:0;font-family:var(--font);color:var(--forest-ink);background:var(--cream);-webkit-font-smoothing:antialiased}
+    body{
+      margin:0;font-family:var(--font);color:var(--forest-ink);background:var(--cream);-webkit-font-smoothing:antialiased;
+    }
+
+    /* === Background photo (same method/feel as landing) === */
+    body::before{
+      content:"";
+      position:fixed; inset:0; z-index:-1;
+      background-image: url("/images/tasker.PNG");
+      background-size: cover; background-position: center;
+      /* image visibility */
+      opacity:.72;                      /* <-- matches landing opacity */
+      filter: brightness(.92) saturate(1.05) blur(1.5px);
+    }
+    /* soft top-to-bottom vignette to keep headings readable on light photos */
+    body::after{
+      content:"";
+      position:fixed; inset:0; z-index:-1;
+      background: linear-gradient(180deg, rgba(250,248,242,.28) 0%, rgba(250,248,242,.50) 35%, rgba(250,248,242,.60) 70%, rgba(250,248,242,.66) 100%);
+      pointer-events:none;
+    }
 
     /* Banner */
-    .notice{background:#143D2A;color:#fff;text-align:center;padding:.65rem .9rem;font-size:.98rem}
+    .notice{
+      background:#143D2A;color:#fff;text-align:center;padding:.65rem .9rem;font-size:.98rem
+    }
     .notice a{color:#FFD66B;text-decoration:underline}
     .notice .zips{font-weight:700}
 
@@ -60,8 +82,15 @@
     .backdrop{position:fixed;inset:0;background:rgba(0,0,0,.32);opacity:0;pointer-events:none;transition:opacity .18s ease;z-index:19}
     .backdrop.show{opacity:1;pointer-events:auto}
 
-    /* Page shell */
-    .wrap{width:100%;max-width:460px;margin:0 auto;padding:var(--space-8) var(--space-4);background:#fff}
+    /* Page shell — same translucent card feel as landing */
+    .wrap{
+      width:100%;max-width:460px;margin:0 auto;padding:var(--space-8) var(--space-4);
+      background: rgba(255,255,255,.94);        /* <-- same .94 card opacity */
+      backdrop-filter: saturate(1.1) blur(1px);
+      border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+      box-shadow: var(--shadow-sm);
+    }
+
     .eyebrow{font-weight:900;letter-spacing:.08em;font-size:.78rem;color:#466355;text-transform:uppercase;margin:0 0 .6rem}
     .title{margin:.25rem 0 var(--space-4);font-weight:900;font-size:clamp(26px,6.2vw,36px);letter-spacing:-.02em;line-height:1.14}
     .sub{margin:0 0 var(--space-6);color:#3c5349}
@@ -93,7 +122,11 @@
     .btn-secondary{background:#fff;color:#224E3B;border-color:var(--line)}
 
     /* Signup (Formspree) */
-    .signup{background:var(--cream);padding:2rem 1rem 2.25rem;text-align:center;border-top:1px solid var(--line);border-radius:0 0 var(--radius-sm) var(--radius-sm);margin-top:var(--space-6)}
+    .signup{
+      background:rgba(247,243,234,.94);         /* lightly translucent to match card vibe */
+      padding:2rem 1rem 2.25rem;text-align:center;border-top:1px solid var(--line);
+      border-radius:0 0 var(--radius-sm) var(--radius-sm);margin-top:var(--space-6)
+    }
     .signup h2{font-size:1.35rem;margin:0 0 1rem;font-weight:900}
     .signup form{display:flex;flex-wrap:wrap;justify-content:center;gap:.5rem;width:100%}
     .signup input[type="email"]{padding:12px 16px;border-radius:1000px;border:1px solid var(--line);width:70%;max-width:320px;font-size:1rem;background:#fff}
@@ -210,7 +243,7 @@
     </section>
 
     <!-- Apply / Waitlist (Formspree) -->
-    <section class="signup" aria-label="Apply to the pilot">
+    <section class="signup" aria-label="Apply to the pilot" id="signup">
       <h2>Apply / join the pilot waitlist</h2>
       <form id="fs-form" action="https://formspree.io/f/xjkjbvdv" method="POST">
         <label class="sr-only" for="email">Email</label>
