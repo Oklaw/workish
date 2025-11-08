@@ -131,6 +131,9 @@
     .list li{display:flex;gap:10px;align-items:flex-start;padding:8px 0}
     .check{color:#1E3C2A;font-weight:900}
 
+    /* Extra space between Why and How cards */
+    #why{ margin-bottom:24px; }
+
     .ctas{display:grid;gap:var(--space-4);margin:var(--space-6) 0}
     .btn{height:56px;border-radius:var(--radius-lg);font-weight:900;font-size:18px;
       display:inline-flex;align-items:center;justify-content:center;text-decoration:none;border:1px solid transparent;cursor:pointer;}
@@ -193,7 +196,7 @@
       <div class="task"><span class="ico">📚</span><span>Tutoring</span></div>
     </section>
 
-    <section class="card" aria-label="Why UpNext">
+    <section id="why" class="card" aria-label="Why UpNext">
       <h3>Why choose UpNext</h3>
       <ul class="list">
         <li><span class="check">✓</span> Verified teen taskers with parent/guardian oversight</li>
