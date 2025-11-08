@@ -1,3 +1,4 @@
+
 <!doctype html>
 <html lang="en">
 <head>
@@ -10,7 +11,7 @@
 
   <style>
     :root{
-      /* Set the site-wide forest green to match the logo exactly */
+      /* Keep site tokens the same (no global swap) */
       --forest:#0F291C; 
       --forest-ink:#224E3B; --cream:#F7F3EA; --offwhite:#FAF8F2;
       --line:rgba(0,0,0,.15);
@@ -51,14 +52,14 @@
       pointer-events:none;
     }
 
-    /* Banner */
-    .notice{background:var(--forest);color:#fff;text-align:center;padding:.65rem .9rem;font-size:.98rem}
+    /* Banner (override to exact forest #003924) */
+    .notice{background:#003924;color:#fff;text-align:center;padding:.65rem .9rem;font-size:.98rem}
     .notice a{color:#FFD66B;text-decoration:underline}
     .notice .zips{font-weight:700}
 
-    /* Logo bar */
+    /* Logo bar (override to exact forest #003924) */
     .logo-bar{
-      position:relative;background:var(--forest);color:#fff;
+      position:relative;background:#003924;color:#fff;
       display:flex;align-items:center;justify-content:center;
       height:128px;padding:10px 16px;
     }
