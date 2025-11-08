@@ -28,27 +28,28 @@
       position:relative;
     }
 
-    /* Background image + tint */
-    .bg{
+    /* ---- Background image behind everything ---- */
+    body::before{
+      content:"";
       position:fixed;
       inset:0;
-      background:url('/images/Raking.PNG?v=3') center / cover no-repeat;
-      opacity:.25;
+      background:url('images/Raking.PNG') center / cover no-repeat;
+      opacity:.28;                 /* fade the photo */
+      z-index:0;                   /* behind content */
       pointer-events:none;
+    }
+    /* soft cream tint so text pops */
+    body::after{
+      content:"";
+      position:fixed;
+      inset:0;
+      background:rgba(247,243,234,.70);
       z-index:0;
-    }
-    .tint{
-      position:fixed;
-      inset:0;
-      background:rgba(247,243,234,.78); /* translucent cream overlay */
       pointer-events:none;
-      z-index:1;
     }
-
-    /* Keep all content above the bg/tint */
+    /* Ensure real content sits above bg/tint */
     .notice, .logo-bar, .wrap, .menu-panel, .backdrop{
-      position:relative;
-      z-index:2;
+      position:relative; z-index:1;
     }
 
     /* Banner */
@@ -97,22 +98,13 @@
 
     /* Main content */
     .wrap{
-      width:100%;
-      max-width:460px;
-      margin:0 auto;
+      width:100%; max-width:460px; margin:0 auto;
       padding:var(--space-8) var(--space-4);
-      background:rgba(255,255,255,.92);  /* translucent card */
+      background:rgba(255,255,255,.92);
       border-radius:var(--radius-sm);
       box-shadow:var(--shadow-sm);
     }
-    .title{
-      margin:0 0 var(--space-6);
-      font-weight:800;
-      font-size:clamp(26px,6.2vw,36px);
-      letter-spacing:-.02em;
-      line-height:1.14;
-      color:var(--forest-ink);
-    }
+    .title{margin:0 0 var(--space-6);font-weight:800;font-size:clamp(26px,6.2vw,36px);letter-spacing:-.02em;line-height:1.14;color:var(--forest-ink)}
 
     /* Search */
     .search{display:flex;align-items:center;gap:8px;background:var(--offwhite);border:1px solid var(--line);border-radius:1000px;padding:14px 14px 14px 16px;box-shadow:var(--shadow-sm);margin-bottom:var(--space-6)}
@@ -150,10 +142,6 @@
   </style>
 </head>
 <body>
-
-  <!-- Background image + tint -->
-  <div class="bg"></div>
-  <div class="tint"></div>
 
   <!-- Service area banner -->
   <div class="notice">
