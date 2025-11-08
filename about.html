@@ -1,3 +1,4 @@
+
 <!doctype html>
 <html lang="en">
 <head>
@@ -10,7 +11,7 @@
 
   <style>
     :root{
-      --forest:#003924;               /* exact match to logo background */
+      --forest:#003924;
       --forest-ink:#224E3B;
       --cream:#F7F3EA; --offwhite:#FAF8F2;
       --gold:#FFD66B;
@@ -29,26 +30,19 @@
       -webkit-font-smoothing:antialiased;
     }
 
-    /* Background (swap /images/about.PNG if you add one) */
+    /* Background */
     body::before{
       content:""; position:fixed; inset:0; z-index:-2;
       background:url("/images/about.PNG") center/cover no-repeat;
-      opacity:1;
-      filter:brightness(.96) saturate(1.02) blur(.3px);
+      opacity:1; filter:brightness(.96) saturate(1.02) blur(.3px);
     }
-    /* Forest-tinted scrim for legibility */
     body::after{
       content:""; position:fixed; inset:0; z-index:-1;
-      background:
-        linear-gradient(180deg,
-          rgba(0,57,36,.32) 0px,
-          rgba(0,57,36,.26) 280px,
-          rgba(247,243,234,.18) 60%,
-          rgba(247,243,234,.22) 100%);
+      background:linear-gradient(180deg, rgba(0,57,36,.32) 0px, rgba(0,57,36,.26) 280px, rgba(247,243,234,.18) 60%, rgba(247,243,234,.22) 100%);
       pointer-events:none;
     }
 
-    /* Banner (matches logo background) */
+    /* Banner */
     .notice{
       background:var(--forest); color:#fff; text-align:center;
       padding:.65rem .9rem; font-size:.98rem; position:relative; z-index:2;
@@ -56,124 +50,73 @@
     .notice a{color:var(--gold);text-decoration:underline}
     .notice .zips{font-weight:700}
 
-    /* Header / logo bar (matches taskers/customers) */
+    /* Header / logo bar */
     .logo-bar{
       position:relative;
-      background:var(--forest); color:#fff;
+      background:var(--forest);
+      color:#fff;
       display:flex; align-items:center; justify-content:center;
-      height:148px; padding:10px 16px;
+      height:148px;
+      padding:10px 16px;
     }
-    .brand{
-      display:flex; align-items:center; justify-content:center;
-      line-height:1; text-decoration:none; color:#fff;
-    }
-    .brand-logo{
-      height:150px; width:auto; display:block; filter:none;
-    }
+    .brand{display:flex; align-items:center; justify-content:center; line-height:1; text-decoration:none; color:#fff;}
+    .brand-logo{height:150px; width:auto; display:block;}
     @media (min-width:768px){ .brand-logo{height:180px;} }
 
     /* Hamburger */
     .menu-btn{
       position:absolute; left:14px; top:50%; transform:translateY(-50%);
-      width:44px; height:44px; border-radius:999px; cursor:pointer;
-      border:1px solid rgba(255,255,255,.25); background:transparent; display:grid; place-items:center;
+      width:44px; height:44px; border-radius:999px;
+      border:1px solid rgba(255,255,255,.25);
+      background:transparent; display:grid; place-items:center; cursor:pointer;
     }
-    .menu-btn:focus-visible{outline:2px solid var(--gold); outline-offset:2px}
-    .menu-ico{width:22px; height:18px; display:block}
     .menu-ico path{stroke:#fff; stroke-width:6; stroke-linecap:round; fill:none}
 
-    /* Dropdown + backdrop */
-    .menu-panel{
-      position:fixed; left:0; right:0; top:160px;
-      background:#fff; border-bottom:1px solid var(--line);
-      box-shadow:0 10px 24px rgba(0,0,0,.12);
-      transform:translateY(-12px); opacity:0; pointer-events:none;
-      transition:transform .18s ease, opacity .18s ease; z-index:20;
-    }
+    /* Dropdown */
+    .menu-panel{position:fixed; left:0; right:0; top:160px; background:#fff; border-bottom:1px solid var(--line); box-shadow:0 10px 24px rgba(0,0,0,.12); transform:translateY(-12px); opacity:0; pointer-events:none; transition:transform .18s ease, opacity .18s ease; z-index:20;}
     .menu-panel.open{transform:none; opacity:1; pointer-events:auto;}
     .menu-list{list-style:none; margin:0; padding:6px 0;}
-    .menu-list a{
-      display:block; padding:14px 18px;
-      text-decoration:none; color:var(--forest-ink);
-      font-weight:800; font-size:1.05rem;
-    }
+    .menu-list a{display:block; padding:14px 18px; text-decoration:none; color:var(--forest-ink); font-weight:800; font-size:1.05rem;}
     .menu-list a + a{border-top:1px solid var(--line)}
     .backdrop{position:fixed; inset:0; background:rgba(0,0,0,.32); opacity:0; pointer-events:none; transition:opacity .18s ease; z-index:19;}
     .backdrop.show{opacity:1; pointer-events:auto;}
 
-    /* Page container */
+    /* Page */
     .wrap{
-      width:100%; max-width:720px; margin:0 auto;
-      padding:var(--space-8) var(--space-4);
-      background:rgba(255,255,255,.40);
-      backdrop-filter:saturate(1.05) blur(.6px);
+      width:100%; max-width:720px; margin:0 auto; padding:var(--space-8) var(--space-4);
+      background:rgba(255,255,255,.40); backdrop-filter:saturate(1.05) blur(.6px);
       border-radius:0 0 var(--radius-sm) var(--radius-sm);
-      box-shadow:var(--shadow-sm);
-      color:#0d2619;
+      box-shadow:var(--shadow-sm); color:#0d2619;
     }
 
-    /* Typography */
-    h1,h2,h3,.title{color:#092014; text-shadow:0 2px 4px rgba(0,0,0,.28)}
-    p,li{color:#0f2a1b; text-shadow:0 1px 2px rgba(0,0,0,.18)}
-    .eyebrow{font-weight:900; letter-spacing:.08em; font-size:.78rem; color:#e9f4ee; text-transform:uppercase; margin:0 0 .6rem; text-shadow:0 1px 2px rgba(0,0,0,.35)}
-    .title{margin:.25rem 0 var(--space-4); font-weight:900; font-size:clamp(26px,6.2vw,36px); letter-spacing:-.02em; line-height:1.14}
-    .sub{margin:0 0 var(--space-6); color:#10311f}
+    .title{margin:.25rem 0 var(--space-4);font-weight:900;font-size:clamp(26px,6.2vw,36px);letter-spacing:-.02em;line-height:1.14}
+    .sub{margin:0 0 var(--space-6);color:#10311f}
 
-    /* Cards / content blocks */
-    .card{
-      border:1px solid var(--line); border-radius:16px;
-      padding:16px; background:#fff; box-shadow:var(--shadow-sm);
-      margin-bottom:20px;
-    }
-    .card h3{margin:.2rem 0 .5rem; font-size:1.08rem}
-    .list{margin:0; padding:0; list-style:none}
-    .list li{display:flex; gap:10px; align-items:flex-start; padding:8px 0}
-    .check{color:#1E3C2A; font-weight:900}
+    .card{border:1px solid var(--line);border-radius:16px;padding:16px;background:#fff;box-shadow:var(--shadow-sm);margin-bottom:20px;}
+    .list{margin:0;padding:0;list-style:none}
+    .list li{display:flex;gap:10px;align-items:flex-start;padding:8px 0}
+    .check{color:#1E3C2A;font-weight:900}
 
-    /* Section spacers to mirror customers page */
-    #need{ margin-bottom:24px; }
-    #benefits{ margin-bottom:24px; }
-    #safety{ margin-bottom:24px; }
-    #compliance{ margin-bottom:24px; }
-
-    /* CTAs */
-    .ctas{display:grid; gap:var(--space-4); margin:var(--space-6) 0}
-    .btn{
-      height:56px; border-radius:var(--radius-lg); font-weight:900; font-size:18px;
-      display:inline-flex; align-items:center; justify-content:center; text-decoration:none; border:1px solid transparent; cursor:pointer;
-      transition:transform .06s ease, filter .15s ease;
-    }
+    /* Buttons (match index) */
+    .ctas{display:grid;gap:var(--space-4);margin:var(--space-6) 0}
+    .btn{height:56px;border-radius:var(--radius-lg);font-weight:900;font-size:18px;display:inline-flex;align-items:center;justify-content:center;text-decoration:none;border:1px solid transparent;cursor:pointer;transition:transform .06s ease, filter .15s ease;}
     .btn:active{transform:translateY(1px)}
-    .btn-primary{background:var(--forest); color:#fff; box-shadow:var(--shadow-md)}
-    .btn-secondary{background:#fff; color:var(--forest-ink); border-color:var(--line)}
-    .btn-tertiary{background:var(--gold); color:var(--forest); box-shadow:var(--shadow-md)}
+    .btn-primary{background:var(--forest);color:#fff;box-shadow:var(--shadow-md)}
+    .btn-secondary{background:#fff;color:var(--forest-ink);border-color:var(--line)}
+    .btn-tertiary{background:var(--gold);color:var(--forest);box-shadow:var(--shadow-md)}
     .btn-tertiary:hover{filter:brightness(.95)}
-
-    /* Signup (optional bottom section) */
-    .signup{
-      background:rgba(247,243,234,.50);
-      padding:2rem 1rem 2.25rem; text-align:center; border-top:1px solid var(--line);
-      border-radius:0 0 var(--radius-sm) var(--radius-sm); margin-top:var(--space-6)
-    }
-    .signup h2{font-size:1.35rem; margin:0 0 1rem; font-weight:900; color:#0F291C; text-shadow:0 2px 4px rgba(0,0,0,.25)}
-    .signup form{display:flex; flex-wrap:wrap; justify-content:center; gap:.5rem; width:100%}
-    .signup input[type="email"]{padding:12px 16px; border-radius:1000px; border:1px solid var(--line); width:70%; max-width:320px; font-size:1rem; background:#fff}
-    .signup button{background:var(--forest); color:#fff; border:none; border-radius:1000px; padding:12px 20px; font-weight:900; cursor:pointer; min-width:130px}
-    .success{display:none; color:#0a6c3b; margin-top:.75rem; font-weight:700}
-
-    .sr-only{position:absolute!important; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0}
   </style>
 </head>
 <body>
 
   <!-- Banner -->
   <div class="notice">
-    Now piloting in <strong>Northern Virginia</strong> — currently serving ZIPs:
+    Now piloting in <strong>Northern Virginia</strong> — ZIPs:
     <span class="zips">20169, 20155, 20136, 20143, 20109</span>.
     <a href="#signup">Join the waitlist</a>
   </div>
 
-  <!-- Header / Logo -->
+  <!-- Header -->
   <header class="logo-bar" role="banner" aria-label="UpNext Works">
     <button class="menu-btn" id="menuBtn" aria-label="Open menu" aria-expanded="false" aria-controls="menuPanel">
       <svg class="menu-ico" viewBox="0 0 48 36" aria-hidden="true">
@@ -185,14 +128,14 @@
     </a>
   </header>
 
-  <!-- Dropdown Menu -->
-  <div class="menu-panel" id="menuPanel" role="menu" aria-label="Site navigation">
+  <!-- Dropdown -->
+  <div class="menu-panel" id="menuPanel">
     <nav class="menu-list">
-      <a href="/index.html" role="menuitem">Home</a>
-      <a href="/taskers.html" role="menuitem">For Taskers</a>
-      <a href="/customers.html" role="menuitem">For Customers</a>
-      <a href="/parents.html" role="menuitem">For Parents</a>
-      <a href="/about.html" role="menuitem">About</a>
+      <a href="/index.html">Home</a>
+      <a href="/taskers.html">For Taskers</a>
+      <a href="/customers.html">For Customers</a>
+      <a href="/parents.html">For Parents/Guardians</a>
+      <a href="/about.html">About</a>
     </nav>
   </div>
   <div class="backdrop" id="menuBackdrop" hidden></div>
@@ -202,112 +145,45 @@
     <h1 class="title">Why UpNext Works</h1>
     <p class="sub">We’re building a safe, local way for families to get help — and for teens to gain real-world experience — with clear guardrails and oversight baked in.</p>
 
-    <!-- Need & Mission -->
-    <section id="need" class="card" aria-label="The need we serve">
+    <section class="card">
       <h3>The need we’re filling</h3>
       <ul class="list">
-        <li><span class="check">✓</span> Families need trustworthy, short-duration help for yardwork, snow, pet care, cleaning, babysitting, and tutoring.</li>
-        <li><span class="check">✓</span> Teens (14–17) want flexible, nearby ways to earn money and practice responsibility without navigating risky gig platforms.</li>
-        <li><span class="check">✓</span> Existing marketplaces don’t center youth safety, parental oversight, or age-appropriate task controls. We do.</li>
+        <li><span class="check">✓</span> Families need trustworthy, short-duration help for everyday home tasks.</li>
+        <li><span class="check">✓</span> Teens need safe, guided, flexible ways to earn and learn without risky gig platforms.</li>
+        <li><span class="check">✓</span> UpNext is the first to integrate safety, compliance, and parental consent end-to-end.</li>
       </ul>
     </section>
 
-    <!-- Benefits -->
-    <section id="benefits" class="card" aria-label="Benefits for families and teens">
-      <h3>Benefits for customers & young adults</h3>
+    <section class="card">
+      <h3>Safety and compliance, by design</h3>
       <ul class="list">
-        <li><span class="check">✓</span> Reliable, local help that’s verified and age-appropriate — with simple scheduling and feedback.</li>
-        <li><span class="check">✓</span> Real-world experience, communication skills, and references for jobs/college — with short, safe tasks that fit school.</li>
-        <li><span class="check">✓</span> Clear oversight and visibility into tasks, timing, and safety expectations.</li>
+        <li><span class="check">✓</span> Verified teen and parent/guardian accounts.</li>
+        <li><span class="check">✓</span> Age-appropriate task matching and hour limits built into the app.</li>
+        <li><span class="check">✓</span> Secure communication, safety checklists, and task verification.</li>
+        <li><span class="check">✓</span> Automatic adherence to youth-labor laws — no guessing required.</li>
       </ul>
     </section>
 
-    <!-- Safety & Parental Controls -->
-    <section id="safety" class="card" aria-label="Safety and parental controls">
-      <h3>Safety and parental controls — built in</h3>
-      <ul class="list">
-        <li><span class="check">✓</span> Verified teen accounts with required parent/guardian involvement and contact preferences.</li>
-        <li><span class="check">✓</span> Age-appropriate task catalog with what’s allowed vs. not allowed clearly defined by age band.</li>
-        <li><span class="check">✓</span> Transparent job details, checklists, and the right to decline tasks that feel unsafe — no penalties.</li>
-        <li><span class="check">✓</span> Clear communication lanes and escalation guidance for both families and teens.</li>
-      </ul>
-    </section>
-
-    <!-- Compliance & Labor Law -->
-    <section id="compliance" class="card" aria-label="Compliance with youth labor laws">
-      <h3>Designed for compliance with youth labor rules</h3>
-      <ul class="list">
-        <li><span class="check">✓</span> Age-based restrictions surfaced at signup and enforced in task matching.</li>
-        <li><span class="check">✓</span> Guidance on Virginia youth-labor rules (e.g., work permits for 14–15, hour limits, equipment restrictions).</li>
-        <li><span class="check">✓</span> In-product nudges and disclosures to help ensure tasks and schedules align with applicable laws.</li>
-        <li><span class="check">✓</span> Ongoing updates as regulations evolve, with parents kept in the loop.</li>
-      </ul>
-      <p style="margin:.25rem 0 0; color:#365447; font-size:.95rem">Note: UpNext Works is piloting with clearly defined task types and schedules, and will continue refining controls to support safe, lawful participation.</p>
-    </section>
-
-    <!-- How it works (brief) -->
-    <section class="card" aria-label="How it works">
-      <h3>How it works</h3>
-      <ul class="list">
-        <li><span class="check">1)</span> Teens and a parent/guardian apply once — we verify details and set age-appropriate settings.</li>
-        <li><span class="check">2)</span> Families request help; the system matches by proximity, availability, and allowed tasks.</li>
-        <li><span class="check">3)</span> Task gets done with checklists and feedback — building trust and useful references over time.</li>
-      </ul>
-    </section>
-
-    <!-- CTAs -->
-    <div class="ctas">
-      <a class="btn btn-primary" href="/customers.html">For Customers</a>
-      <a class="btn btn-secondary" href="/taskers.html">For Teens (Taskers)</a>
-      <a class="btn btn-tertiary" href="#signup">Join the pilot waitlist</a>
+    <!-- CTAs (match index) -->
+    <div class="ctas" role="group" aria-label="Sign up options">
+      <a class="btn btn-primary" href="/taskers.html">I'm a Tasker</a>
+      <a class="btn btn-secondary" href="/customers.html">I'm a Customer</a>
+      <a class="btn btn-tertiary" href="/parents.html">I'm a Parent/Guardian</a>
     </div>
-
-    <!-- Optional: signup -->
-    <section class="signup" aria-label="Join the pilot" id="signup">
-      <h2>Get early access</h2>
-      <form id="fs-form" action="https://formspree.io/f/xjkjbvdv" method="POST">
-        <label class="sr-only" for="email">Email</label>
-        <input id="email" name="email" type="email" placeholder="Enter your email" required />
-        <input type="hidden" name="role" value="about" />
-        <input type="hidden" name="source" value="about-landing" />
-        <button type="submit" id="fs-btn">Notify Me</button>
-      </form>
-      <div class="success" id="fs-success">Thanks! We’ll reach out with next steps.</div>
-    </section>
   </main>
 
   <!-- JS -->
   <script>
-    // Menu open/close
     (function(){
-      const btn = document.getElementById('menuBtn');
-      const panel = document.getElementById('menuPanel');
-      const backdrop = document.getElementById('menuBackdrop');
-      const open = () => { panel.classList.add('open'); backdrop.hidden=false; backdrop.classList.add('show'); btn.setAttribute('aria-expanded','true'); };
-      const close = () => { panel.classList.remove('open'); backdrop.classList.remove('show'); setTimeout(()=>{backdrop.hidden=true},180); btn.setAttribute('aria-expanded','false'); };
-      btn.addEventListener('click', () => panel.classList.contains('open') ? close() : open());
-      backdrop.addEventListener('click', close);
-      document.addEventListener('keydown', e => { if (e.key==='Escape' && panel.classList.contains('open')) close(); });
-      panel.querySelectorAll('a').forEach(a => a.addEventListener('click', close));
-    })();
-
-    // Formspree inline success
-    (function () {
-      const form = document.getElementById('fs-form');
-      const btn  = document.getElementById('fs-btn');
-      const ok   = document.getElementById('fs-success');
-      if (!form) return;
-      form.addEventListener('submit', async function (e) {
-        e.preventDefault();
-        btn.disabled = true; btn.textContent = 'Sending…';
-        try {
-          const res = await fetch(form.action, { method: 'POST', headers: { 'Accept': 'application/json' }, body: new FormData(form) });
-          if (res.ok) { form.reset(); ok.style.display = 'block'; btn.textContent = 'Sent ✓'; }
-          else { btn.textContent = 'Try again'; btn.disabled = false; }
-        } catch {
-          btn.textContent = 'Try again'; btn.disabled = false;
-        }
-      });
+      const btn=document.getElementById('menuBtn');
+      const panel=document.getElementById('menuPanel');
+      const backdrop=document.getElementById('menuBackdrop');
+      const open=()=>{panel.classList.add('open');backdrop.hidden=false;backdrop.classList.add('show');btn.setAttribute('aria-expanded','true');};
+      const close=()=>{panel.classList.remove('open');backdrop.classList.remove('show');setTimeout(()=>{backdrop.hidden=true},180);btn.setAttribute('aria-expanded','false');};
+      btn.addEventListener('click',()=>panel.classList.contains('open')?close():open());
+      backdrop.addEventListener('click',close);
+      document.addEventListener('keydown',e=>{if(e.key==='Escape'&&panel.classList.contains('open'))close();});
+      panel.querySelectorAll('a').forEach(a=>a.addEventListener('click',close));
     })();
   </script>
 </body>
