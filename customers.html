@@ -30,7 +30,7 @@
     /* Background image (customers hero) */
     body::before{
       content:""; position:fixed; inset:0; z-index:-2;
-      background:url("/images/Raking.PNG") center/cover no-repeat;
+      background:url("/images/customer.PNG") center/cover no-repeat;
       opacity:1;
       filter:brightness(.96) saturate(1.02) blur(.3px);
     }
@@ -141,6 +141,9 @@
     .list li{display:flex;gap:10px;align-items:flex-start;padding:8px 0}
     .check{color:#1E3C2A;font-weight:900}
 
+    /* Extra spacing between Why and How sections */
+    #why { margin-bottom: 22px; }
+
     /* CTAs */
     .ctas{display:grid;gap:var(--space-4);margin:var(--space-6) 0}
     .btn{
@@ -218,12 +221,13 @@
     </section>
 
     <!-- Why UpNext -->
-    <section class="card" aria-label="Why UpNext">
+    <section id="why" class="card" aria-label="Why UpNext">
       <h3>Why choose UpNext</h3>
       <ul class="list">
         <li><span class="check">✓</span> Verified teen taskers with parent/guardian oversight</li>
         <li><span class="check">✓</span> Clear safety guidelines matched to age-appropriate tasks</li>
         <li><span class="check">✓</span> Local, flexible help that supports teens’ growth</li>
+        <li><span class="check">✓</span> <strong>Safe, simple payments:</strong> tasks are confirmed complete before funds are released, with receipts and no sharing of sensitive info with teens</li>
       </ul>
     </section>
 
