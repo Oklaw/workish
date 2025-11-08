@@ -38,12 +38,21 @@ body::before{
   opacity:1;
   filter:brightness(.96) saturate(1.02) blur(.3px);
 }
-    body::after{
-      content:""; position:fixed; inset:0; z-index:-1;
-      background:linear-gradient(180deg, rgba(0,57,36,.32) 0px, rgba(0,57,36,.26) 280px, rgba(247,243,234,.18) 60%, rgba(247,243,234,.22) 100%);
-      pointer-events:none;
-    }
+ body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  z-index:-2;
 
+  /* Replace the one-line shorthand with these explicit props */
+  background-image: url("/images/about.png");
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center 190px; /* <-- push image down by ~banner+header height */
+
+  opacity:1;
+  filter:brightness(.96) saturate(1.02) blur(.3px);
+}
     /* Banner */
     .notice{
       background:var(--forest); color:#fff; text-align:center;
