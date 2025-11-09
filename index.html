@@ -1,4 +1,3 @@
-
 <!doctype html>
 <html lang="en">
 <head>
@@ -30,22 +29,6 @@
       -webkit-font-smoothing:antialiased;
     }
 
-    body::before{
-      content:"";position:fixed;inset:0;z-index:-2;
-      background:url("/images/Raking.PNG") center/cover no-repeat;
-      background-position:center 20%;opacity:1;
-      filter:brightness(.96)saturate(1.02)blur(.3px);
-    }
-    body::after{
-      content:"";position:fixed;inset:0;z-index:-1;
-      background:linear-gradient(180deg,
-        rgba(20,61,42,.32)0px,
-        rgba(20,61,42,.26)280px,
-        rgba(247,243,234,.18)60%,
-        rgba(247,243,234,.22)100%);
-      pointer-events:none;
-    }
-
     .notice{
       background:var(--forest);color:#fff;text-align:center;
       padding:.65rem .9rem;font-size:.98rem;position:relative;z-index:2;
@@ -53,7 +36,7 @@
     .notice a{color:var(--gold);text-decoration:underline}
     .notice .zips{font-weight:700}
 
-    /* --- Clean Header --- */
+    /* Header */
     .site-header{
       position:sticky;top:0;z-index:50;background:#fff;border-bottom:1px solid var(--line);
     }
@@ -63,7 +46,6 @@
     }
     .nav-brand{display:flex;align-items:center;text-decoration:none;}
     .nav-logo{height:71px;width:auto;display:block;}
-
     .nav-main{display:flex;align-items:center;gap:6px;margin-left:8px;}
     .nav-item{position:relative;}
     .nav-link{
@@ -71,37 +53,20 @@
       padding:10px 12px;border-radius:10px;
       font-weight:700;color:#0e1f17;letter-spacing:.01em;
     }
-    .nav-link:focus-visible{outline:2px solid var(--gold);outline-offset:2px;}
-
     .submenu{
       position:absolute;top:100%;left:0;min-width:220px;
       background:#fff;border:1px solid var(--line);border-radius:12px;
       box-shadow:0 12px 28px rgba(0,0,0,.12);
       padding:8px;display:none;
     }
-    .submenu a{
-      display:block;padding:10px 12px;border-radius:8px;
-      color:var(--forest-ink);text-decoration:none;font-weight:600;
-    }
-    .submenu a:hover{background:var(--offwhite);}
     @media(hover:hover){.has-submenu:hover .submenu{display:block;}}
 
-    .nav-burger{
-      margin-left:auto;width:42px;height:42px;border-radius:10px;
-      border:1px solid rgba(0,0,0,.12);background:#fff;display:none;
-      align-items:center;justify-content:center;gap:4px;flex-direction:column;cursor:pointer;
+    /* Map section */
+    .map-section img {
+      width: 100%;
+      border-radius: 20px;
+      box-shadow: 0 10px 24px rgba(0,0,0,.1);
     }
-    .nav-burger span{width:20px;height:2px;background:#0e1f17;display:block;}
-
-    .mobile-panel{
-      border-top:1px solid var(--line);background:#fff;
-      box-shadow:0 12px 28px rgba(0,0,0,.12);
-    }
-    .m-item{border-bottom:1px solid var(--line);padding:6px 8px;}
-    .m-item summary{cursor:pointer;padding:12px 8px;font-weight:800;}
-    .m-item a{display:block;padding:10px 12px;text-decoration:none;color:var(--forest-ink);}
-    .m-item a:hover{background:var(--offwhite);border-radius:8px;}
-    @media(max-width:900px){.nav-main{display:none;}.nav-burger{display:flex;}}
 
     .wrap{
       position:relative;z-index:1;width:100%;max-width:460px;margin:0 auto;
@@ -112,26 +77,14 @@
       box-shadow:var(--shadow-sm);
       color:#0d2619;
     }
-    h1,h2,h3,.title{color:#092014;text-shadow:0 2px 4px rgba(0,0,0,.28);}
-    p,li,label{color:#0f2a1b;text-shadow:0 1px 2px rgba(0,0,0,.18);}
-    .title{margin:0 0 var(--space-6);font-weight:800;font-size:clamp(26px,6.2vw,36px);letter-spacing:-.02em;line-height:1.14;}
-    .search{display:flex;align-items:center;gap:8px;background:var(--offwhite);border:1px solid var(--line);border-radius:1000px;padding:14px 14px 14px 16px;box-shadow:var(--shadow-sm);margin-bottom:var(--space-6);}
-    .search input{flex:1;border:none;outline:none;background:transparent;font-size:16px;color:#2A3A33;}
-    .search button{display:inline-grid;place-items:center;background:var(--forest);color:#fff;width:54px;height:46px;border:none;border-radius:1000px;cursor:pointer;}
 
-    .tasks{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:var(--space-6) 0;}
-    .task-card{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;height:112px;padding:14px 10px;gap:10px;background:rgba(255,255,255,.92);border:1px solid var(--line);border-radius:20px;box-shadow:0 10px 24px rgba(0,0,0,.10);text-decoration:none;}
-    .task-card .ico{font-size:28px;line-height:1;}
-    .task-card .label{font-weight:900;font-size:20px;color:#1e3b2d;}
+    .title{margin:0 0 var(--space-6);font-weight:800;font-size:clamp(26px,6.2vw,36px);letter-spacing:-.02em;line-height:1.14;}
 
     .ctas{display:grid;gap:var(--space-4);margin-bottom:var(--space-6);}
-    .btn{height:56px;border-radius:var(--radius-lg);font-weight:900;font-size:18px;letter-spacing:.01em;display:inline-flex;align-items:center;justify-content:center;text-decoration:none;border:1px solid transparent;cursor:pointer;transition:transform .06s ease,filter .15s ease;}
-    .btn:active{transform:translateY(1px);}
+    .btn{height:56px;border-radius:var(--radius-lg);font-weight:900;font-size:18px;display:inline-flex;align-items:center;justify-content:center;text-decoration:none;border:1px solid transparent;cursor:pointer;}
     .btn-primary{background:var(--forest);color:#fff;box-shadow:var(--shadow-md);}
     .btn-secondary{background:#fff;color:var(--forest-ink);border-color:var(--line);}
     .btn-tertiary{background:var(--gold);color:var(--forest);box-shadow:var(--shadow-md);}
-    .btn-tertiary:hover{filter:brightness(.95);}
-    .signup{background:rgba(247,243,234,.50);padding:2rem 1rem 2.25rem;text-align:center;border-top:1px solid var(--line);border-radius:0 0 var(--radius-sm) var(--radius-sm);margin-top:var(--space-6);}
   </style>
 </head>
 <body>
@@ -146,75 +99,14 @@
     <a class="nav-brand" href="/index.html" aria-label="Kindra Home">
       <img src="/images/logo.PNG" alt="Kindra" class="nav-logo">
     </a>
-
-    <nav class="nav-main" aria-label="Primary">
-      <div class="nav-item has-submenu">
-        <button class="nav-link" aria-haspopup="true" aria-expanded="false">Find Tasks</button>
-        <div class="submenu">
-          <a href="/taskers.html#yardwork">Yardwork</a>
-          <a href="/taskers.html#snow">Snow</a>
-          <a href="/taskers.html#petcare">Pet Care</a>
-          <a href="/taskers.html#tutoring">Tutoring</a>
-        </div>
-      </div>
-      <div class="nav-item has-submenu">
-        <button class="nav-link" aria-haspopup="true" aria-expanded="false">Hire Work</button>
-        <div class="submenu">
-          <a href="/customers.html#post">Post a request</a>
-          <a href="/customers.html#pricing">Pricing</a>
-          <a href="/parents.html#safety">Safety & oversight</a>
-        </div>
-      </div>
-      <div class="nav-item has-submenu">
-        <button class="nav-link" aria-haspopup="true" aria-expanded="false">Why Kindra</button>
-        <div class="submenu">
-          <a href="/about.html#mission">Mission</a>
-          <a href="/about.html#trust">Trust & verification</a>
-          <a href="/about.html#faq">FAQ</a>
-        </div>
-      </div>
-      <div class="nav-item has-submenu">
-        <button class="nav-link" aria-haspopup="true" aria-expanded="false">What’s new</button>
-        <div class="submenu">
-          <a href="/updates.html#pilot-news">Pilot updates</a>
-          <a href="/updates.html#roadmap">Roadmap</a>
-          <a href="/updates.html#changelog">Changelog</a>
-        </div>
-      </div>
-    </nav>
-
-    <button class="nav-burger" id="navBurger" aria-label="Open menu" aria-controls="mobilePanel" aria-expanded="false">
-      <span></span><span></span><span></span>
-    </button>
-  </div>
-
-  <div id="mobilePanel" class="mobile-panel" hidden>
-    <details class="m-item"><summary>Find Tasks</summary><a href="/taskers.html#yardwork">Yardwork</a><a href="/taskers.html#snow">Snow</a><a href="/taskers.html#petcare">Pet Care</a><a href="/taskers.html#tutoring">Tutoring</a></details>
-    <details class="m-item"><summary>Hire Work</summary><a href="/customers.html#post">Post a request</a><a href="/customers.html#pricing">Pricing</a><a href="/parents.html#safety">Safety & oversight</a></details>
-    <details class="m-item"><summary>Why UpNext</summary><a href="/about.html#mission">Mission</a><a href="/about.html#trust">Trust & verification</a><a href="/about.html#faq">FAQ</a></details>
-    <details class="m-item"><summary>What’s new</summary><a href="/updates.html#pilot-news">Pilot updates</a><a href="/updates.html#roadmap">Roadmap</a><a href="/updates.html#changelog">Changelog</a></details>
   </div>
 </header>
 
 <main class="wrap">
   <h1 class="title">Book trusted teen<br>help for home &amp; community tasks</h1>
 
-  <form class="search" role="search" action="/search" onsubmit="return false;">
-    <input id="q" name="q" type="search" placeholder="What do you need help with?" aria-label="What do you need help with?" />
-    <button type="submit" aria-label="Search">
-      <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
-        <path d="M21 21l-4.3-4.3m1.3-5a7 7 0 1 1-14 0 7 7 0 0 1 14 0Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-      </svg>
-    </button>
-  </form>
-
-  <section class="tasks" aria-label="Popular tasks">
-    <a href="/taskers.html#yardwork" class="task-card"><span class="ico">🪴</span><span class="label">Yardwork</span></a>
-    <a href="/taskers.html#snow" class="task-card"><span class="ico">❄️</span><span class="label">Snow</span></a>
-    <a href="/taskers.html#petcare" class="task-card"><span class="ico">🐾</span><span class="label">Pet Care</span></a>
-    <a href="/taskers.html#cleaning" class="task-card"><span class="ico">🧹</span><span class="label">Cleaning</span></a>
-    <a href="/taskers.html#babysitting" class="task-card"><span class="ico">🧸</span><span class="label">Babysitting</span></a>
-    <a href="/taskers.html#tutoring" class="task-card"><span class="ico">📚</span><span class="label">Tutoring</span></a>
+  <section class="map-section" aria-label="Task map">
+    <img src="/images/taskmap.PNG" alt="Map showing active Kindra task requests">
   </section>
 
   <div class="ctas" role="group" aria-label="Sign up">
@@ -223,31 +115,5 @@
     <a class="btn btn-tertiary" href="/parents.html">I'm a Parent/Guardian</a>
   </div>
 </main>
-
-<script>
-  const burger=document.getElementById('navBurger');
-  const panel=document.getElementById('mobilePanel');
-  if(burger&&panel){
-    burger.addEventListener('click',()=>{
-      const open=panel.hasAttribute('hidden');
-      if(open)panel.removeAttribute('hidden');else panel.setAttribute('hidden','');
-      burger.setAttribute('aria-expanded',String(open));
-    });
-  }
-  document.querySelectorAll('.has-submenu .nav-link').forEach(btn=>{
-    const menu=btn.parentElement.querySelector('.submenu');
-    btn.addEventListener('click',e=>{
-      const visible=menu&&menu.style.display==='block';
-      document.querySelectorAll('.submenu').forEach(m=>m.style.display='none');
-      if(menu)menu.style.display=visible?'none':'block';
-      btn.setAttribute('aria-expanded',String(!visible));
-      e.stopPropagation();
-    });
-  });
-  document.addEventListener('click',()=>{
-    document.querySelectorAll('.submenu').forEach(m=>m.style.display='none');
-    document.querySelectorAll('.has-submenu .nav-link').forEach(b=>b.setAttribute('aria-expanded','false'));
-  });
-</script>
 </body>
 </html>
