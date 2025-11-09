@@ -10,481 +10,190 @@
 
   <style>
     :root{
-      /* Exact match to the logo background */
       --forest:#003924;
-      --forest-ink:#224E3B; --cream:#F7F3EA; --offwhite:#FAF8F2;
+      --forest-ink:#224E3B;
+      --cream:#F7F3EA;
+      --offwhite:#FAF8F2;
+      --gold:#FFD66B;
       --line:rgba(0,0,0,.15);
-      --font: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans";
+      --font:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial,"Noto Sans";
       --radius-lg:28px; --radius-sm:14px;
-      --shadow-sm:0 1px 2px rgba(0,0,0,.06), 0 2px 8px rgba(0,0,0,.04);
+      --shadow-sm:0 1px 2px rgba(0,0,0,.06),0 2px 8px rgba(0,0,0,.04);
       --shadow-md:0 8px 24px rgba(0,0,0,.12);
-      --space-2:.5rem; --space-3:.75rem; --space-4:1rem; --space-6:1.5rem; --space-8:2rem;
+      --space-4:1rem; --space-6:1.5rem; --space-8:2rem;
     }
     *{box-sizing:border-box}
-    html,body{height:100%}
-    body{
-      margin:0;
-      font-family:var(--font);
-      color:#0c2217;
-      background:var(--cream);
-      -webkit-font-smoothing:antialiased;
-    }
+    body{margin:0;font-family:var(--font);color:#0c2217;background:var(--cream);-webkit-font-smoothing:antialiased;}
 
-    /* === BACKGROUND IMAGE (tasker.PNG) === */
     body::before{
-      content:"";
-      position:fixed; inset:0; z-index:-2;
+      content:"";position:fixed;inset:0;z-index:-2;
       background:url("/images/tasker.PNG") center/cover no-repeat;
-      opacity:1;
-      filter:brightness(.96) saturate(1.02) blur(.3px);
+      filter:brightness(.96)saturate(1.02)blur(.3px);
     }
-    /* === DARK SCRIM FOR LEGIBILITY — tinted with the same forest hue === */
     body::after{
-      content:"";
-      position:fixed; inset:0; z-index:-1;
-      background:
-        linear-gradient(180deg,
-          rgba(0,57,36,.32) 0px,
-          rgba(0,57,36,.26) 280px,
-          rgba(247,243,234,.18) 60%,
-          rgba(247,243,234,.22) 100%);
+      content:"";position:fixed;inset:0;z-index:-1;
+      background:linear-gradient(180deg,rgba(0,57,36,.32)0px,rgba(0,57,36,.26)280px,rgba(247,243,234,.18)60%,rgba(247,243,234,.22)100%);
       pointer-events:none;
     }
 
-    /* Banner (matches logo background) */
     .notice{
-      background:var(--forest); color:#fff; text-align:center;
-      padding:.65rem .9rem; font-size:.98rem; position:relative; z-index:2;
+      background:var(--forest);color:#fff;text-align:center;
+      padding:.65rem .9rem;font-size:.98rem;position:relative;z-index:2;
     }
-    .notice a{color:#FFD66B;text-decoration:underline}
+    .notice a{color:var(--gold);text-decoration:underline}
     .notice .zips{font-weight:700}
 
-    /* Logo bar (matches logo background) */
-    .logo-bar{
-      position:relative;
-      background:var(--forest);
-      color:#fff;
-      display:flex; align-items:center; justify-content:center;
-      height:148px; /* taller header for larger logo */
-      padding:10px 16px;
+    /* --- Clean Header --- */
+    .site-header{
+      position:sticky;top:0;z-index:50;background:#fff;border-bottom:1px solid var(--line);
     }
-
-    /* Clickable brand with image logo */
-    .brand{
-      display:flex; align-items:center; justify-content:center;
-      line-height:1; text-decoration:none; color:#fff;
+    .nav-wrap{
+      height:72px;display:flex;align-items:center;gap:18px;
+      max-width:1100px;margin:0 auto;padding:0 16px;
     }
+    .nav-brand{display:flex;align-items:center;text-decoration:none;}
+    .nav-logo{height:52px;width:auto;display:block;}
 
-    /* Larger, more prominent logo image */
-.brand-logo {
-  height: 150px;  /* increase from 128px */
-  width: auto;
-  display: block;
-  filter: none;
-}
-
-@media (min-width: 768px) {
-  .brand-logo {
-    height: 180px; /* increase from 156px */
-  }
-}
-    /* Hamburger */
-    .menu-btn{
-      position:absolute; left:14px; top:50%; transform:translateY(-50%);
-      width:44px; height:44px; border-radius:999px; border:1px solid rgba(255,255,255,.25);
-      background:transparent; display:grid; place-items:center; cursor:pointer
+    .nav-main{display:flex;align-items:center;gap:6px;margin-left:8px;}
+    .nav-item{position:relative;}
+    .nav-link{
+      background:transparent;border:none;cursor:pointer;
+      padding:10px 12px;border-radius:10px;
+      font-weight:700;color:#0e1f17;letter-spacing:.01em;
     }
-    .menu-btn:focus-visible{outline:2px solid #FFD66B; outline-offset:2px}
-    .menu-ico{width:22px; height:18px; display:block}
-    .menu-ico path{stroke:#fff; stroke-width:6; stroke-linecap:round; fill:none}
+    .nav-link:focus-visible{outline:2px solid var(--gold);outline-offset:2px;}
 
-    /* Dropdown panel + backdrop */
-    .menu-panel{
-      position:fixed; left:0; right:0; top:160px; background:#fff; border-bottom:1px solid var(--line);
-      box-shadow:0 10px 24px rgba(0,0,0,.12); transform:translateY(-12px); opacity:0; pointer-events:none;
-      transition:transform .18s ease, opacity .18s ease; z-index:20
+    .submenu{
+      position:absolute;top:100%;left:0;min-width:220px;
+      background:#fff;border:1px solid var(--line);border-radius:12px;
+      box-shadow:0 12px 28px rgba(0,0,0,.12);
+      padding:8px;display:none;
     }
-    .menu-panel.open{transform:none; opacity:1; pointer-events:auto}
-    .menu-list{list-style:none; margin:0; padding:6px 0}
-    .menu-list a{display:block; padding:14px 18px; text-decoration:none; color:var(--forest-ink); font-weight:800; font-size:1.05rem}
-    .menu-list a + a{border-top:1px solid var(--line)}
-    .backdrop{position:fixed; inset:0; background:rgba(0,0,0,.32); opacity:0; pointer-events:none; transition:opacity .18s ease; z-index:19}
-    .backdrop.show{opacity:1; pointer-events:auto}
+    .submenu a{
+      display:block;padding:10px 12px;border-radius:8px;
+      color:var(--forest-ink);text-decoration:none;font-weight:600;
+    }
+    .submenu a:hover{background:var(--offwhite);}
+    @media(hover:hover){.has-submenu:hover .submenu{display:block;}}
 
-    /* Page container */
+    .nav-burger{
+      margin-left:auto;width:42px;height:42px;border-radius:10px;
+      border:1px solid rgba(0,0,0,.12);background:#fff;display:none;
+      align-items:center;justify-content:center;gap:4px;flex-direction:column;cursor:pointer;
+    }
+    .nav-burger span{width:20px;height:2px;background:#0e1f17;display:block;}
+    .mobile-panel{
+      border-top:1px solid var(--line);background:#fff;
+      box-shadow:0 12px 28px rgba(0,0,0,.12);
+    }
+    .m-item{border-bottom:1px solid var(--line);padding:6px 8px;}
+    .m-item summary{cursor:pointer;padding:12px 8px;font-weight:800;}
+    .m-item a{display:block;padding:10px 12px;text-decoration:none;color:var(--forest-ink);}
+    .m-item a:hover{background:var(--offwhite);border-radius:8px;}
+    @media(max-width:900px){.nav-main{display:none;}.nav-burger{display:flex;}}
+
     .wrap{
-      width:100%; max-width:460px; margin:0 auto; padding:var(--space-8) var(--space-4);
-      background:rgba(255,255,255,.40);
-      backdrop-filter:saturate(1.05) blur(.6px);
-      border-radius:0 0 var(--radius-sm) var(--radius-sm);
-      box-shadow:var(--shadow-sm);
-      color:#0d2619;
+      width:100%;max-width:460px;margin:0 auto;padding:var(--space-8) var(--space-4);
+      background:rgba(255,255,255,.40);backdrop-filter:saturate(1.05) blur(.6px);
+      border-radius:0 0 var(--radius-sm) var(--radius-sm);box-shadow:var(--shadow-sm);color:#0d2619;
     }
-
-    /* Text contrast */
-    h1,h2,h3,.title{color:#092014; text-shadow:0 2px 4px rgba(0,0,0,.28)}
-    p,li{color:#0f2a1b; text-shadow:0 1px 2px rgba(0,0,0,.18)}
-
-    .eyebrow{font-weight:900; letter-spacing:.08em; font-size:.78rem; color:#e9f4ee; text-transform:uppercase; margin:0 0 .6rem; text-shadow:0 1px 2px rgba(0,0,0,.35)}
-    .title{margin:.25rem 0 var(--space-4); font-weight:900; font-size:clamp(26px,6.2vw,36px); letter-spacing:-.02em; line-height:1.14}
-    .sub{margin:0 0 var(--space-6); color:#10311f}
-
-    /* Steps & cards */
-    .steps{display:grid; gap:12px; margin:var(--space-6) 0}
-    .card{border:1px solid var(--line); border-radius:16px; padding:14px; background:#fff; box-shadow:var(--shadow-sm)}
-    .card h3{margin:.2rem 0 .35rem; font-size:1.05rem}
-    .card p{margin:0; color:#2c3f37; font-size:.98rem; text-shadow:none}
-
-    /* Task grid */
-    .tasks{display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin:var(--space-6) 0}
-    .task{border:1px solid var(--line); border-radius:14px; padding:12px; text-align:center; background:#fff}
-    .task .ico{font-size:22px; display:block; margin-bottom:6px}
-    .task span{font-weight:800; color:#2b453a; text-shadow:none}
-
-    /* Checklists */
-    .list{margin:0; padding:0; list-style:none}
-    .list li{display:flex; gap:10px; align-items:flex-start; padding:8px 0}
-    .check{color:#1E3C2A; font-weight:900}
-
-    /* CTAs */
-    .ctas{display:grid; gap:var(--space-4); margin:var(--space-6) 0}
-    .btn{
-      height:56px; border-radius:var(--radius-lg); font-weight:900; font-size:18px;
-      display:inline-flex; align-items:center; justify-content:center; text-decoration:none; border:1px solid transparent; cursor:pointer
-    }
-    .btn-primary{background:var(--forest); color:#fff; box-shadow:var(--shadow-md)}
-    .btn-secondary{background:#fff; color:var(--forest-ink); border-color:var(--line)}
-
-    /* Signup */
-    .signup{
-      background:rgba(247,243,234,.50);
-      padding:2rem 1rem 2.25rem; text-align:center; border-top:1px solid var(--line);
-      border-radius:0 0 var(--radius-sm) var(--radius-sm); margin-top:var(--space-6)
-    }
-    .signup h2{font-size:1.35rem; margin:0 0 1rem; font-weight:900; color:#0F291C; text-shadow:0 2px 4px rgba(0,0,0,.25)}
-    .signup form{display:flex; flex-wrap:wrap; justify-content:center; gap:.5rem; width:100%}
-    .signup input[type="email"]{padding:12px 16px; border-radius:1000px; border:1px solid var(--line); width:70%; max-width:320px; font-size:1rem; background:#fff}
-    .signup button{background:var(--forest); color:#fff; border:none; border-radius:1000px; padding:12px 20px; font-weight:900; cursor:pointer; min-width:130px}
-    .success{display:none; color:#0a6c3b; margin-top:.75rem; font-weight:700}
-
-    /* FAQ */
-    .faq{margin:var(--space-6) 0}
-    .faq details{border-top:1px solid var(--line); padding:12px 0; background:rgba(255,255,255,.65)}
-    .faq details:first-of-type{border-top:none}
-    .faq summary{cursor:pointer; font-weight:800; color:#153624; text-shadow:none}
-    .faq p{margin:.5rem 0 0; color:#1E3C2A; text-shadow:none}
-
-    /* ===== Age Compliance "Check Zone" (SCOPED) ===== */
-    #rules .sub{margin:0 0 1rem; color:#365447; font-size:.98rem}
-    #rules .bubble-grid{display:grid; gap:14px; grid-template-columns:1fr}
-    @media(min-width:640px){ #rules .bubble-grid{ grid-template-columns:repeat(3,1fr) } }
-
-    #rules details.bubble{
-      position:relative; padding:0; border-radius:18px; background:#fff;
-      border:1px solid var(--line);
-      box-shadow:var(--shadow-sm);
-      transition:box-shadow .2s ease, border-color .2s ease;
-    }
-    #rules details.bubble[open]{
-      box-shadow:0 8px 24px rgba(0,0,0,.12);
-      border-color:rgba(0,0,0,.18);
-    }
-    /* tail */
-    #rules details.bubble::after{
-      content:""; position:absolute; left:50%; transform:translateX(-50%);
-      bottom:-10px; width:0; height:0;
-      border-left:10px solid transparent; border-right:10px solid transparent;
-      border-top:10px solid #fff;
-      filter:drop-shadow(0 -1px 0 rgba(0,0,0,.08));
-      pointer-events:none;
-    }
-
-    #rules summary{
-      list-style:none; cursor:pointer; outline:none;
-      display:flex; flex-direction:column; gap:10px;
-      padding:16px 16px 14px;
-    }
-    #rules summary::-webkit-details-marker{ display:none; }
-
-    #rules .tag{
-      display:inline-flex; align-items:center; gap:8px;
-      background:rgba(0,57,36,.08); color:var(--forest); font-weight:800;
-      border-radius:999px; padding:6px 12px; font-size:.92rem
-    }
-    #rules .tag .dot{width:8px; height:8px; border-radius:999px; background:#1f4b37}
-
-    #rules .headline{color:#0F291C; font-weight:800; letter-spacing:-.01em; font-size:1.02rem; text-shadow:0 1px 2px rgba(0,0,0,.08)}
-    #rules .snippet{margin:0; color:#213c31; font-size:.95rem}
-
-    #rules .chev{
-      margin-left:auto; margin-top:-28px; align-self:flex-end;
-      display:inline-flex; align-items:center; justify-content:center;
-      width:32px; height:32px; border-radius:999px;
-      border:1px solid rgba(0,0,0,.08); background:#FAF8F2;
-    }
-    #rules .chev svg{ width:18px; height:18px; transition:transform .2s ease; }
-    #rules details[open] .chev svg{ transform:rotate(180deg); }
-
-    #rules .content{
-      padding:0 16px 16px; border-top:1px solid var(--line); margin-top:6px;
-    }
-    #rules .content h3{ margin:.75rem 0 .4rem; font-size:1rem; color:#0F291C }
-    #rules .age-list{ list-style:none; padding:0; margin:.1rem 0 .25rem }
-    #rules .age-list li{ display:flex; gap:8px; align-items:flex-start; padding:6px 0; color:#213c31; font-size:.95rem }
-    #rules .age-list .ok{ font-weight:900; color:#1f4b37 }
-    #rules .age-list .no{ font-weight:900; color:#9a3e2b }
-    #rules .hours, #rules .note{ margin:.4rem 0 0; font-size:.9rem; color:#365447 }
-    #rules .note strong{ color:var(--forest) }
+    h1,h2,h3,.title{color:#092014;text-shadow:0 2px 4px rgba(0,0,0,.28);}
+    p,li{color:#0f2a1b;text-shadow:0 1px 2px rgba(0,0,0,.18);}
   </style>
 </head>
 <body>
 
-  <!-- Header -->
-  <header class="logo-bar" role="banner" aria-label="UpNext Works">
-    <button class="menu-btn" id="menuBtn" aria-label="Open menu" aria-expanded="false" aria-controls="menuPanel">
-      <svg class="menu-ico" viewBox="0 0 48 36" aria-hidden="true">
-        <path d="M6 6 H42 M6 18 H42 M6 30 H42"></path>
-      </svg>
-    </button>
-    <!-- Larger image logo that links to landing page -->
-    <a class="brand" href="/index.html" aria-label="UpNext Works Home">
-      <img class="brand-logo" src="/images/logo.png" alt="UpNext Works logo" />
+<div class="notice">
+  Teens ages 14–17 in <strong>Northern Virginia</strong> — earn safe, local gigs after school and weekends.
+  <a href="tasker-registration.html">Apply to the pilot</a>
+</div>
+
+<header class="site-header" role="banner">
+  <div class="nav-wrap">
+    <a class="nav-brand" href="/index.html" aria-label="UpNext Works Home">
+      <img src="/images/logo.png" alt="UpNext Works" class="nav-logo">
     </a>
-  </header>
 
-  <!-- Dropdown menu -->
-  <div class="menu-panel" id="menuPanel" role="menu" aria-label="Site navigation">
-    <nav class="menu-list">
-      <a href="/" role="menuitem">Home</a>
-      <a href="/customers.html" role="menuitem">For Customers</a>
-      <a href="/taskers.html" role="menuitem">For Taskers</a>
-      <a href="#rules" role="menuitem">What you can do (by age)</a>
-      <a href="#faq" role="menuitem">FAQ</a>
-    </nav>
-  </div>
-  <div class="backdrop" id="menuBackdrop" hidden></div>
-
-  <!-- Page -->
-  <main class="wrap">
-    <p class="eyebrow">FOR TASKERS (14–17)</p>
-    <h1 class="title">Earn safe, local gigs after school & weekends</h1>
-    <p class="sub" style="
-  font-weight:600;
-  color:#153624;
-  letter-spacing:-0.01em;
-  font-size:1.05rem;
-">
-  Build skills, help neighbors, and earn money with tasks like yardwork, snow shoveling, pet care, and more — with parental consent and clear safety guidelines.
-</p>
-    
-      <!-- CTAs -->
-    <div class="ctas" id="apply">
-      <a class="btn btn-primary" href="tasker-registration.html">Apply to the pilot</a>
-    </div>
-    
-    <!-- Benefits -->
-    <ul class="list" aria-label="Why join" style="
-  font-weight:500;
-  font-size:1.05rem;
-  color:#0f291c;
-  letter-spacing:-0.01em;
-  line-height:1.6;
-  text-shadow:0 1px 2px rgba(0,0,0,0.06);
-">
-  <li><span class="check">✓</span> Flexible, short tasks that fit around school</li>
-  <li><span class="check">✓</span> Learn responsibility, communication & reliability</li>
-  <li><span class="check">✓</span> References for jobs, college, and community service</li>
-</ul>
-
-    <!-- Tasks -->
-    <section class="tasks" aria-label="Popular tasks">
-      <div class="task"><span class="ico">🪴</span><span>Yardwork</span></div>
-      <div class="task"><span class="ico">❄️</span><span>Snow</span></div>
-      <div class="task"><span class="ico">🐾</span><span>Pet Care</span></div>
-      <div class="task"><span class="ico">🧹</span><span>Cleaning</span></div>
-      <div class="task"><span class="ico">🧸</span><span>Babysitting</span></div>
-      <div class="task"><span class="ico">📚</span><span>Tutoring</span></div>
-    </section>
-
-    <!-- How it works -->
-    <section class="steps" aria-label="How it works">
-      <div class="card"><h3>1) Apply to the pilot</h3><p>You and a parent/guardian submit your info so we can verify age and consent.</p></div>
-      <div class="card"><h3>2) Get matched</h3><p>We match you with nearby tasks that fit your schedule and restrictions.</p></div>
-      <div class="card"><h3>3) Do the task, get paid</h3><p>Pilot payments may be cash. Future production app will offer seamless, secure digital payments.</p></div>
-    </section>
-
-    <!-- Requirements -->
-    <section aria-label="Requirements" class="card">
-      <h3>Pilot requirements</h3>
-      <ul class="list">
-        <li><span class="check">✓</span> Ages 14–17</li>
-        <li><span class="check">✓</span> Parent/guardian consent & involvement required</li>
-        <li><span class="check">✓</span> Agree to Code of Conduct & task guidelines</li>
-        <li><span class="check">✓</span> Virginia youth-labor rules apply (14–15 year olds must obtain a Child Labor Employment Certificate)</li>
-      </ul>
-    </section>
-
-    <!-- ===== Age Compliance "Check Zone" (SCOPED ACCORDION) ===== -->
-    <section id="rules" class="compliance" aria-label="Age-based work rules">
-      <h2>✅ Virginia Youth Work Rules</h2>
-  
-      <div class="bubble-grid">
-        <!-- 14–15 -->
-        <details class="bubble" aria-labelledby="age1415-head">
-          <summary>
-            <span class="tag"><span class="dot" aria-hidden="true"></span> Ages 14–15</span>
-            <div class="headline" id="age1415-head">Allowed tasks</div>
-            <p class="snippet">Yardwork (hand tools), snow shoveling, pet care, light indoor tasks.</p>
-            <span class="chev" aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                   stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
-            </span>
-          </summary>
-          <div class="content">
-            <h3>Details</h3>
-            <ul class="age-list">
-              <li><span class="ok">✓</span> Raking, weeding, bagging (hand tools only)</li>
-              <li><span class="ok">✓</span> Snow shoveling & walkway salting</li>
-              <li><span class="ok">✓</span> Pet care & dog walking</li>
-              <li><span class="ok">✓</span> Babysitting / mother’s helper</li>
-              <li><span class="ok">✓</span> Light indoor tasks (tidying, organizing, simple cleaning)</li>
-              <li><span class="no">⚠</span> <strong>No</strong> motorized/power equipment (mowers, chainsaws, power trimmers)</li>
-            </ul>
-            <p class="hours">⏰ Limits: outside school hours; daily/weekly caps; earlier evening end times.</p>
-            <p class="note">📄 <strong>Work permit</strong> is required. Parent/guardian consent and oversight required.</p>
-          </div>
-        </details>
-
-        <!-- 16–17 -->
-        <details class="bubble" aria-labelledby="age1617-head">
-          <summary>
-            <span class="tag"><span class="dot" aria-hidden="true"></span> Ages 16–17</span>
-            <div class="headline" id="age1617-head">Allowed tasks</div>
-            <p class="snippet">Push mowing & leaf blowing, snow, pet care, babysitting, tutoring.</p>
-            <span class="chev" aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                   stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
-            </span>
-          </summary>
-          <div class="content">
-            <h3>Details</h3>
-            <ul class="age-list">
-              <li><span class="ok">✓</span> Yardwork incl. push lawn mowing & leaf blowing</li>
-              <li><span class="ok">✓</span> Snow shoveling, pet care, babysitting</li>
-              <li><span class="ok">✓</span> Tutoring / homework help</li>
-              <li><span class="no">⚠</span> <strong>No</strong> hazardous/heavy equipment or ladders above allowed heights</li>
-            </ul>
-            <p class="hours">⏰ No work during school hours; later evening limits may apply; weekly caps vary by school status.</p>
-            <p class="note">👪 Parent/guardian consent & coordination required.</p>
-          </div>
-        </details>
-
-        <!-- 18+ -->
-        <details class="bubble" aria-labelledby="age18-head">
-          <summary>
-            <span class="tag"><span class="dot" aria-hidden="true"></span> Ages 18+</span>
-            <div class="headline" id="age18-head">Allowed tasks</div>
-            <p class="snippet">All standard UpNext tasks; equipment per safety guidance; flexible hours.</p>
-            <span class="chev" aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                   stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
-            </span>
-          </summary>
-          <div class="content">
-            <h3>Details</h3>
-            <ul class="age-list">
-              <li><span class="ok">✓</span> All standard UpNext tasks</li>
-              <li><span class="ok">✓</span> Equipment use per safety guidelines</li>
-              <li><span class="ok">✓</span> Flexible hours per agreement</li>
-            </ul>
-            <p class="hours">⏰ Treated as adult worker; normal scheduling rules apply.</p>
-            <p class="note">🛡 Follow site safety, insurance, and customer requirements.</p>
-          </div>
-        </details>
+    <nav class="nav-main" aria-label="Primary">
+      <div class="nav-item has-submenu">
+        <button class="nav-link" aria-haspopup="true" aria-expanded="false">Find Tasks</button>
+        <div class="submenu">
+          <a href="/taskers.html#yardwork">Yardwork</a>
+          <a href="/taskers.html#snow">Snow</a>
+          <a href="/taskers.html#petcare">Pet Care</a>
+          <a href="/taskers.html#tutoring">Tutoring</a>
+        </div>
       </div>
-    </section>
+      <div class="nav-item has-submenu">
+        <button class="nav-link" aria-haspopup="true" aria-expanded="false">Hire Work</button>
+        <div class="submenu">
+          <a href="/customers.html#post">Post a request</a>
+          <a href="/customers.html#pricing">Pricing</a>
+          <a href="/parents.html#safety">Safety & oversight</a>
+        </div>
+      </div>
+      <div class="nav-item has-submenu">
+        <button class="nav-link" aria-haspopup="true" aria-expanded="false">Why UpNext</button>
+        <div class="submenu">
+          <a href="/about.html#mission">Mission</a>
+          <a href="/about.html#trust">Trust & verification</a>
+          <a href="/about.html#faq">FAQ</a>
+        </div>
+      </div>
+      <div class="nav-item has-submenu">
+        <button class="nav-link" aria-haspopup="true" aria-expanded="false">What’s new</button>
+        <div class="submenu">
+          <a href="/updates.html#pilot-news">Pilot updates</a>
+          <a href="/updates.html#roadmap">Roadmap</a>
+          <a href="/updates.html#changelog">Changelog</a>
+        </div>
+      </div>
+    </nav>
 
-    <!-- Apply / Waitlist (Formspree) 
-    <section class="signup" aria-label="Apply to the pilot" id="signup">
-      <h2>Apply / join the pilot waitlist</h2>
-      <form id="fs-form" action="https://formspree.io/f/xjkjbvdv" method="POST">
-        <label class="sr-only" for="email">Email</label>
-        <input id="email" name="email" type="email" placeholder="Your email (teen or parent)" required />
-        <input type="hidden" name="role" value="tasker" />
-        <input type="hidden" name="source" value="taskers-landing" />
-        <button type="submit" id="fs-btn">Notify Me</button>
-      </form>
-      <div class="success" id="fs-success">Thanks! We’ll reach out with next steps.</div>
-    </section>
-  </main>
--->
-  <!-- JS -->
-  <script>
-    // Menu
-    (function(){
-      const btn = document.getElementById('menuBtn');
-      const panel = document.getElementById('menuPanel');
-      const backdrop = document.getElementById('menuBackdrop');
+    <button class="nav-burger" id="navBurger" aria-label="Open menu" aria-controls="mobilePanel" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
 
-      function open() {
-        panel.classList.add('open');
-        backdrop.hidden = false;
-        backdrop.classList.add('show');
-        btn.setAttribute('aria-expanded','true');
-      }
-      function close() {
-        panel.classList.remove('open');
-        backdrop.classList.remove('show');
-        setTimeout(()=>{ backdrop.hidden = true; }, 180);
-        btn.setAttribute('aria-expanded','false');
-      }
-      btn.addEventListener('click', () =>
-        panel.classList.contains('open') ? close() : open()
-      );
-      backdrop.addEventListener('click', close);
-      document.addEventListener('keydown', e => {
-        if (e.key === 'Escape' && panel.classList.contains('open')) close();
-      });
-      panel.querySelectorAll('a').forEach(a => a.addEventListener('click', close));
-    })();
+  <div id="mobilePanel" class="mobile-panel" hidden>
+    <details class="m-item"><summary>Find Tasks</summary><a href="/taskers.html#yardwork">Yardwork</a><a href="/taskers.html#snow">Snow</a><a href="/taskers.html#petcare">Pet Care</a><a href="/taskers.html#tutoring">Tutoring</a></details>
+    <details class="m-item"><summary>Hire Work</summary><a href="/customers.html#post">Post a request</a><a href="/customers.html#pricing">Pricing</a><a href="/parents.html#safety">Safety & oversight</a></details>
+    <details class="m-item"><summary>Why UpNext</summary><a href="/about.html#mission">Mission</a><a href="/about.html#trust">Trust & verification</a><a href="/about.html#faq">FAQ</a></details>
+    <details class="m-item"><summary>What’s new</summary><a href="/updates.html#pilot-news">Pilot updates</a><a href="/updates.html#roadmap">Roadmap</a><a href="/updates.html#changelog">Changelog</a></details>
+  </div>
+</header>
 
-    // Accordion behavior scoped to #rules bubbles (only one open at a time)
-    (function(){
-      const zone = document.querySelector('#rules');
-      if (!zone) return;
-      const bubbles = Array.from(zone.querySelectorAll('details.bubble'));
-      zone.addEventListener('toggle', (e) => {
-        const target = e.target;
-        if (!(target instanceof HTMLDetailsElement)) return;
-        if (!target.classList.contains('bubble')) return;
-        if (target.open) {
-          bubbles.forEach(d => { if (d !== target) d.open = false; });
-        }
-      });
-    })();
+<main class="wrap">
+  <p class="eyebrow">FOR TASKERS (14–17)</p>
+  <h1 class="title">Earn safe, local gigs after school & weekends</h1>
+  <p class="sub">Build skills, help neighbors, and earn money with tasks like yardwork, snow shoveling, pet care, and more — with parental consent and clear safety guidelines.</p>
+  <div class="ctas"><a class="btn btn-primary" href="tasker-registration.html">Apply to the pilot</a></div>
+</main>
 
-    // Formspree inline success (unchanged)
-    (function () {
-      const form = document.getElementById('fs-form');
-      const btn  = document.getElementById('fs-btn');
-      const ok   = document.getElementById('fs-success');
-      if (!form) return;
-      form.addEventListener('submit', async function (e) {
-        e.preventDefault();
-        btn.disabled = true; btn.textContent = 'Sending…';
-        try {
-          const res = await fetch(form.action, {
-            method: 'POST',
-            headers: { 'Accept': 'application/json' },
-            body: new FormData(form)
-          });
-          if (res.ok) { form.reset(); ok.style.display = 'block'; btn.textContent = 'Sent ✓'; }
-          else { btn.textContent = 'Try again'; btn.disabled = false; }
-        } catch {
-          btn.textContent = 'Try again'; btn.disabled = false;
-        }
-      });
-    })();
-  </script>
+<script>
+  const burger=document.getElementById('navBurger');
+  const panel=document.getElementById('mobilePanel');
+  if(burger&&panel){
+    burger.addEventListener('click',()=>{
+      const open=panel.hasAttribute('hidden');
+      if(open)panel.removeAttribute('hidden');else panel.setAttribute('hidden','');
+      burger.setAttribute('aria-expanded',String(open));
+    });
+  }
+  document.querySelectorAll('.has-submenu .nav-link').forEach(btn=>{
+    const menu=btn.parentElement.querySelector('.submenu');
+    btn.addEventListener('click',e=>{
+      const visible=menu&&menu.style.display==='block';
+      document.querySelectorAll('.submenu').forEach(m=>m.style.display='none');
+      if(menu)menu.style.display=visible?'none':'block';
+      btn.setAttribute('aria-expanded',String(!visible));
+      e.stopPropagation();
+    });
+  });
+  document.addEventListener('click',()=>{
+    document.querySelectorAll('.submenu').forEach(m=>m.style.display='none');
+    document.querySelectorAll('.has-submenu .nav-link').forEach(b=>b.setAttribute('aria-expanded','false'));
+  });
+</script>
 </body>
 </html>
