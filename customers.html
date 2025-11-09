@@ -60,22 +60,23 @@
       /* keep subject centered on common screens */
       object-fit:cover;
     }
-   .hero-overlay {
-  position: absolute;
-  inset: 0;
-  display: grid;
-  place-items: center;
-  text-align: center;
-  padding: 1px 18px;
-  transform: translateY(-90px); /* raise text for mobile */
-}
-    
-/* ===== Desktop-only adjustment ===== */
-@media (min-width: 900px) {
-  .hero-overlay {
-    transform: translateY(-390px); /* Raise text only on wider screens */
-  }
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      padding: 1px 18px;
+      transform: translateY(-90px); /* raise text for mobile */
     }
+
+    /* ===== Desktop-only adjustment ===== */
+    @media (min-width: 900px) {
+      .hero-overlay {
+        transform: translateY(-390px); /* Raise text only on wider screens */
+      }
+    }
+
     .hero-title{
       color:#fff; margin:0 0 10px 0;
       font-weight:900; letter-spacing:-.02em;
@@ -102,9 +103,15 @@
       margin-top:16px;
     }
     .apply:hover{ filter:brightness(1.08); transform:translateY(-2px); }
-    .hero-overlay .apply {
-  margin-top: 10px; /* increase spacing between subtitle and button */
-}
+
+    /* Spacing between title and button (device-specific) */
+    .hero-overlay .apply { margin-top: 10px; }           /* default/fallback */
+    @media (max-width: 600px) {
+      .hero-overlay .apply { margin-top: 6px; }          /* closer on iPhone */
+    }
+    @media (min-width: 900px) {
+      .hero-overlay .apply { margin-top: 14px; }         /* a touch more on desktop */
+    }
 
     /* ===== Two customer-focused cards ===== */
     .benefits{
@@ -130,7 +137,6 @@
     }
     .muted{ color:#2a4639; }
 
-    /* (Optional) CTA buttons — retained from your theme if you need them later */
     .btn{ display:inline-flex; align-items:center; justify-content:center; height:48px; padding:0 18px;
       border-radius:999px; text-decoration:none; border:1px solid transparent; font-weight:900; }
     .btn-primary{ background:var(--forest); color:#fff; box-shadow:0 8px 24px rgba(0,0,0,.18); }
@@ -205,15 +211,14 @@
       <div class="hero-overlay">
         <div>
           <h1 class="hero-title">Get help with<br/>household tasks</h1>
-        <!--  <p class="hero-sub">
-            Local, parent-supervised teens for raking leaves, pet care, babysitting, and other
-            odd jobs. -->
+          <!--  <p class="hero-sub">
+                Local, parent-supervised teens for raking leaves, pet care, babysitting, and other
+                odd jobs. -->
           </p>
           <a class="apply" href="/tasker-registration.html">Register Today →</a>
         </div>
       </div>
     </section>
-    
   </main>
 
   <script>
