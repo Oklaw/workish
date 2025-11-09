@@ -84,12 +84,13 @@
       /* keep subject centered on common screens */
       object-fit:cover;
     }
-    .hero-overlay{
-      position:absolute; inset:0;
-      background:linear-gradient(180deg, rgba(0,0,0,.10) 0%, rgba(0,0,0,.32) 55%, rgba(0,0,0,.38) 100%);
-      display:grid; place-items:center;
-      text-align:center; padding:40px 18px;
-    }
+  .hero-overlay{
+  position:absolute; inset:0;
+  background:linear-gradient(180deg, rgba(0,0,0,.10) 0%, rgba(0,0,0,.32) 55%, rgba(0,0,0,.38) 100%);
+  display:grid; place-items:center;  /* mobile centered */
+  text-align:center; padding:40px 18px;
+  /* ❌ remove any transform from here */
+}
     .hero-title{
       color:#fff; margin:0 0 10px 0;
       font-weight:900; letter-spacing:-.02em;
