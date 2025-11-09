@@ -3,27 +3,38 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Kindra — For Taskers</title>
-  <meta name="description" content="Earn safely with parent-supervised local opportunities for teens." />
+  <title>Kindra — For Taskers (14–17)</title>
+  <meta name="description" content="Safe, local gigs for teens 14–17 with parent/guardian consent. Trust & safety first, with clear rules and age-appropriate tasks." />
 
   <style>
     :root{
-      --forest:#003924;
-      --ink:#0f2a1b;
-      --sub:#224E3B;
-      --cream:#F7F3EA;
-      --off:#FAF8F2;
-      --gold:#FFD66B;
+      --forest:#003924; --ink:#0f2a1b; --sub:#224E3B;
+      --cream:#F7F3EA; --off:#FAF8F2; --gold:#FFD66B;
       --line:rgba(0,0,0,.14);
       --font:Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans";
-      --r-md:18px; --r-lg:24px;
+      --r-sm:14px; --r-md:18px; --r-lg:24px;
       --shadow:0 10px 24px rgba(0,0,0,.10);
-      --shadow-lg:0 18px 40px rgba(0,0,0,.18);
     }
     *{box-sizing:border-box}
     body{ margin:0; font-family:var(--font); color:var(--ink); background:var(--cream); -webkit-font-smoothing:antialiased; }
 
-    /* ===== Header (same as customer page) ===== */
+    /* Background image (match your other pages’ treatment) */
+    body::before{
+      content:""; position:fixed; inset:0; z-index:-2;
+      background:url("/images/tasker.PNG") center/cover no-repeat;
+      filter:brightness(.96) saturate(1.02) blur(.3px);
+    }
+    body::after{
+      content:""; position:fixed; inset:0; z-index:-1;
+      background:linear-gradient(180deg,
+        rgba(0,57,36,.30) 0px,
+        rgba(0,57,36,.24) 280px,
+        rgba(247,243,234,.18) 60%,
+        rgba(247,243,234,.22) 100%);
+      pointer-events:none;
+    }
+
+    /* Header (reuse same styles you already have) */
     .site-header{ position:sticky; top:0; z-index:50; background:#fff; border-bottom:1px solid var(--line); }
     .nav-wrap{ height:72px; display:flex; align-items:center; gap:18px; max-width:1100px; margin:0 auto; padding:0 16px; }
     .nav-brand{ display:flex; align-items:center; text-decoration:none; }
@@ -44,84 +55,60 @@
     .m-item a:hover{ background:var(--off); border-radius:8px; }
     @media(max-width:900px){ .nav-main{display:none;} .nav-burger{display:flex;} }
 
-    /* ===== Page shell ===== */
+    /* Page container */
     .shell{ max-width:1100px; margin:0 auto; padding:28px 16px 56px; }
 
-    /* ===== HERO (photo with centered white text) ===== */
-    .hero-visual{
-      position:relative;
-      border-radius:20px;
-      overflow:hidden;
-      box-shadow:var(--shadow-lg);
-      margin-top:16px;
+    /* Hero (parent/trust focus) */
+    .hero{
+      color:#fff; text-shadow:0 2px 4px rgba(0,0,0,.32);
+      display:grid; gap:12px; margin-bottom:18px;
     }
-    .hero-visual img{
-      width:100%; display:block; height:auto;
-      object-fit:cover;
-    }
+    .hero h1{ margin:0; font-weight:900; font-size:clamp(28px,5vw,44px); line-height:1.12; letter-spacing:-.02em; }
+    .hero p{ margin:0; font-weight:700; color:#f3fff8; max-width:780px; }
 
-    .hero-overlay {
-      position: absolute;
-      inset: 0;
-      display: grid;
-      place-items: center;
-      text-align: center;
-      padding: 1px 18px;
-      transform: translateY(-135px); /* raise text for mobile */
-    }
-
-    /* ===== Desktop-only adjustment ===== */
-    @media (min-width: 900px) {
-      .hero-overlay {
-        transform: translateY(-420px); /* Raise text on wider screens */
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-      }
-
-      /* make the Apply for the Pilot bubble larger and centered */
-      .hero-overlay .apply {
-        font-size: 2.25rem;       /* larger font on desktop */
-        padding: 18px 30px;       /* larger bubble */
-        margin-top: 18px;
-        text-align: center;
-        display: inline-flex;
-        justify-content: center;
-      }
-    }
-
-    .hero-title{
-      color:#fff; margin:0 0 10px 0;
-      font-weight:900; letter-spacing:-.02em;
-      font-size:clamp(28px,5.6vw,56px); line-height:1.05;
-      text-shadow:0 4px 10px rgba(0,0,0,.45);
-    }
-
-    /* ===== CTA BUTTON (pilot-style bubble) ===== */
+    /* Apply bubble */
     .apply{
-      display:inline-flex; align-items:center; justify-content:center; gap:10px;
-      padding:12px 22px;
-      border-radius:999px;
-      background:var(--forest);
-      color:#fff; font-weight:900; font-size:1.05rem; text-decoration:none;
-      border:2px solid #fff; /* white ring */
-      box-shadow:0 0 8px rgba(255,255,255,.35), 0 8px 24px rgba(0,0,0,.25);
-      transition:transform .12s ease, filter .2s ease;
-      margin-top:16px;
+      display:inline-flex; align-items:center; gap:10px; padding:12px 18px;
+      border-radius:999px; background:var(--forest); color:#fff; font-weight:900; text-decoration:none;
+      box-shadow:0 12px 28px rgba(0,0,0,.18); margin-top:8px;
+       border:2px solid #fff; /* Add this line */
     }
-    .apply:hover{ filter:brightness(1.08); transform:translateY(-2px); }
+    .apply:hover{ filter:brightness(.96); }
 
-    /* Mobile spacing between title and button */
-    .hero-overlay .apply { margin-top: 10px; }
-    @media (max-width: 600px) {
-      .hero-overlay .apply { margin-top: 6px; }
+        /* Desktop: keep the bubble from stretching full width */
+    @media (min-width: 768px) {
+      .apply{
+        width:auto;            /* shrink to fit text */
+        justify-self:start;    /* prevent stretch in grid */
+        align-self:start;      /* align nicely to top/left */
+        padding:12px 20px;     /* keep good padding */
+        display:inline-flex;   /* maintain pill style */
+      }
     }
+
+    /* Two-column info layout */
+    .grid{ display:grid; gap:18px; grid-template-columns: 1.1fr 1fr; }
+    @media(max-width:960px){ .grid{ grid-template-columns:1fr; } }
+
+    .card{ background:#fff; border:1px solid var(--line); border-radius:18px; box-shadow:var(--shadow); }
+    .panel{ padding:18px; }
+
+    .list{ margin:0; padding:0; list-style:none; }
+    .list li{ display:flex; gap:10px; padding:10px 0; border-top:1px solid rgba(0,0,0,.06); }
+    .list li:first-child{ border-top:none; }
+    .check{ color:#143D2A; font-weight:900; }
+
+    .faq details{ border-top:1px solid rgba(0,0,0,.08); padding:10px 0; }
+    .faq details:first-child{ border-top:none; }
+    .faq summary{ cursor:pointer; font-weight:800; }
+    .faq p{ margin:.5rem 0 0; color:#355346; }
   </style>
 </head>
 <body>
 
-  <!-- Header (unchanged) -->
+  <!-- Keep your existing notice/banner if present above header -->
+
+  <!-- Header -->
   <header class="site-header" role="banner">
     <div class="nav-wrap">
       <a class="nav-brand" href="/index.html" aria-label="Kindra Home">
@@ -141,7 +128,7 @@
           <button class="nav-link" aria-haspopup="true" aria-expanded="false">Why Kindra</button>
           <div class="submenu">
             <a href="/about.html#mission">Mission</a>
-            <a href="/about.html#trust">Trust & Verification</a>
+            <a href="/about.html#trust">Trust & verification</a>
             <a href="/about.html#faq">FAQ</a>
           </div>
         </div>
@@ -162,13 +149,13 @@
 
     <div id="mobilePanel" class="mobile-panel" hidden>
       <details class="m-item"><summary>Join Kindra</summary>
-        <a href="/taskers.html">For Taskers & Parents</a>
-        <a href="/customers.html">For Customers</a>
-        <a href="/safety.html">Safety & Oversight</a>
+        <a href="/customers.html#post">For Taskers & Parents</a>
+        <a href="/customers.html#pricing">For Customers</a>
+        <a href="/parents.html#safety">Safety & Oversight</a>
       </details>
       <details class="m-item"><summary>Why Kindra</summary>
         <a href="/about.html#mission">Mission</a>
-        <a href="/about.html#trust">Trust & Verification</a>
+        <a href="/about.html#trust">Trust & verification</a>
         <a href="/about.html#faq">FAQ</a>
       </details>
       <details class="m-item"><summary>What’s new</summary>
@@ -181,15 +168,41 @@
 
   <!-- Main -->
   <main class="shell">
-    <!-- HERO -->
-    <section class="hero-visual" aria-label="Kindra Taskers Hero">
-      <img src="/images/tasker-bg.png" alt="Teen taskers working safely with parents nearby">
-      <div class="hero-overlay">
-        <div>
-          <h1 class="hero-title">Earn, grow, and help<br/>your community</h1>
-          <a class="apply" href="/tasker-registration.html">Apply for the Pilot →</a>
-        </div>
-      </div>
+    <section class="hero" aria-label="Intro">
+      <h1>Safe, local work for teens — with parent oversight</h1>
+      <p>Ages 14–17 only. Parents review and approve participation. We apply clear Virginia-appropriate rules so tasks remain safe and age-appropriate.</p>
+      <a class="apply" href="/tasker-registration.html">Apply for the Pilot →</a>
+    </section>
+
+    <section class="grid" aria-label="Information for families">
+      <!-- Left: Parent/oversight details -->
+      <article class="card panel" aria-label="For parents">
+        <h2 style="margin:0 0 8px 0; color:#143D2A;">For parents: how it works</h2>
+        <ul class="list" aria-label="Benefits">
+          <li><span class="check">✓</span> You approve participation and can coordinate scheduling.</li>
+          <li><span class="check">✓</span> Under 16? Virginia Youth Employment Certificate required.</li>
+          <li><span class="check">✓</span> Only age-appropriate, non-hazardous tasks are offered.</li>
+          <li><span class="check">✓</span> Short, local tasks that fit around school and family life.</li>
+          <li><span class="check">✓</span> Clear safety guidelines and expected behavior for every job.</li>
+        </ul>
+      </article>
+
+      <!-- Right: FAQs -->
+      <aside class="card panel faq" aria-label="FAQs">
+        <h2 style="margin:0 0 8px 0; color:#143D2A;">Quick FAQs</h2>
+        <details open>
+          <summary>How does Kindra handle parental consent and oversight?</summary>
+          <p>Teens enroll with a parent/guardian. Parents review/approve each task, receive status updates, and can opt to be present at jobs.</p>
+        </details>
+        <details>
+          <summary>What about Virginia work permits?</summary>
+          <p>Under 16? Virginia requires a Youth Employment Certificate before paid work. We’ll guide you through the steps.</p>
+        </details>
+        <details>
+          <summary>What if a task seems unsafe?</summary>
+          <p>Your teen or you can decline any task. We encourage open communication and will address concerns promptly.</p>
+        </details>
+      </aside>
     </section>
   </main>
 
@@ -204,7 +217,7 @@
         burger.setAttribute('aria-expanded', String(open));
       });
     }
-    // Desktop dropdowns toggle
+    // Desktop dropdowns toggle on click
     document.querySelectorAll('.has-submenu .nav-link').forEach(btn=>{
       const menu=btn.parentElement.querySelector('.submenu');
       btn.addEventListener('click',e=>{
@@ -222,4 +235,3 @@
   </script>
 </body>
 </html>
-
