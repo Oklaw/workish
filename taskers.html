@@ -33,6 +33,23 @@
         rgba(247,243,234,.22) 100%);
       pointer-events:none;
     }
+    
+    /* ===== Desktop-only: center & enlarge the hero CTA ===== */
+@media (min-width: 900px) {
+  /* Center the whole hero content */
+  .hero{
+    place-items: center;    /* centers grid children horizontally & vertically */
+    text-align: center;     /* center the text */
+  }
+
+  /* Make sure the bubble button is centered and a bit larger on desktop */
+  .hero .apply{
+    align-self: center;     /* center within the grid cell */
+    justify-self: center;   /* center within the grid cell */
+    font-size: 2.25rem;     /* larger text on desktop only */
+    padding: 18px 30px;     /* larger clickable area */
+  }
+}
 
     /* Header (reuse same styles you already have) */
     .site-header{ position:sticky; top:0; z-index:50; background:#fff; border-bottom:1px solid var(--line); }
