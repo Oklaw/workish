@@ -10,11 +10,8 @@
 
   <style>
     :root{
-      --forest:#003924;
-      --forest-ink:#224E3B; --cream:#F7F3EA; --offwhite:#FAF8F2;
-      --gold:#FFD66B;
-      --line:rgba(0,0,0,.15);
-      --font: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans";
+      --forest:#143D2A; --forest-ink:#224E3B; --cream:#F7F3EA; --offwhite:#FAF8F2;
+      --line:rgba(0,0,0,.15); --font: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans";
       --radius-lg:28px; --radius-sm:14px;
       --shadow-sm:0 1px 2px rgba(0,0,0,.06), 0 2px 8px rgba(0,0,0,.04);
       --shadow-md:0 8px 24px rgba(0,0,0,.12);
@@ -22,69 +19,26 @@
     }
     *{box-sizing:border-box}
     html,body{height:100%}
-    body{
-      margin:0; font-family:var(--font);
-      color:#0c2217; background:var(--cream);
-      -webkit-font-smoothing:antialiased;
-    }
-
-    /* Background image */
-    body::before{
-      content:""; position:fixed; inset:0; z-index:-2;
-      background:url("/images/Raking.PNG") center/cover no-repeat;
-      background-position:center 20%;
-      opacity:1;
-      filter:brightness(.96) saturate(1.02) blur(.3px);
-    }
-    body::after{
-      content:""; position:fixed; inset:0; z-index:-1;
-      background:linear-gradient(180deg,
-          rgba(20,61,42,.32) 0px,
-          rgba(20,61,42,.26) 280px,
-          rgba(247,243,234,.18) 60%,
-          rgba(247,243,234,.22) 100%);
-      pointer-events:none;
-    }
+    body{margin:0;font-family:var(--font);color:var(--forest-ink);background:var(--cream);-webkit-font-smoothing:antialiased}
 
     /* Banner */
-    .notice{
-      background:var(--forest); color:#fff; text-align:center;
-      padding:.65rem .9rem; font-size:.98rem; position:relative; z-index:2;
-    }
-    .notice a{color:var(--gold);text-decoration:underline}
+    .notice{background:#143D2A;color:#fff;text-align:center;padding:.65rem .9rem;font-size:.98rem}
+    .notice a{color:#FFD66B;text-decoration:underline}
     .notice .zips{font-weight:700}
 
     /* Logo bar */
-    .logo-bar {
-      position: relative;
-      background: var(--forest);
-      color: #fff;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      height: auto;
-      padding: 14px 16px;
-      overflow: hidden;
+    .logo-bar{
+      position:relative;
+      background:var(--forest);
+      color:#fff;
+      display:flex; align-items:center; justify-content:center;
+      height:108px; padding:10px 16px;
     }
-    .brand {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      line-height: 1;
-      text-decoration: none;
-      color: #fff;
-    }
-    .brand-logo {
-      max-height: 120px;
-      width: auto;
-      display: block;
-      filter: none;
-    }
-    @media (min-width: 768px) {
-      .brand-logo { max-height: 160px; }
-    }
+    .brand{display:flex; flex-direction:column; align-items:center; line-height:1}
+    .brand .upnext{font-weight:900;font-size:40px;letter-spacing:-.01em}
+    .brand .works{margin-top:8px;font-weight:900;font-size:18px;letter-spacing:.35em}
 
-    /* Hamburger menu */
+    /* Hamburger */
     .menu-btn{
       position:absolute; left:14px; top:50%; transform:translateY(-50%);
       width:44px; height:44px; border-radius:999px;
@@ -154,8 +108,9 @@
 
   <!-- Service area banner -->
   <div class="notice">
-    Currently piloting for teens in <strong>Northern Virginia</strong>. After-school & weekend availability.
-    See <a href="tasker-registration.html">Parent/Guardian Registration</a> for details.
+    Now piloting in <strong>Northern Virginia</strong> — currently serving ZIPs:
+    <span class="zips">20169, 20155, 20136, 20143, 20109</span>.
+    <a href="#signup">Join the waitlist</a>
   </div>
 
   <!-- Logo bar -->
@@ -166,9 +121,10 @@
       </svg>
     </button>
 
-    <a class="brand" href="/index.html" aria-label="UpNext Works Home">
-      <img class="brand-logo" src="/images/kindralogo.PNG" alt="UpNext Works logo">
-    </a>
+    <div class="brand">
+      <span class="upnext">UpNext</span>
+      <span class="works">WORKS</span>
+    </div>
   </header>
 
   <!-- Dropdown menu -->
@@ -219,7 +175,7 @@
       <li><span class="check">✓</span> Parental consent &amp; oversight</li>
     </ul>
 
-    <!-- Signup -->
+    <!-- Formspree signup -->
     <section id="signup" class="signup" aria-label="Early access signup">
       <h2>Sign up for early access</h2>
       <form id="fs-form" action="https://formspree.io/f/xjkjbvdv" method="POST">
