@@ -11,242 +11,256 @@
   <style>
     :root{
       --forest:#003924;
-      --forest-ink:#224E3B;
-      --cream:#F7F3EA;
-      --offwhite:#FAF8F2;
+      --forest-ink:#224E3B; --cream:#F7F3EA; --offwhite:#FAF8F2;
       --gold:#FFD66B;
       --line:rgba(0,0,0,.15);
-      --font:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial,"Noto Sans";
+      --font: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans";
       --radius-lg:28px; --radius-sm:14px;
-      --shadow-sm:0 1px 2px rgba(0,0,0,.06),0 2px 8px rgba(0,0,0,.04);
+      --shadow-sm:0 1px 2px rgba(0,0,0,.06), 0 2px 8px rgba(0,0,0,.04);
       --shadow-md:0 8px 24px rgba(0,0,0,.12);
       --space-2:.5rem; --space-3:.75rem; --space-4:1rem; --space-6:1.5rem; --space-8:2rem;
     }
     *{box-sizing:border-box}
+    html,body{height:100%}
     body{
-      margin:0;font-family:var(--font);
-      color:#0c2217;background:var(--cream);
+      margin:0; font-family:var(--font);
+      color:#0c2217; background:var(--cream);
       -webkit-font-smoothing:antialiased;
     }
 
+    /* Background image */
     body::before{
-      content:"";position:fixed;inset:0;z-index:-2;
+      content:""; position:fixed; inset:0; z-index:-2;
       background:url("/images/Raking.PNG") center/cover no-repeat;
-      background-position:center 20%;opacity:1;
-      filter:brightness(.96)saturate(1.02)blur(.3px);
+      background-position:center 20%;
+      opacity:1;
+      filter:brightness(.96) saturate(1.02) blur(.3px);
     }
     body::after{
-      content:"";position:fixed;inset:0;z-index:-1;
+      content:""; position:fixed; inset:0; z-index:-1;
       background:linear-gradient(180deg,
-        rgba(20,61,42,.32)0px,
-        rgba(20,61,42,.26)280px,
-        rgba(247,243,234,.18)60%,
-        rgba(247,243,234,.22)100%);
+          rgba(20,61,42,.32) 0px,
+          rgba(20,61,42,.26) 280px,
+          rgba(247,243,234,.18) 60%,
+          rgba(247,243,234,.22) 100%);
       pointer-events:none;
     }
 
+    /* Banner */
     .notice{
-      background:var(--forest);color:#fff;text-align:center;
-      padding:.65rem .9rem;font-size:.98rem;position:relative;z-index:2;
+      background:var(--forest); color:#fff; text-align:center;
+      padding:.65rem .9rem; font-size:.98rem; position:relative; z-index:2;
     }
     .notice a{color:var(--gold);text-decoration:underline}
     .notice .zips{font-weight:700}
 
-    /* --- Clean Header --- */
-    .site-header{
-      position:sticky;top:0;z-index:50;background:#fff;border-bottom:1px solid var(--line);
+    /* Logo bar */
+    .logo-bar {
+      position: relative;
+      background: var(--forest);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: auto;
+      padding: 14px 16px;
+      overflow: hidden;
     }
-    .nav-wrap{
-      height:72px;display:flex;align-items:center;gap:18px;
-      max-width:1100px;margin:0 auto;padding:0 16px;
+    .brand {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      line-height: 1;
+      text-decoration: none;
+      color: #fff;
     }
-    .nav-brand{display:flex;align-items:center;text-decoration:none;}
-    .nav-logo{height:52px;width:auto;display:block;}
+    .brand-logo {
+      max-height: 120px;
+      width: auto;
+      display: block;
+      filter: none;
+    }
+    @media (min-width: 768px) {
+      .brand-logo { max-height: 160px; }
+    }
 
-    .nav-main{display:flex;align-items:center;gap:6px;margin-left:8px;}
-    .nav-item{position:relative;}
-    .nav-link{
-      background:transparent;border:none;cursor:pointer;
-      padding:10px 12px;border-radius:10px;
-      font-weight:700;color:#0e1f17;letter-spacing:.01em;
+    /* Hamburger menu */
+    .menu-btn{
+      position:absolute; left:14px; top:50%; transform:translateY(-50%);
+      width:44px; height:44px; border-radius:999px;
+      border:1px solid rgba(255,255,255,.25);
+      background:transparent; display:grid; place-items:center; cursor:pointer;
     }
-    .nav-link:focus-visible{outline:2px solid var(--gold);outline-offset:2px;}
+    .menu-btn:focus-visible{outline:2px solid #FFD66B; outline-offset:2px}
+    .menu-ico{width:22px; height:18px; display:block}
+    .menu-ico path{stroke:#fff; stroke-width:6; stroke-linecap:round; fill:none}
 
-    .submenu{
-      position:absolute;top:100%;left:0;min-width:220px;
-      background:#fff;border:1px solid var(--line);border-radius:12px;
-      box-shadow:0 12px 28px rgba(0,0,0,.12);
-      padding:8px;display:none;
+    /* Dropdown panel + backdrop */
+    .menu-panel{
+      position:fixed; left:0; right:0;
+      top:160px; background:#fff; border-bottom:1px solid var(--line);
+      box-shadow:0 10px 24px rgba(0,0,0,.12);
+      transform:translateY(-12px); opacity:0; pointer-events:none;
+      transition:transform .18s ease, opacity .18s ease; z-index:20;
     }
-    .submenu a{
-      display:block;padding:10px 12px;border-radius:8px;
-      color:var(--forest-ink);text-decoration:none;font-weight:600;
-    }
-    .submenu a:hover{background:var(--offwhite);}
-    @media(hover:hover){.has-submenu:hover .submenu{display:block;}}
+    .menu-panel.open{transform:none; opacity:1; pointer-events:auto;}
+    .menu-list{list-style:none; margin:0; padding:6px 0;}
+    .menu-list a{display:block; padding:14px 18px; text-decoration:none; color:var(--forest-ink); font-weight:800; font-size:1.05rem;}
+    .menu-list a + a{border-top:1px solid var(--line)}
+    .menu-list a:active{background:var(--offwhite)}
+    .backdrop{position:fixed; inset:0; background:rgba(0,0,0,.32); opacity:0; pointer-events:none; transition:opacity .18s ease; z-index:19;}
+    .backdrop.show{opacity:1; pointer-events:auto;}
 
-    .nav-burger{
-      margin-left:auto;width:42px;height:42px;border-radius:10px;
-      border:1px solid rgba(0,0,0,.12);background:#fff;display:none;
-      align-items:center;justify-content:center;gap:4px;flex-direction:column;cursor:pointer;
-    }
-    .nav-burger span{width:20px;height:2px;background:#0e1f17;display:block;}
+    /* Main content */
+    .wrap{width:100%;max-width:460px;margin:0 auto;padding:var(--space-8) var(--space-4);background:#fff}
+    .title{margin:0 0 var(--space-6);font-weight:800;font-size:clamp(26px,6.2vw,36px);letter-spacing:-.02em;line-height:1.14;color:var(--forest-ink)}
 
-    .mobile-panel{
-      border-top:1px solid var(--line);background:#fff;
-      box-shadow:0 12px 28px rgba(0,0,0,.12);
-    }
-    .m-item{border-bottom:1px solid var(--line);padding:6px 8px;}
-    .m-item summary{cursor:pointer;padding:12px 8px;font-weight:800;}
-    .m-item a{display:block;padding:10px 12px;text-decoration:none;color:var(--forest-ink);}
-    .m-item a:hover{background:var(--offwhite);border-radius:8px;}
-    @media(max-width:900px){.nav-main{display:none;}.nav-burger{display:flex;}}
+    /* Search */
+    .search{display:flex;align-items:center;gap:8px;background:var(--offwhite);border:1px solid var(--line);border-radius:1000px;padding:14px 14px 14px 16px;box-shadow:var(--shadow-sm);margin-bottom:var(--space-6)}
+    .search input{flex:1;border:none;outline:none;background:transparent;font-size:16px;color:#2A3A33}
+    .search button{display:inline-grid;place-items:center;background:var(--forest);color:#fff;width:54px;height:46px;border:none;border-radius:1000px;cursor:pointer}
 
-    .wrap{
-      position:relative;z-index:1;width:100%;max-width:460px;margin:0 auto;
-      padding:var(--space-8) var(--space-4);
-      background:rgba(255,255,255,.40);
-      backdrop-filter:saturate(1.05) blur(.6px);
-      border-radius:0 0 var(--radius-sm) var(--radius-sm);
-      box-shadow:var(--shadow-sm);
-      color:#0d2619;
-    }
-    h1,h2,h3,.title{color:#092014;text-shadow:0 2px 4px rgba(0,0,0,.28);}
-    p,li,label{color:#0f2a1b;text-shadow:0 1px 2px rgba(0,0,0,.18);}
-    .title{margin:0 0 var(--space-6);font-weight:800;font-size:clamp(26px,6.2vw,36px);letter-spacing:-.02em;line-height:1.14;}
-    .search{display:flex;align-items:center;gap:8px;background:var(--offwhite);border:1px solid var(--line);border-radius:1000px;padding:14px 14px 14px 16px;box-shadow:var(--shadow-sm);margin-bottom:var(--space-6);}
-    .search input{flex:1;border:none;outline:none;background:transparent;font-size:16px;color:#2A3A33;}
-    .search button{display:inline-grid;place-items:center;background:var(--forest);color:#fff;width:54px;height:46px;border:none;border-radius:1000px;cursor:pointer;}
+    /* Categories */
+    .tabs{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-top:var(--space-4);margin-bottom:var(--space-4);text-align:center}
+    .tab{padding:10px 6px;background:transparent;border:none;color:#4A5B54;font-weight:700;border-bottom:2px solid transparent;cursor:pointer}
+    .tab .ico{display:block;font-size:22px;margin-bottom:6px}
+    .tab.active{color:var(--forest-ink);border-bottom-color:var(--forest-ink)}
 
-    .tasks{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:var(--space-6) 0;}
-    .task-card{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;height:112px;padding:14px 10px;gap:10px;background:rgba(255,255,255,.92);border:1px solid var(--line);border-radius:20px;box-shadow:0 10px 24px rgba(0,0,0,.10);text-decoration:none;}
-    .task-card .ico{font-size:28px;line-height:1;}
-    .task-card .label{font-weight:900;font-size:20px;color:#1e3b2d;}
+    /* CTAs */
+    .ctas{display:grid;gap:var(--space-4);margin-bottom:var(--space-6)}
+    .btn{height:56px;border-radius:var(--radius-lg);font-weight:900;font-size:18px;letter-spacing:.01em;display:inline-flex;align-items:center;justify-content:center;text-decoration:none;border:1px solid transparent;cursor:pointer;transition:transform .06s ease, filter .15s ease}
+    .btn:active{transform:translateY(1px)}
+    .btn-primary{background:var(--forest);color:#fff;box-shadow:var(--shadow-md)}
+    .btn-secondary{background:#fff;color:var(--forest-ink);border-color:var(--line)}
 
-    .ctas{display:grid;gap:var(--space-4);margin-bottom:var(--space-6);}
-    .btn{height:56px;border-radius:var(--radius-lg);font-weight:900;font-size:18px;letter-spacing:.01em;display:inline-flex;align-items:center;justify-content:center;text-decoration:none;border:1px solid transparent;cursor:pointer;transition:transform .06s ease,filter .15s ease;}
-    .btn:active{transform:translateY(1px);}
-    .btn-primary{background:var(--forest);color:#fff;box-shadow:var(--shadow-md);}
-    .btn-secondary{background:#fff;color:var(--forest-ink);border-color:var(--line);}
-    .btn-tertiary{background:var(--gold);color:var(--forest);box-shadow:var(--shadow-md);}
-    .btn-tertiary:hover{filter:brightness(.95);}
-    .signup{background:rgba(247,243,234,.50);padding:2rem 1rem 2.25rem;text-align:center;border-top:1px solid var(--line);border-radius:0 0 var(--radius-sm) var(--radius-sm);margin-top:var(--space-6);}
+    /* Checklist */
+    .list{margin:0;padding:0;list-style:none;color:#263A32}
+    .list li{display:flex;gap:10px;align-items:flex-start;padding:8px 0;font-size:16px}
+    .list li .check{color:var(--forest-ink);font-weight:900}
+
+    /* Signup */
+    .signup{background:var(--cream);padding:2rem 1rem 2.25rem;text-align:center;border-top:1px solid var(--line);border-radius:0 0 var(--radius-sm) var(--radius-sm);margin-top:var(--space-6)}
+    .signup h2{color:var(--forest-ink);font-size:1.35rem;margin:0 0 1rem 0;font-weight:900;letter-spacing:-.01em}
+    .signup form{display:flex;flex-wrap:wrap;justify-content:center;gap:.5rem;width:100%}
+    .signup input[type="email"]{padding:12px 16px;border-radius:1000px;border:1px solid var(--line);width:70%;max-width:320px;font-size:1rem;background:#fff}
+    .signup button{background:var(--forest);color:#fff;border:none;border-radius:1000px;padding:12px 20px;font-weight:900;cursor:pointer;min-width:130px}
+    .success{display:none;color:#0a6c3b;margin-top:.75rem;font-weight:700}
+
+    @media (min-width:768px){ .wrap{max-width:720px} .title{font-size:40px} }
+    .sr-only{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
   </style>
 </head>
 <body>
 
-<div class="notice">
-  Currently piloting for teens in <strong>Northern Virginia</strong>. After-school & weekend availability.
-  See <a href="tasker-registration.html">Parent/Guardian Registration</a> for details.
-</div>
-
-<header class="site-header" role="banner">
-  <div class="nav-wrap">
-    <a class="nav-brand" href="/index.html" aria-label="UpNext Works Home">
-      <img src="/images/logo.png" alt="UpNext Works" class="nav-logo">
-    </a>
-
-    <nav class="nav-main" aria-label="Primary">
-      <div class="nav-item has-submenu">
-        <button class="nav-link" aria-haspopup="true" aria-expanded="false">Find Tasks</button>
-        <div class="submenu">
-          <a href="/taskers.html#yardwork">Yardwork</a>
-          <a href="/taskers.html#snow">Snow</a>
-          <a href="/taskers.html#petcare">Pet Care</a>
-          <a href="/taskers.html#tutoring">Tutoring</a>
-        </div>
-      </div>
-      <div class="nav-item has-submenu">
-        <button class="nav-link" aria-haspopup="true" aria-expanded="false">Hire Work</button>
-        <div class="submenu">
-          <a href="/customers.html#post">Post a request</a>
-          <a href="/customers.html#pricing">Pricing</a>
-          <a href="/parents.html#safety">Safety & oversight</a>
-        </div>
-      </div>
-      <div class="nav-item has-submenu">
-        <button class="nav-link" aria-haspopup="true" aria-expanded="false">Why UpNext</button>
-        <div class="submenu">
-          <a href="/about.html#mission">Mission</a>
-          <a href="/about.html#trust">Trust & verification</a>
-          <a href="/about.html#faq">FAQ</a>
-        </div>
-      </div>
-      <div class="nav-item has-submenu">
-        <button class="nav-link" aria-haspopup="true" aria-expanded="false">What’s new</button>
-        <div class="submenu">
-          <a href="/updates.html#pilot-news">Pilot updates</a>
-          <a href="/updates.html#roadmap">Roadmap</a>
-          <a href="/updates.html#changelog">Changelog</a>
-        </div>
-      </div>
-    </nav>
-
-    <button class="nav-burger" id="navBurger" aria-label="Open menu" aria-controls="mobilePanel" aria-expanded="false">
-      <span></span><span></span><span></span>
-    </button>
+  <!-- Service area banner -->
+  <div class="notice">
+    Currently piloting for teens in <strong>Northern Virginia</strong>. After-school & weekend availability.
+    See <a href="tasker-registration.html">Parent/Guardian Registration</a> for details.
   </div>
 
-  <div id="mobilePanel" class="mobile-panel" hidden>
-    <details class="m-item"><summary>Find Tasks</summary><a href="/taskers.html#yardwork">Yardwork</a><a href="/taskers.html#snow">Snow</a><a href="/taskers.html#petcare">Pet Care</a><a href="/taskers.html#tutoring">Tutoring</a></details>
-    <details class="m-item"><summary>Hire Work</summary><a href="/customers.html#post">Post a request</a><a href="/customers.html#pricing">Pricing</a><a href="/parents.html#safety">Safety & oversight</a></details>
-    <details class="m-item"><summary>Why UpNext</summary><a href="/about.html#mission">Mission</a><a href="/about.html#trust">Trust & verification</a><a href="/about.html#faq">FAQ</a></details>
-    <details class="m-item"><summary>What’s new</summary><a href="/updates.html#pilot-news">Pilot updates</a><a href="/updates.html#roadmap">Roadmap</a><a href="/updates.html#changelog">Changelog</a></details>
-  </div>
-</header>
-
-<main class="wrap">
-  <h1 class="title">Book trusted teen<br>help for home &amp; community tasks</h1>
-
-  <form class="search" role="search" action="/search" onsubmit="return false;">
-    <input id="q" name="q" type="search" placeholder="What do you need help with?" aria-label="What do you need help with?" />
-    <button type="submit" aria-label="Search">
-      <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
-        <path d="M21 21l-4.3-4.3m1.3-5a7 7 0 1 1-14 0 7 7 0 0 1 14 0Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+  <!-- Logo bar -->
+  <header class="logo-bar" role="banner" aria-label="UpNext Works">
+    <button class="menu-btn" id="menuBtn" aria-label="Open menu" aria-expanded="false" aria-controls="menuPanel">
+      <svg class="menu-ico" viewBox="0 0 48 36" aria-hidden="true">
+        <path d="M6 6 H42 M6 18 H42 M6 30 H42"></path>
       </svg>
     </button>
-  </form>
 
-  <section class="tasks" aria-label="Popular tasks">
-    <a href="/taskers.html#yardwork" class="task-card"><span class="ico">🪴</span><span class="label">Yardwork</span></a>
-    <a href="/taskers.html#snow" class="task-card"><span class="ico">❄️</span><span class="label">Snow</span></a>
-    <a href="/taskers.html#petcare" class="task-card"><span class="ico">🐾</span><span class="label">Pet Care</span></a>
-    <a href="/taskers.html#cleaning" class="task-card"><span class="ico">🧹</span><span class="label">Cleaning</span></a>
-    <a href="/taskers.html#babysitting" class="task-card"><span class="ico">🧸</span><span class="label">Babysitting</span></a>
-    <a href="/taskers.html#tutoring" class="task-card"><span class="ico">📚</span><span class="label">Tutoring</span></a>
-  </section>
+    <a class="brand" href="/index.html" aria-label="UpNext Works Home">
+      <img class="brand-logo" src="/images/kindralogo.PNG" alt="UpNext Works logo">
+    </a>
+  </header>
 
-  <div class="ctas" role="group" aria-label="Sign up">
-    <a class="btn btn-primary" href="/taskers.html">I'm a Tasker</a>
-    <a class="btn btn-secondary" href="/customers.html">I'm a Customer</a>
-    <a class="btn btn-tertiary" href="/parents.html">I'm a Parent/Guardian</a>
+  <!-- Dropdown menu -->
+  <div class="menu-panel" id="menuPanel" role="menu" aria-label="Site navigation">
+    <nav class="menu-list">
+      <a href="#about" role="menuitem">About</a>
+      <a href="#community" role="menuitem">Community</a>
+      <a href="#contact" role="menuitem">Contact</a>
+    </nav>
   </div>
-</main>
+  <div class="backdrop" id="menuBackdrop" hidden></div>
 
-<script>
-  const burger=document.getElementById('navBurger');
-  const panel=document.getElementById('mobilePanel');
-  if(burger&&panel){
-    burger.addEventListener('click',()=>{
-      const open=panel.hasAttribute('hidden');
-      if(open)panel.removeAttribute('hidden');else panel.setAttribute('hidden','');
-      burger.setAttribute('aria-expanded',String(open));
-    });
-  }
-  document.querySelectorAll('.has-submenu .nav-link').forEach(btn=>{
-    const menu=btn.parentElement.querySelector('.submenu');
-    btn.addEventListener('click',e=>{
-      const visible=menu&&menu.style.display==='block';
-      document.querySelectorAll('.submenu').forEach(m=>m.style.display='none');
-      if(menu)menu.style.display=visible?'none':'block';
-      btn.setAttribute('aria-expanded',String(!visible));
-      e.stopPropagation();
-    });
-  });
-  document.addEventListener('click',()=>{
-    document.querySelectorAll('.submenu').forEach(m=>m.style.display='none');
-    document.querySelectorAll('.has-submenu .nav-link').forEach(b=>b.setAttribute('aria-expanded','false'));
-  });
-</script>
+  <!-- Main content -->
+  <main class="wrap">
+    <h1 class="title">Book trusted teen<br/>help for home &amp; community tasks</h1>
+
+    <!-- Search -->
+    <form class="search" role="search" action="/search" onsubmit="return false;">
+      <label class="sr-only" for="q">What do you need help with?</label>
+      <input id="q" name="q" type="search" placeholder="What do you need help with?" />
+      <button type="submit" aria-label="Search">
+        <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
+          <path d="M21 21l-4.3-4.3m1.3-5a7 7 0 1 1-14 0 7 7 0 0 1 14 0Z"
+                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </button>
+    </form>
+
+    <!-- Categories -->
+    <nav class="tabs" aria-label="Categories">
+      <button class="tab active" type="button"><span class="ico">🪴</span>Yardwork</button>
+      <button class="tab" type="button"><span class="ico">❄️</span>Snow</button>
+      <button class="tab" type="button"><span class="ico">🐾</span>Pet Care</button>
+      <button class="tab" type="button"><span class="ico">🧹</span>Cleaning</button>
+      <button class="tab" type="button"><span class="ico">🧸</span>Babysitting</button>
+      <button class="tab" type="button"><span class="ico">📚</span>Tutoring</button>
+    </nav>
+
+    <!-- CTAs -->
+    <div class="ctas" role="group" aria-label="Sign up">
+      <a class="btn btn-primary" href="/taskers.html">I'm a Tasker</a>
+      <a class="btn btn-secondary" href="/customers.html">I'm a Customer</a>
+    </div>
+
+    <!-- Checklist -->
+    <ul class="list" aria-label="Trust features">
+      <li><span class="check">✓</span> Verified accounts</li>
+      <li><span class="check">✓</span> Parental consent &amp; oversight</li>
+    </ul>
+
+    <!-- Signup -->
+    <section id="signup" class="signup" aria-label="Early access signup">
+      <h2>Sign up for early access</h2>
+      <form id="fs-form" action="https://formspree.io/f/xjkjbvdv" method="POST">
+        <label class="sr-only" for="email">Email</label>
+        <input id="email" name="email" type="email" placeholder="Enter your email" required />
+        <input type="hidden" name="source" value="upnextworks.org-landing" />
+        <button type="submit" id="fs-btn">Notify Me</button>
+      </form>
+      <div class="success" id="fs-success">Thanks! You’re on the list 🎉</div>
+    </section>
+  </main>
+
+  <!-- JS -->
+  <script>
+    (function(){
+      const btn = document.getElementById('menuBtn');
+      const panel = document.getElementById('menuPanel');
+      const backdrop = document.getElementById('menuBackdrop');
+      const open = () => { panel.classList.add('open'); backdrop.hidden=false; backdrop.classList.add('show'); btn.setAttribute('aria-expanded','true'); };
+      const close = () => { panel.classList.remove('open'); backdrop.classList.remove('show'); setTimeout(()=>{backdrop.hidden=true},180); btn.setAttribute('aria-expanded','false'); };
+      btn.addEventListener('click', () => panel.classList.contains('open') ? close() : open());
+      backdrop.addEventListener('click', close);
+      document.addEventListener('keydown', e => { if (e.key==='Escape' && panel.classList.contains('open')) close(); });
+      panel.querySelectorAll('a').forEach(a => a.addEventListener('click', close));
+    })();
+
+    (function () {
+      const form = document.getElementById('fs-form');
+      const btn  = document.getElementById('fs-btn');
+      const ok   = document.getElementById('fs-success');
+      if (!form) return;
+      form.addEventListener('submit', async function (e) {
+        e.preventDefault();
+        btn.disabled = true; btn.textContent = 'Sending…';
+        try {
+          const res = await fetch(form.action, { method: 'POST', headers: { 'Accept': 'application/json' }, body: new FormData(form) });
+          if (res.ok) { form.reset(); ok.style.display = 'block'; btn.textContent = 'Sent ✓'; }
+          else { btn.textContent = 'Try again'; btn.disabled = false; }
+        } catch { btn.textContent = 'Try again'; btn.disabled = false; }
+      });
+    })();
+  </script>
 </body>
 </html>
