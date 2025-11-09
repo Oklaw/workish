@@ -63,12 +63,11 @@
    .hero-overlay {
   position: absolute;
   inset: 0;
-  /*background: linear-gradient(180deg, rgba(0,0,0,.10) 0%, rgba(0,0,0,.32) 55%, rgba(0,0,0,.38) 100%);*/ 
   display: grid;
   place-items: center;
   text-align: center;
-  padding: 1px 18px; /* === MOVES TEXT ON MOBILE ==== */
-  /* No transform here — mobile version stays as-is */
+  padding: 1px 18px;
+  transform: translateY(-90px); /* raise text for mobile */
 }
     
 /* ===== Desktop-only adjustment ===== */
