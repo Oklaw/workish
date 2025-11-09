@@ -53,24 +53,41 @@
     }
     .notice a{color:var(--gold);text-decoration:underline}
     .notice .zips{font-weight:700}
+    
+/* Logo bar */
+.logo-bar {
+  position: relative;
+  background: var(--forest);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: auto;             /* was 148px — let it flex naturally */
+  padding: 14px 16px;       /* gives breathing room */
+  overflow: hidden;         /* ensures no logo spill */
+}
 
-    /* Header / logo bar */
-    .logo-bar{
-      position:relative;
-      background:var(--forest);
-      color:#fff;
-      display:flex; align-items:center; justify-content:center;
-      height:148px;
-      padding:10px 16px;
-    }
-    .brand{
-      display:flex; align-items:center; justify-content:center;
-      line-height:1; text-decoration:none; color:#fff;
-    }
-    .brand-logo{
-      height:150px; width:auto; display:block; filter:none;
-    }
-    @media (min-width:768px){ .brand-logo{height:180px;} }
+.brand {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  text-decoration: none;
+  color: #fff;
+}
+
+.brand-logo {
+  max-height: 120px;        /* was fixed 150px — now capped and responsive */
+  width: auto;
+  display: block;
+  filter: none;
+}
+
+@media (min-width: 768px) {
+  .brand-logo {
+    max-height: 160px;      /* larger on desktop but still contained */
+  }
+}
 
     /* Hamburger */
     .menu-btn{
