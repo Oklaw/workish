@@ -10,19 +10,17 @@
 
   <style>
     :root{
-      --forest:#143D2A;
+      --forest:#003924;
       --forest-ink:#224E3B;
       --cream:#F7F3EA;
       --offwhite:#FAF8F2;
+      --gold:#FFD66B;
       --line:rgba(0,0,0,.15);
       --font: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans";
-      --radius-lg:28px;
-      --radius-sm:14px;
+      --radius-lg:28px; --radius-sm:14px;
       --shadow-sm:0 1px 2px rgba(0,0,0,.06), 0 2px 8px rgba(0,0,0,.04);
       --shadow-md:0 8px 24px rgba(0,0,0,.12);
-      --space-4:1rem;
-      --space-6:1.5rem;
-      --space-8:2rem;
+      --space-4:1rem; --space-6:1.5rem; --space-8:2rem;
     }
     *{box-sizing:border-box}
     body{
@@ -33,118 +31,172 @@
       -webkit-font-smoothing:antialiased;
     }
 
-    /* Logo bar */
-    .logo-bar{
+    /* Banner */
+    .notice{
       background:var(--forest);
       color:#fff;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      height:108px;
-      padding:10px 16px;
+      text-align:center;
+      padding:.65rem .9rem;
+      font-size:.98rem;
       position:relative;
+      z-index:2;
+    }
+    .notice a{color:var(--gold);text-decoration:underline}
+
+    /* Logo bar */
+    .logo-bar{
+      position:relative;
+      background:var(--forest);
+      color:#fff;
+      display:flex; align-items:center; justify-content:center;
+      height:148px;
+      padding:10px 16px;
     }
     .brand{
-      display:flex;
-      flex-direction:column;
-      align-items:center;
-      line-height:1;
+      display:flex; align-items:center; justify-content:center;
+      line-height:1; text-decoration:none; color:#fff;
     }
-    .brand .upnext{font-weight:900;font-size:40px;letter-spacing:-.01em;}
-    .brand .works{margin-top:8px;font-weight:900;font-size:18px;letter-spacing:.35em;}
+    .brand-logo{
+      height:150px; width:auto; display:block; filter:none;
+    }
+    @media(min-width:768px){
+      .brand-logo{height:180px;}
+    }
 
-    /* Content wrap */
+    /* Hamburger */
+    .menu-btn{
+      position:absolute; left:14px; top:50%; transform:translateY(-50%);
+      width:44px; height:44px; border-radius:999px;
+      border:1px solid rgba(255,255,255,.25);
+      background:transparent; display:grid; place-items:center; cursor:pointer;
+    }
+    .menu-btn:focus-visible{outline:2px solid var(--gold); outline-offset:2px;}
+    .menu-ico{width:22px; height:18px; display:block;}
+    .menu-ico path{stroke:#fff; stroke-width:6; stroke-linecap:round; fill:none;}
+
+    /* Dropdown + backdrop */
+    .menu-panel{
+      position:fixed; left:0; right:0; top:160px; background:#fff;
+      border-bottom:1px solid var(--line); box-shadow:0 10px 24px rgba(0,0,0,.12);
+      transform:translateY(-12px); opacity:0; pointer-events:none;
+      transition:transform .18s ease, opacity .18s ease; z-index:20;
+    }
+    .menu-panel.open{transform:none; opacity:1; pointer-events:auto;}
+    .menu-list{list-style:none; margin:0; padding:6px 0;}
+    .menu-list a{
+      display:flex; align-items:center; justify-content:space-between;
+      gap:12px; padding:16px 18px; text-decoration:none;
+      text-transform:uppercase; letter-spacing:.04em;
+      font-weight:800; font-size:0.98rem; color:var(--forest-ink);
+    }
+    .menu-list a + a{border-top:1px solid var(--line);}
+    .menu-list a:hover{background:var(--offwhite);}
+    .menu-list a:focus-visible{outline:2px solid var(--gold); outline-offset:-2px;}
+    .menu-list a::after{
+      content:""; width:16px; height:16px; flex:0 0 16px;
+      mask:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path fill="%23000" d="M9.29 6.71a1 1 0 0 0 0 1.41L13.17 12l-3.88 3.88a1 1 0 1 0 1.41 1.41l4.59-4.59a1 1 0 0 0 0-1.41L10.7 6.7a1 1 0 0 0-1.41.01Z"/></svg>') center/contain no-repeat;
+      background:#4a5b54;
+    }
+    .backdrop{position:fixed; inset:0; background:rgba(0,0,0,.32); opacity:0; pointer-events:none; transition:opacity .18s ease; z-index:19;}
+    .backdrop.show{opacity:1; pointer-events:auto;}
+
+    /* Main wrap */
     .wrap{
-      width:100%;
-      max-width:720px;
-      margin:0 auto;
-      background:#fff;
-      padding:var(--space-8) var(--space-4);
-      box-shadow:var(--shadow-sm);
-      border-radius:var(--radius-sm);
+      width:100%; max-width:720px; margin:0 auto;
+      background:#fff; padding:var(--space-8) var(--space-4);
+      box-shadow:var(--shadow-sm); border-radius:var(--radius-sm);
     }
     .title{
       margin:0 0 var(--space-6);
-      font-weight:800;
-      font-size:clamp(26px,6vw,36px);
-      letter-spacing:-.02em;
-      line-height:1.14;
-      color:var(--forest-ink);
-      text-align:center;
+      font-weight:800; font-size:clamp(26px,6vw,36px);
+      letter-spacing:-.02em; line-height:1.14;
+      color:var(--forest-ink); text-align:center;
     }
 
     /* iframe container */
     .iframe-container{
-      position:relative;
-      padding-bottom:70vh;
-      height:0;
-      overflow:hidden;
-      border-radius:var(--radius-sm);
-      border:1px solid rgba(0,0,0,.1);
-      box-shadow:var(--shadow-sm);
+      position:relative; padding-bottom:70vh; height:0;
+      overflow:hidden; border-radius:var(--radius-sm);
+      border:1px solid rgba(0,0,0,.1); box-shadow:var(--shadow-sm);
     }
     .iframe-container iframe{
-      position:absolute;
-      top:0; left:0;
-      width:100%; height:100%;
-      border:none;
-      background:transparent;
+      position:absolute; top:0; left:0;
+      width:100%; height:100%; border:none; background:transparent;
     }
 
-    footer{
-      text-align:center;
-      color:#4A5B54;
-      font-size:.9rem;
-      margin:2rem 0 1rem;
-    }
-
-    @media (min-width:768px){
-      .wrap{max-width:800px;}
-    }
+    footer{text-align:center; color:#4A5B54; font-size:.9rem; margin:2rem 0 1rem;}
+    @media(min-width:768px){.wrap{max-width:800px;}}
   </style>
 </head>
 <body>
 
+  <!-- Banner -->
+  <div class="notice">
+    Currently piloting for teens in <strong>Northern Virginia</strong>.
+    After-school & weekend availability.
+    <a href="tasker-registration.html">Parent/Guardian Registration</a> for details.
+  </div>
+
   <!-- Header -->
   <header class="logo-bar" role="banner" aria-label="UpNext Works">
-    <div class="brand">
-      <span class="upnext">UpNext</span>
-      <span class="works">WORKS</span>
-    </div>
+    <button class="menu-btn" id="menuBtn" aria-label="Open menu" aria-expanded="false" aria-controls="menuPanel">
+      <svg class="menu-ico" viewBox="0 0 48 36" aria-hidden="true">
+        <path d="M6 6 H42 M6 18 H42 M6 30 H42"></path>
+      </svg>
+    </button>
+    <a class="brand" href="/index.html" aria-label="UpNext Works Home">
+      <img class="brand-logo" src="/images/logo.png" alt="UpNext Works logo" />
+    </a>
   </header>
 
-  <!-- Main content -->
+  <!-- Dropdown menu -->
+  <div class="menu-panel" id="menuPanel" role="menu" aria-label="Site navigation">
+    <nav class="menu-list">
+      <a href="/index.html" role="menuitem">Home</a>
+      <a href="/about.html" role="menuitem">About</a>
+      <a href="/parents.html" role="menuitem">For Parents/Guardians</a>
+      <a href="/taskers.html" role="menuitem">For Taskers</a>
+      <a href="/customers.html" role="menuitem">For Customers</a>
+    </nav>
+  </div>
+  <div class="backdrop" id="menuBackdrop" hidden></div>
+
+  <!-- Main -->
   <main class="wrap">
-<!-- Parental Consent Notice -->
-<div style="
-  background: var(--offwhite);
-  border-left: 4px solid var(--forest);
-  border-radius: 8px;
-  padding: 1rem 1.25rem;
-  margin-bottom: 1.5rem;
-  font-size: 1rem;
-  color: var(--forest-ink);
-  line-height: 1.5;
-">
-  <strong>Parental Consent Notice</strong><br>
-  Participation in the UpNext Works pilot is limited to teens ages <strong>14–17</strong>. 
-  A parent or legal guardian must complete this form to grant consent for their teen’s involvement. 
-  After approval, the teen will receive an individual registration link and Terms of Service.<br><br>
-  <strong>Virginia Youth Work Permit Requirement:</strong> 
-  Teens <strong>under 16 years old</strong> are required by Virginia law to obtain a valid 
-  <a href="https://selfserviceportal.doli.virginia.gov/LaborLaw/ChildLaborPermits/" 
-     target="_blank" 
-     rel="noopener" 
-     style="color:#143D2A; font-weight:600; text-decoration:underline;">
-     Employment Certificate (Work Permit)
-  </a> 
-  before beginning any paid work. Parents or guardians must approve the application, and the employer (UpNext Works) 
-  must also provide information as part of the form.
-</div>
+
+    <!-- Parental Consent Notice -->
+    <div style="
+      background: var(--offwhite);
+      border-left: 4px solid var(--forest);
+      border-radius: 8px;
+      padding: 1rem 1.25rem;
+      margin-bottom: 1.5rem;
+      font-size: 1rem;
+      color: var(--forest-ink);
+      line-height: 1.5;
+    ">
+      <strong>Parental Consent Notice</strong><br>
+      Participation in the UpNext Works pilot is limited to teens ages <strong>14–17</strong>.
+      A parent or legal guardian must complete this form to grant consent for their teen’s involvement.
+      After approval, the teen will receive an individual registration link and Terms of Service.<br><br>
+      <strong>Virginia Youth Work Permit Requirement:</strong>
+      Teens <strong>under 16 years old</strong> are required by Virginia law to obtain a valid
+      <a href="https://selfserviceportal.doli.virginia.gov/LaborLaw/ChildLaborPermits/"
+         target="_blank" rel="noopener"
+         style="color:#143D2A; font-weight:600; text-decoration:underline;">
+         Employment Certificate (Work Permit)
+      </a>
+      before beginning any paid work. Parents or guardians must approve the application,
+      and the employer (UpNext Works) must also provide information as part of the form.
+    </div>
 
     <!-- Airtable Embed -->
     <div class="iframe-container">
-    <iframe class="airtable-embed" src="https://airtable.com/embed/appzSH0ANl00UEhNx/pagMGEl5zpjnhKP15/form" frameborder="0" onmousewheel="" width="100%" height="533" style="background: transparent; border: 1px solid #ccc;"></iframe>
+      <iframe class="airtable-embed"
+              src="https://airtable.com/embed/appzSH0ANl00UEhNx/pagMGEl5zpjnhKP15/form"
+              frameborder="0" width="100%" height="533"
+              style="background: transparent; border: 1px solid #ccc;">
+      </iframe>
     </div>
 
     <p style="font-size:0.95rem; color:#4A5B54; margin-top:1rem; text-align:center;">
@@ -153,11 +205,21 @@
     </p>
   </main>
 
-  <!-- Footer -->
-  <footer>
-    © 2025 UpNext Works &nbsp;|&nbsp; Northern Virginia Pilot
-  </footer>
+  <footer>© 2025 UpNext Works &nbsp;|&nbsp; Northern Virginia Pilot</footer>
 
+  <!-- JS -->
+  <script>
+    (function(){
+      const btn=document.getElementById('menuBtn');
+      const panel=document.getElementById('menuPanel');
+      const backdrop=document.getElementById('menuBackdrop');
+      const open=()=>{panel.classList.add('open');backdrop.hidden=false;backdrop.classList.add('show');btn.setAttribute('aria-expanded','true');};
+      const close=()=>{panel.classList.remove('open');backdrop.classList.remove('show');setTimeout(()=>{backdrop.hidden=true},180);btn.setAttribute('aria-expanded','false');};
+      btn.addEventListener('click',()=>panel.classList.contains('open')?close():open());
+      backdrop.addEventListener('click',close);
+      document.addEventListener('keydown',e=>{if(e.key==='Escape'&&panel.classList.contains('open'))close();});
+      panel.querySelectorAll('a').forEach(a=>a.addEventListener('click',close));
+    })();
+  </script>
 </body>
 </html>
-
