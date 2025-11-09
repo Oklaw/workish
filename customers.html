@@ -4,194 +4,145 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Kindra — For Customers</title>
-  <meta name="description" content="Book trusted teen help for home & community tasks in Northern Virginia. Safe, local, and parent-supervised." />
-  <meta name="geo.region" content="US-VA">
-  <meta name="geo.placename" content="Northern Virginia">
+  <meta name="description" content="Local, parent-supervised teens for raking leaves, pet care, babysitting, and other odd jobs." />
 
   <style>
     :root{
       --forest:#003924;
-      --forest-ink:#224E3B; --cream:#F7F3EA; --offwhite:#FAF8F2;
+      --ink:#0f2a1b;
+      --sub:#224E3B;
+      --cream:#F7F3EA;
+      --off:#FAF8F2;
       --gold:#FFD66B;
-      --line:rgba(0,0,0,.15);
-      --font: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans";
-      --radius-lg:28px; --radius-sm:14px;
-      --shadow-sm:0 1px 2px rgba(0,0,0,.06), 0 2px 8px rgba(0,0,0,.04);
-      --shadow-md:0 8px 24px rgba(0,0,0,.12);
-      --space-2:.5rem; --space-3:.75rem; --space-4:1rem; --space-6:1.5rem; --space-8:2rem;
+      --line:rgba(0,0,0,.14);
+      --font:Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans";
+      --r-md:18px; --r-lg:24px;
+      --shadow:0 10px 24px rgba(0,0,0,.10);
+      --shadow-lg:0 18px 40px rgba(0,0,0,.18);
     }
     *{box-sizing:border-box}
-    html,body{height:100%}
-    body{
-      margin:0; font-family:var(--font);
-      color:#0c2217; background:var(--cream);
-      -webkit-font-smoothing:antialiased;
-    }
+    body{ margin:0; font-family:var(--font); color:var(--ink); background:var(--cream); -webkit-font-smoothing:antialiased; }
 
-    /* Background */
-    body::before{
-      content:""; position:fixed; inset:0; z-index:-2;
-      background:url("/images/customer.PNG") center/cover no-repeat;
-      opacity:1;
-      filter:brightness(.96) saturate(1.02) blur(.3px);
-    }
-    body::after{
-      content:""; position:fixed; inset:0; z-index:-1;
-      background:
-        linear-gradient(180deg,
-          rgba(0,57,36,.32) 0px,
-          rgba(0,57,36,.26) 280px,
-          rgba(247,243,234,.18) 60%,
-          rgba(247,243,234,.22) 100%);
-      pointer-events:none;
-    }
-
-    /* Optional notice bar (kept from your file) */
-    .notice{
-      background:var(--forest); color:#fff; text-align:center;
-      padding:.65rem .9rem; font-size:.98rem; position:relative; z-index:2;
-    }
-    .notice a{color:var(--gold);text-decoration:underline}
-    .notice .zips{font-weight:700}
-
-    /* ===== Clean Header (same as other pages) ===== */
-    .site-header{
-      position:sticky; top:0; z-index:50; background:#fff; border-bottom:1px solid var(--line);
-    }
-    .nav-wrap{
-      height:72px; display:flex; align-items:center; gap:18px;
-      max-width:1100px; margin:0 auto; padding:0 16px;
-    }
+    /* ===== Header (kept the same) ===== */
+    .site-header{ position:sticky; top:0; z-index:50; background:#fff; border-bottom:1px solid var(--line); }
+    .nav-wrap{ height:72px; display:flex; align-items:center; gap:18px; max-width:1100px; margin:0 auto; padding:0 16px; }
     .nav-brand{ display:flex; align-items:center; text-decoration:none; }
     .nav-logo{ height:71px; width:auto; display:block; }
-
     .nav-main{ display:flex; align-items:center; gap:6px; margin-left:8px; }
     .nav-item{ position:relative; }
-    .nav-link{
-      background:transparent; border:none; cursor:pointer;
-      padding:10px 12px; border-radius:10px;
-      font-weight:700; color:#0e1f17; letter-spacing:.01em;
-    }
-    .nav-link:focus-visible{ outline:2px solid var(--gold); outline-offset:2px; }
-
-    .submenu{
-      position:absolute; top:100%; left:0; min-width:220px;
-      background:#fff; border:1px solid var(--line); border-radius:12px;
-      box-shadow:0 12px 28px rgba(0,0,0,.12);
-      padding:8px; display:none;
-    }
-    .submenu a{
-      display:block; padding:10px 12px; border-radius:8px;
-      color:var(--forest-ink); text-decoration:none; font-weight:600;
-    }
-    .submenu a:hover{ background:var(--offwhite); }
-    @media (hover:hover){
-      .has-submenu:hover .submenu{ display:block; }
-    }
-
-    .nav-burger{
-      margin-left:auto; width:42px; height:42px; border-radius:10px;
-      border:1px solid rgba(0,0,0,.12); background:#fff; display:none;
-      align-items:center; justify-content:center; gap:4px; flex-direction:column; cursor:pointer;
-    }
+    .nav-link{ background:transparent; border:none; cursor:pointer; padding:10px 12px; border-radius:10px; font-weight:700; color:#0e1f17; }
+    .submenu{ position:absolute; top:100%; left:0; min-width:220px; background:#fff; border:1px solid var(--line); border-radius:12px; box-shadow:0 12px 28px rgba(0,0,0,.12); padding:8px; display:none; }
+    .submenu a{ display:block; padding:10px 12px; border-radius:8px; color:var(--sub); text-decoration:none; font-weight:600; }
+    .submenu a:hover{ background:var(--off); }
+    @media(hover:hover){ .has-submenu:hover .submenu{ display:block; } }
+    .nav-burger{ margin-left:auto; width:42px; height:42px; border-radius:10px; border:1px solid rgba(0,0,0,.12); background:#fff; display:none; align-items:center; justify-content:center; gap:4px; flex-direction:column; cursor:pointer; }
     .nav-burger span{ width:20px; height:2px; background:#0e1f17; display:block; }
-
-    .mobile-panel{
-      border-top:1px solid var(--line); background:#fff;
-      box-shadow:0 12px 28px rgba(0,0,0,.12);
-    }
+    .mobile-panel{ border-top:1px solid var(--line); background:#fff; box-shadow:0 12px 28px rgba(0,0,0,.12); }
     .m-item{ border-bottom:1px solid var(--line); padding:6px 8px; }
     .m-item summary{ cursor:pointer; padding:12px 8px; font-weight:800; }
-    .m-item a{ display:block; padding:10px 12px; text-decoration:none; color:var(--forest-ink); }
-    .m-item a:hover{ background:var(--offwhite); border-radius:8px; }
-    @media (max-width:900px){ .nav-main{ display:none; } .nav-burger{ display:flex; } }
+    .m-item a{ display:block; padding:10px 12px; text-decoration:none; color:var(--sub); }
+    .m-item a:hover{ background:var(--off); border-radius:8px; }
+    @media(max-width:900px){ .nav-main{display:none;} .nav-burger{display:flex;} }
 
-    /* Page container */
-    .wrap{
-      width:100%; max-width:460px; margin:0 auto;
-      padding:var(--space-8) var(--space-4);
-      background:rgba(255,255,255,.40);
-      backdrop-filter:saturate(1.05) blur(.6px);
-      border-radius:0 0 var(--radius-sm) var(--radius-sm);
-      box-shadow:var(--shadow-sm);
-      color:#0d2619;
-    }
+    /* ===== Page shell ===== */
+    .shell{ max-width:1100px; margin:0 auto; padding:28px 16px 56px; }
 
-    h1,h2,h3,.title{color:#092014;text-shadow:0 2px 4px rgba(0,0,0,.28)}
-    p,li{color:#0f2a1b;text-shadow:0 1px 2px rgba(0,0,0,.18)}
-
-    .eyebrow{font-weight:900;letter-spacing:.08em;font-size:.78rem;color:#e9f4ee;text-transform:uppercase;margin:0 0 .6rem;text-shadow:0 1px 2px rgba(0,0,0,.35)}
-    .title{margin:.25rem 0 var(--space-4);font-weight:900;font-size:clamp(26px,6.2vw,36px);letter-spacing:-.02em;line-height:1.14}
-    .sub{margin:0 0 var(--space-6);color:#10311f}
-
-    /* Former task grid (styles left intact in case you revert) */
-    .tasks{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:var(--space-6) 0}
-    .task{border:1px solid var(--line);border-radius:14px;padding:12px;text-align:center;background:#fff}
-    .task .ico{font-size:22px;display:block;margin-bottom:6px}
-    .task span{font-weight:800;color:#2b453a;text-shadow:none}
-
-    .card{border:1px solid var(--line);border-radius:16px;padding:14px;background:#fff;box-shadow:var(--shadow-sm)}
-    .list{margin:0;padding:0;list-style:none}
-    .list li{display:flex;gap:10px;align-items:flex-start;padding:8px 0}
-    .check{color:#1E3C2A;font-weight:900}
-
-    /* Extra space between Why and How cards */
-    #why{ margin-bottom:24px; }
-
-    .ctas{display:grid;gap:var(--space-4);margin:var(--space-6) 0}
-    .btn{height:56px;border-radius:var(--radius-lg);font-weight:900;font-size:18px;
-      display:inline-flex;align-items:center;justify-content:center;text-decoration:none;border:1px solid transparent;cursor:pointer;}
-    .btn-primary{background:var(--forest);color:#fff;box-shadow:var(--shadow-md)}
-    .btn-secondary{background:#fff;color:#fff;border-color:var(--line)}
-    .btn-secondary{background:#fff;color:#0e1f17;border-color:var(--line)}
-    .btn-tertiary{background:var(--gold);color:#0e1f17;box-shadow:var(--shadow-md)}
-
-    .signup{
-      background:rgba(247,243,234,.50);
-      padding:2rem 1rem 2.25rem;text-align:center;border-top:1px solid var(--line);
-      border-radius:0 0 var(--radius-sm) var(--radius-sm);margin-top:var(--space-6)
-    }
-    .signup h2{font-size:1.35rem;margin:0 0 1rem;font-weight:900;color:#0F291C;text-shadow:0 2px 4px rgba(0,0,0,.25)}
-    .signup form{display:flex;flex-wrap:wrap;justify-content:center;gap:.5rem;width:100%}
-    .signup input[type="email"]{padding:12px 16px;border-radius:1000px;border:1px solid var(--line);width:70%;max-width:320px;font-size:1rem;background:#fff}
-    .signup button{background:var(--forest);color:#fff;border:none;border-radius:1000px;padding:12px 20px;font-weight:900;cursor:pointer;min-width:130px}
-    .success{display:none;color:#0a6c3b;margin-top:.75rem;font-weight:700}
-
-    /* New: customer app mock image block */
-    .app-mock img{
-      width:100%;
-      display:block;
+    /* ===== HERO (photo with centered white text) ===== */
+    .hero-visual{
+      position:relative;
       border-radius:20px;
-      box-shadow:0 10px 24px rgba(0,0,0,.10);
-      margin: var(--space-6) 0; /* breathing room above/below */
+      overflow:hidden;
+      box-shadow:var(--shadow-lg);
+      margin-top:16px;
     }
+    .hero-visual img{
+      width:100%; display:block; height:auto;
+      /* keep subject centered on common screens */
+      object-fit:cover;
+    }
+    .hero-overlay{
+      position:absolute; inset:0;
+      background:linear-gradient(180deg, rgba(0,0,0,.10) 0%, rgba(0,0,0,.32) 55%, rgba(0,0,0,.38) 100%);
+      display:grid; place-items:center;
+      text-align:center; padding:40px 18px;
+    }
+    .hero-title{
+      color:#fff; margin:0 0 10px 0;
+      font-weight:900; letter-spacing:-.02em;
+      font-size:clamp(28px,5.6vw,56px); line-height:1.05;
+      text-shadow:0 4px 10px rgba(0,0,0,.45);
+    }
+    .hero-sub{
+      color:#f7fff8; margin:0;
+      font-weight:600; font-size:clamp(16px,2.2vw,22px);
+      text-shadow:0 3px 8px rgba(0,0,0,.45);
+      max-width:900px;
+    }
+
+    /* ===== HERO CTA BUTTON (pilot-style bubble) ===== */
+    .apply{
+      display:inline-flex; align-items:center; justify-content:center; gap:10px;
+      padding:12px 22px;
+      border-radius:999px;
+      background:var(--forest);
+      color:#fff; font-weight:900; font-size:1.05rem; text-decoration:none;
+      border:2px solid #fff; /* white ring */
+      box-shadow:0 0 8px rgba(255,255,255,.35), 0 8px 24px rgba(0,0,0,.25);
+      transition:transform .12s ease, filter .2s ease;
+      margin-top:16px;
+    }
+    .apply:hover{ filter:brightness(1.08); transform:translateY(-2px); }
+    .hero-overlay .apply {
+  margin-top: 36px; /* increase spacing between subtitle and button */
+}
+
+    /* ===== Two customer-focused cards ===== */
+    .benefits{
+      display:grid; grid-template-columns:1fr 1fr; gap:18px;
+      margin-top:22px;
+    }
+    @media(max-width:860px){ .benefits{ grid-template-columns:1fr; } }
+
+    .card{
+      background:#fff; border:1px solid var(--line);
+      border-radius:20px; padding:22px 20px; box-shadow:var(--shadow);
+    }
+    .card h2{
+      margin:0 0 14px 0; color:var(--forest);
+      font-size:clamp(18px,2.6vw,24px); font-weight:900;
+    }
+    .checklist{ margin:0; padding:0; list-style:none; }
+    .checklist li{ display:flex; gap:12px; align-items:flex-start; padding:10px 0; }
+    .check-ico{
+      flex:0 0 22px; height:22px; border-radius:999px;
+      display:grid; place-items:center; background:#eaf3ee; border:1px solid #cfe0d6;
+      color:#1e3c2a; font-weight:900; font-size:14px;
+    }
+    .muted{ color:#2a4639; }
+
+    /* (Optional) CTA buttons — retained from your theme if you need them later */
+    .btn{ display:inline-flex; align-items:center; justify-content:center; height:48px; padding:0 18px;
+      border-radius:999px; text-decoration:none; border:1px solid transparent; font-weight:900; }
+    .btn-primary{ background:var(--forest); color:#fff; box-shadow:0 8px 24px rgba(0,0,0,.18); }
   </style>
 </head>
 <body>
 
-  <!-- New clean header -->
+  <!-- Header (unchanged) -->
   <header class="site-header" role="banner">
     <div class="nav-wrap">
-      <a class="nav-brand" href="/index.html" aria-label="UpNext Works Home">
+      <a class="nav-brand" href="/index.html" aria-label="Kindra Home">
         <img src="/images/logo.PNG" alt="Kindra" class="nav-logo">
       </a>
 
       <nav class="nav-main" aria-label="Primary">
+        <div class="nav-item has-submenu"></div>
         <div class="nav-item has-submenu">
-          <button class="nav-link" aria-haspopup="true" aria-expanded="false">Find Tasks</button>
+          <button class="nav-link" aria-haspopup="true" aria-expanded="false">Join Kindra</button>
           <div class="submenu">
-            <a href="/taskers.html#yardwork">Yardwork</a>
-            <a href="/taskers.html#snow">Snow</a>
-            <a href="/taskers.html#petcare">Pet Care</a>
-            <a href="/taskers.html#tutoring">Tutoring</a>
-          </div>
-        </div>
-        <div class="nav-item has-submenu">
-          <button class="nav-link" aria-haspopup="true" aria-expanded="false">Hire Work</button>
-          <div class="submenu">
-            <a href="/customers.html#post">Post a request</a>
-            <a href="/customers.html#pricing">Pricing</a>
-            <a href="/parents.html#safety">Safety & oversight</a>
+            <a href="/taskers.html">For Taskers & Parents</a>
+            <a href="/customers.html">For Customers</a>
+            <a href="/safety.html">Safety & Oversight</a>
           </div>
         </div>
         <div class="nav-item has-submenu">
@@ -218,27 +169,17 @@
     </div>
 
     <div id="mobilePanel" class="mobile-panel" hidden>
-      <details class="m-item">
-        <summary>Find Tasks</summary>
-        <a href="/taskers.html#yardwork">Yardwork</a>
-        <a href="/taskers.html#snow">Snow</a>
-        <a href="/taskers.html#petcare">Pet Care</a>
-        <a href="/taskers.html#tutoring">Tutoring</a>
+      <details class="m-item"><summary>Join Kindra</summary>
+        <a href="/taskers.html">For Taskers & Parents</a>
+        <a href="/customers.html">For Customers</a>
+        <a href="/safety.html">Safety & Oversight</a>
       </details>
-      <details class="m-item">
-        <summary>Hire Work</summary>
-        <a href="/customers.html#post">Post a request</a>
-        <a href="/customers.html#pricing">Pricing</a>
-        <a href="/parents.html#safety">Safety & oversight</a>
-      </details>
-      <details class="m-item">
-        <summary>Why UpNext</summary>
+      <details class="m-item"><summary>Why Kindra</summary>
         <a href="/about.html#mission">Mission</a>
-        <a href="/about.html#trust">Trust & verification</a>
+        <a href="/about.html#trust">Trust & Verification</a>
         <a href="/about.html#faq">FAQ</a>
       </details>
-      <details class="m-item">
-        <summary>What’s new</summary>
+      <details class="m-item"><summary>What’s new</summary>
         <a href="/updates.html#pilot-news">Pilot updates</a>
         <a href="/updates.html#roadmap">Roadmap</a>
         <a href="/updates.html#changelog">Changelog</a>
@@ -246,67 +187,64 @@
     </div>
   </header>
 
-  <!-- Main content -->
-  <main class="wrap">
-    <p class="eyebrow">FOR CUSTOMERS</p>
-    <h1 class="title">Book trusted teen help for home & community tasks</h1>
-
-    <!-- REPLACED: tiles -> customer app mock image -->
-    <section class="app-mock" aria-label="Customer app preview">
-      <img src="/images/customerapp.png" alt="Kindra customer app: request a task and see available taskers">
+  <!-- Main -->
+  <main class="shell">
+    <!-- HERO -->
+    <section class="hero-visual" aria-label="Kindra customer hero">
+      <img src="/images/customerpage.png" alt="Parent speaking with Kindra teen taskers walking a golden retriever">
+      <div class="hero-overlay">
+        <div>
+          <h1 class="hero-title">Get help with<br/>household tasks</h1>
+          <p class="hero-sub">
+            Local, parent-supervised teens for raking leaves, pet care, babysitting, and other
+            odd jobs.
+          </p>
+          <a class="apply" href="/tasker-registration.html">Register Today →</a>
+        </div>
+      </div>
     </section>
 
-    <section id="why" class="card" aria-label="Why UpNext">
-      <h3>Why choose Kindra</h3>
-      <ul class="list">
-        <li><span class="check">✓</span> Verified teen taskers with parent/guardian oversight</li>
-        <li><span class="check">✓</span> Clear safety guidelines matched to age-appropriate tasks</li>
-        <li><span class="check">✓</span> Local, flexible help that supports teens’ growth</li>
-        <li><span class="check">✓</span> Secure, no-hassle payments after task completion</li>
-      </ul>
-    </section>
+    <!-- BENEFITS -->
+    <section class="benefits" aria-label="Why Kindra & How it works">
+      <article class="card">
+        <h2>Convenient & quick</h2>
+        <ul class="checklist">
+          <li><span class="check-ico">✓</span> <span class="muted">Get matched with nearby Taskers and get your tasks completed pronto.</span></li>
+        </ul>
+      </article>
 
-    <section class="card" aria-label="How it works">
-      <h3>How it works</h3>
-      <ul class="list">
-        <li><span class="check">1)</span> Tell us what you need and your timeframe</li>
-        <li><span class="check">2)</span> We match you with nearby teen taskers</li>
-        <li><span class="check">3)</span> Confirm details; task gets done with simple feedback after</li>
-      </ul>
+      <article class="card">
+        <h2>Experienced & insured</h2>
+        <ul class="checklist">
+          <li><span class="check-ico">✓</span> <span class="muted">Taskers are vetted and show up ready with supplies. We offer peace-of-mind insurance.</span></li>
+        </ul>
+      </article>
     </section>
-
-    <div class="ctas" id="apply">
-      <a class="btn btn-secondary" href="/taskers.html">See How Teen Taskers Participate</a>
-      <a class="btn btn-tertiary" href="/parents.html">Info for Parents/Guardians</a>
-    </div>
   </main>
 
-  <!-- JS -->
   <script>
     // Mobile panel toggle
-    const burger = document.getElementById('navBurger');
-    const panel  = document.getElementById('mobilePanel');
-    if (burger && panel){
-      burger.addEventListener('click', () => {
-        const open = panel.hasAttribute('hidden');
-        if (open) panel.removeAttribute('hidden'); else panel.setAttribute('hidden','');
+    const burger=document.getElementById('navBurger');
+    const panel=document.getElementById('mobilePanel');
+    if(burger&&panel){
+      burger.addEventListener('click',()=>{
+        const open=panel.hasAttribute('hidden');
+        if(open) panel.removeAttribute('hidden'); else panel.setAttribute('hidden','');
         burger.setAttribute('aria-expanded', String(open));
       });
     }
-
-    // Desktop dropdowns: open/close on click too
+    // Desktop dropdowns toggle on click
     document.querySelectorAll('.has-submenu .nav-link').forEach(btn=>{
-      const menu = btn.parentElement.querySelector('.submenu');
-      btn.addEventListener('click', (e)=>{
-        const visible = menu && menu.style.display === 'block';
+      const menu=btn.parentElement.querySelector('.submenu');
+      btn.addEventListener('click',e=>{
+        const visible = menu && menu.style.display==='block';
         document.querySelectorAll('.submenu').forEach(m=>m.style.display='none');
-        if (menu) menu.style.display = visible ? 'none' : 'block';
+        if(menu) menu.style.display = visible ? 'none' : 'block';
         btn.setAttribute('aria-expanded', String(!visible));
         e.stopPropagation();
       });
     });
-    // click-away close
-    document.addEventListener('click', ()=> {
+    document.addEventListener('click',()=>{
       document.querySelectorAll('.submenu').forEach(m=>m.style.display='none');
       document.querySelectorAll('.has-submenu .nav-link').forEach(b=>b.setAttribute('aria-expanded','false'));
     });
