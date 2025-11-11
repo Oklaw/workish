@@ -7,7 +7,6 @@
   <meta name="description" content="Why Workish exists: a safer path for teens to earn and learn, real oversight for parents, and a simple marketplace for homeowners to get everyday tasks done." />
   <meta name="geo.region" content="US-VA">
   <meta name="geo.placename" content="Northern Virginia">
-
   <style>
     :root{
       --forest:#003924;
@@ -26,8 +25,6 @@
       margin:0; font-family:var(--font); color:var(--ink); background:var(--cream);
       -webkit-font-smoothing:antialiased;
     }
-
-    /* Background image + soft overlay */
     body::before{
       content:""; position:fixed; inset:0; z-index:-2;
       background:url("/images/customer.PNG") center/cover no-repeat;
@@ -42,8 +39,6 @@
         rgba(247,243,234,.22) 100%);
       pointer-events:none;
     }
-
-    /* ===== Header (kept consistent) ===== */
     .site-header{ position:sticky; top:0; z-index:50; background:#fff; border-bottom:1px solid var(--line); }
     .nav-wrap{ height:84px; display:flex; align-items:center; gap:18px; max-width:1100px; margin:0 auto; padding:0 16px; }
     .nav-brand{ display:flex; align-items:center; text-decoration:none; }
@@ -64,21 +59,18 @@
     .m-item a:hover{ background:var(--off); border-radius:8px; }
     @media(max-width:900px){ .nav-main{display:none;} .nav-burger{display:flex;} }
 
-    /* ===== Page shell ===== */
     .shell{ max-width:1100px; margin:0 auto; padding:28px 16px 88px; }
     .hero{
       display:flex; flex-direction:column; gap:10px;
-      margin-bottom:32px;
-      color:#fff; text-shadow:0 3px 6px rgba(0,0,0,.40);
+      margin-bottom:32px; color:#fff; text-shadow:0 3px 6px rgba(0,0,0,.40);
     }
     .hero h1{ margin:0; font-size:clamp(26px,4.6vw,42px); line-height:1.12; letter-spacing:-.02em; color:#fff; font-weight:900; }
     .hero p{ margin:0; color:#ffffff; font-weight:600; font-size:1.05rem; }
     .cta-row{ display:flex; gap:10px; flex-wrap:wrap; margin-top:6px; }
-    .apply{
-      display:inline-flex; align-items:center; justify-content:center; gap:10px;
+    .apply{ display:inline-flex; align-items:center; justify-content:center; gap:10px;
       padding:12px 22px; border-radius:999px; background:var(--forest); color:#fff;
-      font-weight:900; text-decoration:none; font-size:1.05rem;
-      border:2px solid #fff; box-shadow:0 0 8px rgba(255,255,255,.35), 0 8px 24px rgba(0,0,0,.25);
+      font-weight:900; text-decoration:none; font-size:1.05rem; border:2px solid #fff;
+      box-shadow:0 0 8px rgba(255,255,255,.35), 0 8px 24px rgba(0,0,0,.25);
       transition:transform .12s ease, filter .2s ease; margin-top:8px;
     }
     .apply:hover{ filter:brightness(1.08); transform:translateY(-2px); }
@@ -88,8 +80,6 @@
 
     .card{ background:#fff; border:1px solid var(--line); border-radius:var(--r-lg); box-shadow:var(--shadow); padding:14px; }
     .card h3{ margin:0 0 8px; font-size:1.08rem; }
-    .pill{ display:inline-flex; align-items:center; gap:8px; padding:8px 12px; border-radius:999px; border:1px solid var(--line); background:#fff; font-weight:800; }
-
     .list{ margin:0; padding:0; list-style:none; display:grid; gap:10px }
     .item{ border:1px solid var(--line); border-radius:14px; padding:12px; background:linear-gradient(180deg,#fff,#f7fbf8); }
     .item strong{ color:var(--forest) }
@@ -97,8 +87,21 @@
     .cols-3{ display:grid; grid-template-columns:repeat(3,1fr); gap:10px }
     @media(max-width:900px){ .cols-3{ grid-template-columns:1fr } }
 
-    .steps{ display:grid; grid-template-columns:repeat(4,1fr); gap:10px }
-    @media(max-width:900px){ .steps{ grid-template-columns:1fr 1fr } }
+    .gap-wrap{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:16px;
+      align-items:center;
+    }
+    .gap-wrap img{
+      width:100%;
+      height:auto;
+      border-radius:14px;
+      box-shadow:0 4px 12px rgba(0,0,0,.15);
+    }
+    @media(max-width:900px){
+      .gap-wrap{ grid-template-columns:1fr; }
+    }
 
     .quote{
       border-left:4px solid var(--forest);
@@ -106,22 +109,16 @@
       padding:12px; border-radius:10px; font-style:italic;
       color:#214735;
     }
-
-    .sr-only{ position:absolute !important; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
   </style>
 </head>
 <body>
-
-  <!-- Header (logo + menus) -->
   <header class="site-header" role="banner">
     <div class="nav-wrap">
       <a class="nav-brand" href="/index.html" aria-label="Workish Home">
         <img src="/images/worklogo.PNG" alt="Workish" class="nav-logo">
       </a>
-
       <nav class="nav-main" aria-label="Primary">
         <div class="nav-item has-submenu"></div>
-
         <div class="nav-item has-submenu">
           <button class="nav-link" aria-haspopup="true" aria-expanded="false">Join Workish</button>
           <div class="submenu">
@@ -138,173 +135,36 @@
             <a href="/about.html#faq">FAQ</a>
           </div>
         </div>
-        <div class="nav-item has-submenu">
-          <button class="nav-link" aria-haspopup="true" aria-expanded="false">What’s new</button>
-          <div class="submenu">
-            <a href="/updates.html#pilot-news">Pilot updates</a>
-            <a href="/updates.html#roadmap">Roadmap</a>
-            <a href="/updates.html#changelog">Changelog</a>
-          </div>
-        </div>
-        <div class="nav-item has-submenu">
-          <button class="nav-link" aria-haspopup="true" aria-expanded="false">Workish Wallet 💰</button>
-          <div class="submenu">
-            <a href="/wallet.html">Save with Workish</a>
-          </div>
-        </div>
       </nav>
-
       <button class="nav-burger" id="navBurger" aria-label="Open menu" aria-controls="mobilePanel" aria-expanded="false">
         <span></span><span></span><span></span>
       </button>
     </div>
-
-    <div id="mobilePanel" class="mobile-panel" hidden>
-      <details class="m-item"><summary>Join Workish</summary>
-        <a href="/taskers.html">For Taskers & Parents</a>
-        <a href="/customers.html">For Customers</a>
-        <a href="/safety.html">Safety & Oversight</a>
-      </details>
-      <details class="m-item"><summary>Why Workish</summary>
-        <a href="/about.html#mission">Mission</a>
-        <a href="/about.html#trust">Trust & Verification</a>
-        <a href="/about.html#faq">FAQ</a>
-      </details>
-      <details class="m-item"><summary>What’s new</summary>
-        <a href="/updates.html#pilot-news">Pilot updates</a>
-        <a href="/updates.html#roadmap">Roadmap</a>
-        <a href="/updates.html#changelog">Changelog</a>
-      </details>
-       <details class="m-item"><summary>Workish Wallet 💰</summary>
-        <a href="/wallet.html">Save with Workish</a>
-      </details>
-    </div>
   </header>
 
-  <!-- Main -->
   <main class="shell">
-    <section class="hero" aria-label="Intro">
+    <section class="hero">
       <h1>Why Workish?</h1>
       <p>Teens get real-world experience and income. Parents get oversight. Neighbors get the simple help they need.</p>
-      <div class="cta-row">
-        <a class="apply" href="/tasker-registration.html">Teen & Parent Pilot Registration →</a>
-        <a class="apply" href="/customers.html">Post a Simple Task →</a>
-      </div>
     </section>
 
-    <section class="grid" aria-label="Value and proof">
-      <!-- Left: The need Workish fills -->
+    <section class="grid">
       <div class="card">
         <h3>The gap we’re closing</h3>
-        <ul class="list">
-          <li class="item"><strong>Teen income & responsibility.</strong> Teens want to earn, but options are limited, irregular, or unsafe. Workish creates a path to earn locally with clear expectations and receipts for the real world.</li>
-          <li class="item"><strong>Parent oversight that didn’t exist.</strong> Traditional “knock and ask” jobs leave parents in the dark. With Workish, parents approve tasks, see messages, set curfews/hour limits, and can require check-ins or presence.</li>
-          <li class="item"><strong>A marketplace for everyday jobs.</strong> Homeowners often don’t need a full service company—just raking, walkway shoveling, pet care, or help carrying boxes. Workish makes those tasks easy to request and easy to say yes to.</li>
-          <li class="item"><strong>Community-first.</strong> Neighbors hire neighbors. Earnings stay local. Teens learn professionalism and customer service in low-risk, age-appropriate work.</li>
-        </ul>
-      </div>
-
-      <!-- (Removed "At a glance" card here) -->
-
-      <!-- Full width: Who it's for -->
-      <div class="card" style="grid-column:1 / -1">
-        <h3>Who it’s for</h3>
-        <div class="cols-3">
-          <div class="item">
-            <strong>Parents & guardians</strong>
-            <ul class="list" style="margin-top:8px">
-              <li class="item">Approve your teen’s profile, tasks, and schedule.</li>
-              <li class="item">See every message; require on-site adult; set curfews.</li>
-              <li class="item">Automatic receipts and activity history.</li>
-            </ul>
-          </div>
-          <div class="item">
-            <strong>Teen taskers (14–17)</strong>
-            <ul class="list" style="margin-top:8px">
-              <li class="item">Start with safe, age-appropriate work that builds confidence.</li>
-              <li class="item">Track earnings, goals, and streaks; unlock badges.</li>
-              <li class="item">Practice real-world professionalism—show up, communicate, deliver.</li>
-            </ul>
-          </div>
-          <div class="item">
-            <strong>Homeowners & neighbors</strong>
-            <ul class="list" style="margin-top:8px">
-              <li class="item">Hire for smaller jobs without the headache of full services.</li>
-              <li class="item">Transparent rates, timing windows, and on-platform payment.</li>
-              <li class="item">Feel good supporting local teens with parent oversight.</li>
-            </ul>
-          </div>
+        <div class="gap-wrap">
+          <ul class="list">
+            <li class="item"><strong>Teen income & responsibility.</strong> Teens want to earn, but options are limited, irregular, or unsafe. Workish creates a path to earn locally with clear expectations and receipts for the real world.</li>
+            <li class="item"><strong>Parent oversight that didn’t exist.</strong> Traditional “knock and ask” jobs leave parents in the dark. With Workish, parents approve tasks, see messages, set curfews/hour limits, and can require check-ins or presence.</li>
+            <li class="item"><strong>A marketplace for everyday jobs.</strong> Homeowners often don’t need a full service company—just raking, walkway shoveling, pet care, or help carrying boxes. Workish makes those tasks easy to request and easy to say yes to.</li>
+            <li class="item"><strong>Community-first.</strong> Neighbors hire neighbors. Earnings stay local. Teens learn professionalism and customer service in low-risk, age-appropriate work.</li>
+          </ul>
+          <img src="/images/sean.png" alt="Sean testimonial photo in Battlefield Bobcats hoodie">
         </div>
-      </div>
-
-      <!-- Left: How Workish answers safety & oversight -->
-      <div class="card">
-        <h3>Safety & oversight—baked in</h3>
-        <ul class="list">
-          <li class="item"><strong>Linked teen–parent accounts</strong> with approvals, curfews, and hour caps.</li>
-          <li class="item"><strong>Verified adults</strong> and clear homeowner standards (on-site adult, safe equipment, potable water, weather breaks).</li>
-          <li class="item"><strong>Age-appropriate tasks only.</strong> Hazardous categories are blocked by design.</li>
-          <li class="item"><strong>On-platform communication</strong> with exportable receipts; optional location check-ins.</li>
-          <li class="item"><strong>Report & pause</strong> controls if anything feels off.</li>
-        </ul>
-        <a class="apply" href="/safety.html" style="margin-top:8px">See Safety Details →</a>
-      </div>
-
-      <!-- Right: Why homeowners love it -->
-      <div class="card">
-        <h3>Why homeowners love Workish</h3>
-        <ul class="list">
-          <li class="item"><strong>Simple tasks, simply handled.</strong> Raking, walkway shoveling, pet care, basic tidying, leaf bagging, and more.</li>
-          <li class="item"><strong>Clear expectations.</strong> Built-in checklists: tools provided, area size, time window, and curbside placement.</li>
-          <li class="item"><strong>Fair prices with tips.</strong> In-app payments and optional tips—no awkward cash exchanges.</li>
-        </ul>
-        <a class="apply" href="/customers.html" style="margin-top:8px">Request Help Near You →</a>
-      </div>
-
-      <!-- Full width: How it works -->
-      <div class="card" style="grid-column:1 / -1">
-        <h3>How it works</h3>
-        <div class="steps">
-          <div class="item"><strong>1) Create accounts.</strong> Teens sign up with a parent. Homeowners verify their profile.</div>
-          <div class="item"><strong>2) Choose tasks.</strong> Parents enable allowed categories; teens browse age-appropriate posts.</div>
-          <div class="item"><strong>3) Book & confirm.</strong> Time window, scope, and price are agreed in-app; parent can join the chat.</div>
-          <div class="item"><strong>4) Do the job.</strong> Optional check-ins; simple completion flow, payment, and tip. Wallet shows savings goals and give-back.</div>
-        </div>
-      </div>
-
-      <!-- Left: Social proof (quotes/placeholders) -->
-      <div class="card">
-        <h3>What early families say</h3>
-        <p class="quote">“My son finally found a consistent way to earn that we can supervise. He’s proud of his savings—and I can see every message.” — Pilot parent</p>
-        <p class="quote" style="margin-top:10px">“Raking and bagging done in an afternoon. The checklist made it crystal clear.” — Homeowner</p>
-      </div>
-
-      <!-- Right: Workish Wallet tie-in -->
-      <div class="card">
-        <h3>Workish Wallet: earn, save, give</h3>
-        <ul class="list">
-          <li class="item"><strong>Goal tracking</strong> with progress bars and streaks.</li>
-          <li class="item"><strong>Financial literacy</strong> moments: savings nudges, give-back prompts, and a growth calculator.</li>
-          <li class="item"><strong>Parent transparency</strong> for contributions and withdrawals.</li>
-        </ul>
-        <a class="apply" href="/wallet.html" style="margin-top:8px">Explore Workish Wallet →</a>
-      </div>
-
-      <!-- Full width: Closing + CTA -->
-      <div class="card" style="grid-column:1 / -1">
-        <h3>The bottom line</h3>
-        <p>Workish gives teens a safe on-ramp to earning and responsibility, gives parents real oversight, and gives neighbors an easy way to get everyday tasks done. That’s good for families and good for the community.</p>
-        <div class="cta-row">
-          <a class="apply" href="/tasker-registration.html">Join the Pilot (Teens & Parents) →</a>
-          <a class="apply" href="/customers.html">Hire Local Help →</a>
-        </div>
-        <p class="sr-only">End of page</p>
       </div>
     </section>
   </main>
 
   <script>
-    // Mobile menu toggle
     const burger=document.getElementById('navBurger');
     const panel=document.getElementById('mobilePanel');
     if(burger&&panel){
@@ -314,21 +174,6 @@
         burger.setAttribute('aria-expanded', String(open));
       });
     }
-    // Desktop submenu click toggles
-    document.querySelectorAll('.has-submenu .nav-link').forEach(btn=>{
-      const menu=btn.parentElement.querySelector('.submenu');
-      btn.addEventListener('click',e=>{
-        const visible = menu && menu.style.display==='block';
-        document.querySelectorAll('.submenu').forEach(m=>m.style.display='none');
-        if(menu) menu.style.display = visible ? 'none' : 'block';
-        btn.setAttribute('aria-expanded', String(!visible));
-        e.stopPropagation();
-      });
-    });
-    document.addEventListener('click',()=>{
-      document.querySelectorAll('.submenu').forEach(m=>m.style.display='none');
-      document.querySelectorAll('.has-submenu .nav-link').forEach(b=>b.setAttribute('aria-expanded','false'));
-    });
   </script>
 </body>
 </html>
