@@ -153,9 +153,7 @@
 </head>
 <body>
 
-  <!-- Keep your existing notice/banner if present above header -->
-
-  <!-- Header -->
+  <!-- Header (logo + menus) -->
   <header class="site-header" role="banner">
     <div class="nav-wrap">
       <a class="nav-brand" href="/index.html" aria-label="Workish Home">
@@ -163,6 +161,8 @@
       </a>
 
       <nav class="nav-main" aria-label="Primary">
+        <div class="nav-item has-submenu"></div>
+
         <div class="nav-item has-submenu">
           <button class="nav-link" aria-haspopup="true" aria-expanded="false">Join Workish</button>
           <div class="submenu">
@@ -202,19 +202,22 @@
 
     <div id="mobilePanel" class="mobile-panel" hidden>
       <details class="m-item"><summary>Join Workish</summary>
-        <a href="/customers.html#post">For Taskers & Parents</a>
-        <a href="/customers.html#pricing">For Customers</a>
-        <a href="/parents.html#safety">Safety & Oversight</a>
+        <a href="/taskers.html">For Taskers & Parents</a>
+        <a href="/customers.html">For Customers</a>
+        <a href="/safety.html">Safety & Oversight</a>
       </details>
       <details class="m-item"><summary>Why Workish</summary>
         <a href="/about.html#mission">Mission</a>
-        <a href="/about.html#trust">Trust & verification</a>
+        <a href="/about.html#trust">Trust & Verification</a>
         <a href="/about.html#faq">FAQ</a>
       </details>
       <details class="m-item"><summary>What’s new</summary>
         <a href="/updates.html#pilot-news">Pilot updates</a>
         <a href="/updates.html#roadmap">Roadmap</a>
         <a href="/updates.html#changelog">Changelog</a>
+      </details>
+       <details class="m-item"><summary>Workish Wallet 💰</summary>
+        <a href="/updates.html#pilot-news">Save with Workish</a>
       </details>
     </div>
   </header>
