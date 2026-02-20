@@ -1,0 +1,376 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Workish — Parent/Guardian Consent</title>
+  <meta name="description" content="Parent/guardian consent form for teen Taskers to join the Workish pilot." />
+  <meta name="geo.region" content="US-VA">
+  <meta name="geo.placename" content="Northern Virginia">
+
+  <style>
+    :root{
+      --forest:#003924;
+      --forest-ink:#224E3B;
+      --cream:#F7F3EA;
+      --offwhite:#FAF8F2;
+      --gold:#FFD66B;
+      --line:rgba(0,0,0,.15);
+      --font: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans";
+      --radius-lg:22px; --radius-sm:14px;
+      --shadow-sm:0 1px 2px rgba(0,0,0,.06), 0 2px 8px rgba(0,0,0,.04);
+      --shadow-md:0 10px 24px rgba(0,0,0,.12);
+      --space-3:.75rem; --space-4:1rem; --space-6:1.5rem; --space-8:2rem;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0; font-family:var(--font); color:var(--forest-ink); background:var(--cream);
+      -webkit-font-smoothing:antialiased;
+    }
+
+    /* Header */
+    .site-header{ position:sticky; top:0; z-index:50; background:#fff; border-bottom:1px solid var(--line); }
+    .nav-wrap{
+      height:74px; display:flex; align-items:center; gap:18px;
+      max-width:1100px; margin:0 auto; padding:0 16px;
+    }
+    .nav-brand{ display:flex; align-items:center; text-decoration:none; }
+    .nav-logo{ height:68px; width:auto; display:block; }
+
+    .wrap{
+      width:100%; max-width:820px; margin:0 auto;
+      padding:var(--space-8) 16px 56px;
+    }
+
+    .hero{
+      background:linear-gradient(135deg, rgba(0,57,36,.94), rgba(0,57,36,.78));
+      border-radius:var(--radius-lg);
+      padding:22px 18px;
+      color:#fff;
+      box-shadow:var(--shadow-md);
+      margin-bottom:18px;
+    }
+    .hero h1{ margin:0 0 6px; font-size:clamp(26px,3.6vw,38px); letter-spacing:-.02em; }
+    .hero p{ margin:0; opacity:.92; font-weight:600; line-height:1.5; }
+
+    .card{
+      background:#fff; border:1px solid var(--line); border-radius:var(--radius-lg);
+      box-shadow:var(--shadow-sm);
+      padding:18px;
+    }
+
+    .notice{
+      background:var(--offwhite);
+      border-left:4px solid var(--forest);
+      border-radius:12px;
+      padding:12px 14px;
+      margin-bottom:16px;
+      line-height:1.5;
+      color:#173627;
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:12px;
+    }
+    @media(max-width:760px){ .grid{ grid-template-columns:1fr; } }
+
+    .field{ display:flex; flex-direction:column; gap:6px; margin-top:12px; }
+    label{ font-weight:800; color:#173627; }
+    input, select, textarea{
+      border:1px solid var(--line);
+      border-radius:12px;
+      padding:12px 12px;
+      font-size:15px;
+      background:#fff;
+      outline:none;
+    }
+    textarea{ min-height:92px; resize:vertical; }
+
+    .checks{
+      margin-top:12px;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      padding:12px;
+      border:1px solid var(--line);
+      border-radius:12px;
+      background:var(--offwhite);
+    }
+    .checks label{
+      font-weight:700;
+      display:flex;
+      gap:10px;
+      align-items:flex-start;
+      line-height:1.35;
+    }
+    .checks input{ margin-top:3px; }
+
+    .cta{
+      margin-top:14px;
+      width:100%;
+      height:52px;
+      border:none;
+      border-radius:14px;
+      background:var(--forest);
+      color:#fff;
+      font-weight:900;
+      font-size:18px;
+      cursor:pointer;
+      box-shadow:0 10px 22px rgba(0,0,0,.12);
+    }
+    .cta[disabled]{ opacity:.65; cursor:not-allowed; }
+
+    .error{
+      margin-top:12px;
+      padding:10px 12px;
+      border:1px solid #e7c5c5;
+      background:#fff3f3;
+      color:#7a1e1e;
+      border-radius:12px;
+      display:none;
+    }
+    .success{
+      margin-top:12px;
+      padding:10px 12px;
+      border:1px solid #cde4d6;
+      background:#f3fbf7;
+      color:#134b33;
+      border-radius:12px;
+      display:none;
+    }
+
+    .tiny{ font-size:.92rem; color:#355346; margin-top:10px; line-height:1.45; }
+    footer{ text-align:center; color:#4A5B54; font-size:.9rem; margin:22px 0 10px; }
+    .sr-only{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+  </style>
+</head>
+<body>
+
+  <header class="site-header" role="banner">
+    <div class="nav-wrap">
+      <a class="nav-brand" href="/index.html" aria-label="Workish Home">
+        <img src="/images/worklogo.PNG" alt="Workish" class="nav-logo">
+      </a>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="hero" aria-label="Parent consent intro">
+      <h1>Parent/Guardian Consent</h1>
+      <p>
+        Workish taskers are typically ages <strong>16–21</strong>. If a teen is <strong>under 18</strong>, a parent or legal guardian must submit consent before the teen can accept jobs.
+      </p>
+    </section>
+
+    <section class="card" aria-label="Consent form">
+      <div class="notice">
+        <strong>What happens next?</strong><br>
+        After you submit, you’ll see a confirmation message. (Next step later: we can automatically email you a “teen signup link” from Workish.)
+      </div>
+
+      <form id="consentForm" novalidate>
+        <div class="grid">
+          <div class="field">
+            <label for="parentName">Parent/Guardian full name</label>
+            <input id="parentName" name="parentName" autocomplete="name" required />
+          </div>
+
+          <div class="field">
+            <label for="relationship">Relationship to teen</label>
+            <select id="relationship" name="relationship" required>
+              <option value="">Select…</option>
+              <option>Parent</option>
+              <option>Legal guardian</option>
+              <option>Other</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="parentEmail">Parent/Guardian email</label>
+            <input id="parentEmail" name="parentEmail" type="email" inputmode="email" autocomplete="email" placeholder="you@example.com" required />
+          </div>
+
+          <div class="field">
+            <label for="parentPhone">Parent/Guardian phone</label>
+            <input id="parentPhone" name="parentPhone" type="tel" inputmode="tel" placeholder="(555) 555-5555" required />
+          </div>
+
+          <div class="field">
+            <label for="teenName">Teen full name</label>
+            <input id="teenName" name="teenName" required />
+          </div>
+
+          <div class="field">
+            <label for="teenDob">Teen date of birth</label>
+            <input id="teenDob" name="teenDob" type="date" required />
+          </div>
+
+          <div class="field">
+            <label for="teenZip">Primary ZIP (service area)</label>
+            <input id="teenZip" name="teenZip" inputmode="numeric" pattern="\\d{5}" placeholder="20169" required />
+          </div>
+
+          <div class="field">
+            <label for="tasks">Tasks teen is interested in</label>
+            <select id="tasks" name="tasks" multiple size="6" aria-describedby="tasksHelp" required>
+              <option>Dog walking</option>
+              <option>Pet sitting</option>
+              <option>Yard mowing</option>
+              <option>Raking leaves</option>
+              <option>Weeding / gardening</option>
+              <option>Snow shoveling</option>
+              <option>Babysitting (if eligible)</option>
+              <option>Tutoring</option>
+              <option>Cleaning / organizing</option>
+            </select>
+            <div id="tasksHelp" class="tiny">Hold Cmd (Mac) / Ctrl (Windows) to select multiple.</div>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="notes">Anything we should know? (optional)</label>
+          <textarea id="notes" name="notes" placeholder="Allergies, schedule limits, experience, etc."></textarea>
+        </div>
+
+        <div class="checks" aria-label="Required consents">
+          <label>
+            <input type="checkbox" id="consentOk" required />
+            <span><strong>I consent</strong> to my teen participating in the Workish pilot and accepting tasks through the platform.</span>
+          </label>
+          <label>
+            <input type="checkbox" id="tosOk" required />
+            <span>I have read and agree to the <a href="/terms.html" target="_blank" rel="noopener">Terms of Service</a> and <a href="/privacy.html" target="_blank" rel="noopener">Privacy Policy</a>.</span>
+          </label>
+          <label>
+            <input type="checkbox" id="commsOk" required />
+            <span><strong>Required:</strong> I consent to receiving communications regarding my teen’s bookings (e.g., scheduling, safety, and updates).</span>
+          </label>
+        </div>
+
+        <button class="cta" id="submitBtn" type="submit">
+          <span id="btnTxt">Submit consent</span>
+        </button>
+
+        <div id="err" class="error" role="alert"></div>
+        <div id="ok" class="success" role="status"></div>
+
+        <p class="tiny">
+          This form is for the Workish Northern Virginia pilot. We store consent records securely and will only use them for onboarding and pilot operations.
+        </p>
+      </form>
+    </section>
+
+    <footer>© 2026 Workish &nbsp;|&nbsp; Northern Virginia Pilot</footer>
+  </main>
+
+  <!-- Firebase + Firestore (module) -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
+    import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
+
+    // ✅ Your existing Firebase config (same project as customers)
+    const firebaseConfig = {
+      apiKey: "AIzaSyAsemgXgVrgclikdZbfNvaVaBWcvSQqQRY",
+      authDomain: "workish-a70bb.firebaseapp.com",
+      projectId: "workish-a70bb",
+      storageBucket: "workish-a70bb.firebasestorage.app",
+      messagingSenderId: "520376346783",
+      appId: "1:520376346783:web:3fcbcb08edf86dd7e79aaa",
+      measurementId: "G-CN0QH1BJEN"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db  = getFirestore(app);
+
+    const form = document.getElementById('consentForm');
+    const err  = document.getElementById('err');
+    const ok   = document.getElementById('ok');
+    const btn  = document.getElementById('submitBtn');
+    const btnTxt = document.getElementById('btnTxt');
+
+    function setBusy(b){
+      btn.disabled = b;
+      btnTxt.textContent = b ? 'Submitting…' : 'Submit consent';
+    }
+
+    function showError(msg){
+      err.textContent = msg;
+      err.style.display = 'block';
+      ok.style.display = 'none';
+    }
+
+    function showOk(msg){
+      ok.textContent = msg;
+      ok.style.display = 'block';
+      err.style.display = 'none';
+    }
+
+    function selectedOptions(selectEl){
+      return Array.from(selectEl.selectedOptions).map(o => o.value);
+    }
+
+    function validEmail(v){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); }
+    function validZip(v){ return /^\d{5}$/.test(v); }
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      err.style.display='none'; ok.style.display='none';
+
+      const parentName = document.getElementById('parentName').value.trim();
+      const relationship = document.getElementById('relationship').value.trim();
+      const parentEmail = document.getElementById('parentEmail').value.trim().toLowerCase();
+      const parentPhone = document.getElementById('parentPhone').value.trim();
+      const teenName = document.getElementById('teenName').value.trim();
+      const teenDob = document.getElementById('teenDob').value;
+      const teenZip = document.getElementById('teenZip').value.trim();
+      const tasks = selectedOptions(document.getElementById('tasks'));
+      const notes = document.getElementById('notes').value.trim();
+
+      const consentOk = document.getElementById('consentOk').checked;
+      const tosOk = document.getElementById('tosOk').checked;
+      const commsOk = document.getElementById('commsOk').checked;
+
+      // basic validation
+      if(!parentName) return showError("Please enter the parent/guardian name.");
+      if(!relationship) return showError("Please select your relationship to the teen.");
+      if(!validEmail(parentEmail)) return showError("Please enter a valid parent/guardian email.");
+      if(!parentPhone) return showError("Please enter a parent/guardian phone number.");
+      if(!teenName) return showError("Please enter the teen’s name.");
+      if(!teenDob) return showError("Please select the teen’s date of birth.");
+      if(!validZip(teenZip)) return showError("Please enter a valid 5-digit ZIP code.");
+      if(!tasks.length) return showError("Please select at least one task interest.");
+      if(!consentOk || !tosOk || !commsOk) return showError("Please check all required consent boxes.");
+
+      setBusy(true);
+      try{
+        await addDoc(collection(db, "parentConsents"), {
+          parentName,
+          relationship,
+          parentEmail,
+          parentPhone,
+          teenName,
+          teenDob,
+          teenZip,
+          taskInterests: tasks,
+          notes,
+          consentOk,
+          tosOk,
+          commsOk,
+          createdAt: serverTimestamp(),
+          status: "submitted" // future: approved/rejected
+        });
+
+        form.reset();
+        showOk("Consent submitted ✅ Thanks! We’ll follow up with next steps shortly.");
+      }catch(ex){
+        console.error(ex);
+        showError("Could not submit right now. Please try again in a minute.");
+      }finally{
+        setBusy(false);
+      }
+    });
+  </script>
+</body>
+</html>
