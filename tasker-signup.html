@@ -34,6 +34,7 @@
     .ok{ margin-top:10px; padding:10px 12px; border:1px solid #cde4d6; background:#f3fbf7; color:#134b33; border-radius:10px; display:none; }
     .pill{ display:inline-block; background:var(--off); border:1px solid var(--line); padding:6px 10px; border-radius:999px; font-weight:800; }
     a{ color:var(--sub); font-weight:800; }
+    code{ background:var(--off); padding:2px 6px; border-radius:8px; }
   </style>
 </head>
 <body>
@@ -49,29 +50,32 @@
 
       <div class="row">
         <div>
-          <label for="code">Invite code</label>
-          <div class="control">
-            <input id="code" placeholder="e.g., 9TYZN6" autocomplete="off" />
-          </div>
+          <!-- Using a real <form> eliminates the Chrome warning and helps Enter-to-submit -->
+          <form id="signupForm" novalidate>
+            <label for="code">Invite code</label>
+            <div class="control">
+              <input id="code" name="code" placeholder="e.g., 9TYZN6" autocomplete="off" />
+            </div>
 
-          <label for="email">Teen email</label>
-          <div class="control">
-            <input id="email" type="email" placeholder="teen@example.com" autocomplete="email" />
-          </div>
+            <label for="email">Teen email</label>
+            <div class="control">
+              <input id="email" name="email" type="email" placeholder="teen@example.com" autocomplete="email" />
+            </div>
 
-          <label for="password">Password (min 8 chars)</label>
-          <div class="control">
-            <input id="password" type="password" placeholder="••••••••" minlength="8" autocomplete="new-password" />
-          </div>
+            <label for="password">Password (min 8 chars)</label>
+            <div class="control">
+              <input id="password" name="password" type="password" placeholder="••••••••" minlength="8" autocomplete="new-password" />
+            </div>
 
-          <button class="btn" id="btn">Create account + Claim invite</button>
+            <button class="btn" id="btn" type="submit">Create account + Claim invite</button>
 
-          <div id="err" class="error"></div>
-          <div id="ok" class="ok"></div>
+            <div id="err" class="error" role="alert"></div>
+            <div id="ok" class="ok" role="status"></div>
 
-          <p class="muted" style="margin-top:12px">
-            Already have an account? <a href="/tasker-login.html">Sign in</a> (optional later).
-          </p>
+            <p class="muted" style="margin-top:12px">
+              Already have an account? <a href="/tasker-login.html">Sign in</a> (optional later).
+            </p>
+          </form>
         </div>
 
         <div>
@@ -82,6 +86,9 @@
             <li>Creates a <code>taskers/{uid}</code> profile with ZIP + interests</li>
             <li>Redirects to the tasker dashboard</li>
           </ul>
+          <p class="muted" style="margin-top:12px;">
+            Tip for testing: use a brand-new email (or Gmail alias like <code>zack.walko+teen1@gmail.com</code>) so you don’t hit <code>auth/email-already-in-use</code>.
+          </p>
         </div>
       </div>
     </div>
@@ -109,8 +116,15 @@
     const qs = new URLSearchParams(location.search);
     const codeFromUrl = (qs.get("code") || "").trim();
 
+    const form = document.getElementById("signupForm");
     const codeEl = document.getElementById("code");
-    const emailEl = document.getElementById("email");
+
+    // FIX: robust email element selection (prevents mismatch issues)
+    const emailEl =
+      document.getElementById("teenEmail") ||
+      document.getElementById("email") ||
+      document.querySelector('input[type="email"]');
+
     const pwEl = document.getElementById("password");
     const btn = document.getElementById("btn");
     const err = document.getElementById("err");
@@ -121,20 +135,34 @@
     function showOk(msg){ ok.textContent = msg; ok.style.display="block"; err.style.display="none"; }
     function setBusy(b){ btn.disabled=b; btn.textContent = b ? "Working…" : "Create account + Claim invite"; }
 
+    // FIX: normalize email (handles hidden whitespace / NBSP)
+    function normalizeEmail(v){
+      return (v || "")
+        .replace(/\u00A0/g, " ")
+        .trim()
+        .toLowerCase();
+    }
+    function validEmail(v){
+      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+    }
+
     if(codeFromUrl){
       codeEl.value = codeFromUrl;
       invitePill.textContent = "Invite: " + codeFromUrl;
     }
 
-    btn.addEventListener("click", async ()=>{
+    form.addEventListener("submit", async (e)=>{
+      e.preventDefault();
+
       err.style.display="none"; ok.style.display="none";
-      const code = codeEl.value.trim();
-      const email = emailEl.value.trim().toLowerCase();
-      const password = pwEl.value;
+
+      const code = (codeEl.value || "").trim();
+      const email = normalizeEmail(emailEl?.value);
+      const password = pwEl.value || "";
 
       if(!code) return showErr("Missing invite code.");
-      if(!email || !/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(email)) return showErr("Enter a valid email.");
-      if(!password || password.length < 8) return showErr("Password must be at least 8 characters.");
+      if(!validEmail(email)) return showErr("Enter a valid email.");
+      if(password.length < 8) return showErr("Password must be at least 8 characters.");
 
       setBusy(true);
       try{
@@ -143,17 +171,23 @@
 
         if(!inviteSnap.exists()) throw new Error("Invite code not found. Ask your parent/guardian for the correct link.");
         const invite = inviteSnap.data();
-        if(invite.status !== "active") throw new Error("This invite is not active (already claimed or disabled).");
 
+        if(invite.status !== "active") {
+          throw new Error("This invite is not active (already claimed or disabled).");
+        }
+
+        // Create Auth account
         const cred = await createUserWithEmailAndPassword(auth, email, password);
         const uid = cred.user.uid;
 
+        // Claim invite
         await updateDoc(inviteRef, {
           status: "claimed",
           claimedByUid: uid,
           claimedAt: serverTimestamp()
         });
 
+        // Create teen profile
         await setDoc(doc(db, "taskers", uid), {
           uid,
           email,
@@ -169,7 +203,11 @@
         setTimeout(()=>{ window.location.href = "/tasker-dashboard.html"; }, 700);
 
       }catch(e){
-        showErr(e?.message || String(e));
+        // Friendlier common Firebase Auth error
+        const msg = (e && e.code === "auth/email-already-in-use")
+          ? "That email already has an account. Use a different email (or a Gmail alias like zack.walko+teen1@gmail.com), or sign in instead."
+          : (e?.message || String(e));
+        showErr(msg);
       }finally{
         setBusy(false);
       }
@@ -177,3 +215,4 @@
   </script>
 </body>
 </html>
+
