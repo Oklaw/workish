@@ -4,154 +4,356 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Workish — Tasker Dashboard</title>
-  <meta name="description" content="Find nearby customer tasks and express interest." />
+  <meta name="description" content="Tasker dashboard: nearby jobs + Workish Wallet gamification." />
+  <meta name="geo.region" content="US-VA">
+  <meta name="geo.placename" content="Northern Virginia">
+
   <style>
     :root{
-      --forest:#003924; --ink:#0f2a1b; --sub:#224E3B;
-      --cream:#F7F3EA; --off:#FAF8F2; --gold:#FFD66B;
-      --line:rgba(0,0,0,.14); --shadow:0 10px 24px rgba(0,0,0,.10);
+      --forest:#003924;
+      --ink:#0f2a1b;
+      --sub:#224E3B;
+      --cream:#F7F3EA;
+      --off:#FAF8F2;
+      --gold:#FFD66B;
+      --line:rgba(0,0,0,.14);
       --font:Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans";
-      --r:18px;
+      --r-sm:14px; --r-lg:24px;
+      --shadow:0 10px 24px rgba(0,0,0,.10);
     }
     *{box-sizing:border-box}
-    body{ margin:0; font-family:var(--font); color:var(--ink); background:var(--cream); -webkit-font-smoothing:antialiased; }
+    body{
+      margin:0; font-family:var(--font); color:var(--ink); background:var(--cream);
+      -webkit-font-smoothing:antialiased;
+    }
 
-    header{
-      position:sticky; top:0; z-index:20;
-      background:#fff; border-bottom:1px solid var(--line);
+    /* Background image + overlay (tasker vibe) */
+    body::before{
+      content:""; position:fixed; inset:0; z-index:-2;
+      background:url("/images/tasker.PNG") center/cover no-repeat;
+      filter:brightness(.96) saturate(1.02) blur(.3px);
     }
-    .topbar{
-      max-width:1100px; margin:0 auto; padding:14px 16px;
-      display:flex; align-items:center; justify-content:space-between; gap:12px;
+    body::after{
+      content:""; position:fixed; inset:0; z-index:-1;
+      background:linear-gradient(180deg,
+        rgba(0,57,36,.30) 0px,
+        rgba(0,57,36,.24) 280px,
+        rgba(247,243,234,.18) 60%,
+        rgba(247,243,234,.22) 100%);
+      pointer-events:none;
     }
-    .brand{ display:flex; align-items:center; gap:10px; text-decoration:none; color:inherit; font-weight:900; }
-    .brand img{ height:44px; width:auto; display:block; }
-    .right{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; justify-content:flex-end; }
-    .pill{ background:var(--off); border:1px solid var(--line); padding:8px 10px; border-radius:999px; font-weight:800; }
-    .btn{
-      border:1px solid var(--line); background:#fff; padding:8px 12px; border-radius:999px;
-      font-weight:900; cursor:pointer;
-    }
-    .btn.primary{ background:var(--forest); color:#fff; border-color:transparent; }
-    .btn[disabled]{ opacity:.6; cursor:not-allowed; }
 
-    main{ max-width:1100px; margin:0 auto; padding:22px 16px 56px; }
+    /* Header */
+    .site-header{ position:sticky; top:0; z-index:50; background:#fff; border-bottom:1px solid var(--line); }
+    .nav-wrap{ height:84px; display:flex; align-items:center; gap:18px; max-width:1100px; margin:0 auto; padding:0 16px; }
+    .nav-brand{ display:flex; align-items:center; text-decoration:none; }
+    .nav-logo{ max-height:86px; width:auto; display:block; object-fit:contain; }
+    .nav-main{ display:flex; align-items:center; gap:6px; margin-left:8px; }
+    .nav-item{ position:relative; }
+    .nav-link{ background:transparent; border:none; cursor:pointer; padding:10px 12px; border-radius:10px; font-weight:700; color:#0e1f17; }
+    .submenu{ position:absolute; top:100%; left:0; min-width:220px; background:#fff; border:1px solid var(--line); border-radius:12px; box-shadow:0 12px 28px rgba(0,0,0,.12); padding:8px; display:none; }
+    .submenu a{ display:block; padding:10px 12px; border-radius:8px; color:#224E3B; text-decoration:none; font-weight:600; }
+    .submenu a:hover{ background:var(--off); }
+    @media(hover:hover){ .has-submenu:hover .submenu{ display:block; } }
+    .nav-burger{ margin-left:auto; width:42px; height:42px; border-radius:10px; border:1px solid rgba(0,0,0,.12); background:#fff; display:none; align-items:center; justify-content:center; gap:4px; flex-direction:column; cursor:pointer; }
+    .nav-burger span{ width:20px; height:2px; background:#0e1f17; display:block; }
+    .mobile-panel{ border-top:1px solid var(--line); background:#fff; box-shadow:0 12px 28px rgba(0,0,0,.12); }
+    .m-item{ border-bottom:1px solid var(--line); padding:6px 8px; }
+    .m-item summary{ cursor:pointer; padding:12px 8px; font-weight:800; }
+    .m-item a{ display:block; padding:10px 12px; text-decoration:none; color:#224E3B; }
+    .m-item a:hover{ background:var(--off); border-radius:8px; }
+    @media(max-width:900px){ .nav-main{display:none;} .nav-burger{display:flex;} }
+
+    /* Shell */
+    .shell{ max-width:1100px; margin:0 auto; padding:28px 16px 88px; }
     .hero{
-      background:linear-gradient(180deg, rgba(0,57,36,.12), rgba(255,255,255,.0));
-      border:1px solid var(--line); border-radius:var(--r); box-shadow:var(--shadow);
-      padding:18px;
+      display:flex; flex-direction:column; gap:10px;
+      margin-bottom:18px;
+      color:#fff; text-shadow:0 3px 6px rgba(0,0,0,.40);
     }
-    h1{ margin:0 0 6px; font-size:clamp(22px,3.4vw,34px); }
-    .muted{ color:#355346; margin:0; }
+    .hero h1{ margin:0; font-size:clamp(26px,4.6vw,42px); line-height:1.12; letter-spacing:-.02em; color:#fff; font-weight:900; }
+    .hero p{ margin:0; color:#ffffff; font-weight:600; font-size:1.05rem; max-width:820px; }
 
-    .grid{ display:grid; grid-template-columns: 1fr 2fr; gap:16px; margin-top:16px; }
-    @media(max-width:950px){ .grid{ grid-template-columns:1fr; } }
+    /* Cards / layout */
+    .grid{ display:grid; gap:18px; grid-template-columns: 1.15fr .85fr; }
+    @media(max-width:990px){ .grid{ grid-template-columns:1fr; } }
+    .card{ background:#fff; border:1px solid var(--line); border-radius:var(--r-lg); box-shadow:var(--shadow); padding:14px; }
+    .card h3{ margin:0 0 8px; font-size:1.08rem; }
+    .muted{ color:#51635b; }
+    .row{ display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
+    .pill{ display:inline-flex; align-items:center; gap:6px; border-radius:999px; padding:6px 10px; background:#f2f7f4; border:1px solid var(--line); font-size:.82rem; font-weight:800; }
+    .btn{ border:none; border-radius:999px; padding:10px 12px; font-weight:900; cursor:pointer; }
+    .btn.primary{ background:var(--forest); color:#fff; }
+    .btn.secondary{ background:#fff; border:1px solid var(--line); color:#0e1f17; }
+    .btn[disabled]{ opacity:.65; cursor:not-allowed; }
+    .note{ border-left:4px solid var(--forest); background:#f7fbf8; border:1px solid var(--line); padding:10px; border-radius:8px; }
+    .error{ margin-top:10px; padding:10px 12px; border:1px solid #e7c5c5; background:#fff3f3; color:#7a1e1e; border-radius:10px; display:none; white-space:pre-wrap; }
+    .ok{ margin-top:10px; padding:10px 12px; border:1px solid #cde4d6; background:#f3fbf7; color:#134b33; border-radius:10px; display:none; }
 
-    .card{ background:#fff; border:1px solid var(--line); border-radius:var(--r); box-shadow:var(--shadow); padding:16px; }
-    .section-title{ margin:0 0 10px; font-size:1.05rem; }
-    label{ font-weight:900; display:block; margin:10px 0 6px; color:#173627; }
-    .control{
-      display:flex; gap:8px; align-items:center; background:var(--off);
-      border:1px solid var(--line); border-radius:12px; padding:12px 14px;
+    /* Tabs */
+    .tabs{ display:flex; gap:10px; flex-wrap:wrap; margin:10px 0 0; }
+    .tab{
+      border:1px solid var(--line); background:#fff; color:#0e1f17;
+      padding:10px 12px; border-radius:999px; font-weight:900; cursor:pointer;
     }
-    .control input{ border:none; outline:none; background:transparent; flex:1; font-size:15px; }
-    .chips{ display:flex; flex-wrap:wrap; gap:8px; margin-top:10px; }
-    .chip{ background:var(--off); border:1px solid var(--line); padding:7px 10px; border-radius:999px; font-weight:800; }
+    .tab.active{ background:var(--forest); color:#fff; border-color:transparent; }
+    .panel{ display:none; }
+    .panel.active{ display:block; }
 
-    .tasks{ display:grid; gap:12px; }
-    .task{
-      border:1px solid var(--line); border-radius:16px; padding:14px;
-      background:#fff;
+    /* Jobs list */
+    .jobs{ display:grid; gap:10px; margin-top:10px; }
+    .job{
+      border:1px solid var(--line); border-radius:14px; padding:12px; background:#fff;
+      display:grid; gap:8px;
     }
-    .task-top{ display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap; align-items:flex-start; }
-    .task h3{ margin:0; }
-    .meta{ color:#355346; font-weight:700; font-size:.95rem; }
-    .tag{ display:inline-block; margin-top:8px; background:var(--off); border:1px solid var(--line); padding:6px 10px; border-radius:999px; font-weight:900; }
-    .row-btns{ display:flex; gap:10px; margin-top:12px; flex-wrap:wrap; }
+    .job .top{ display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap; align-items:flex-start; }
+    .job .title{ font-weight:900; color:var(--forest); font-size:1.05rem; }
+    .job .meta{ display:flex; gap:8px; flex-wrap:wrap; color:#51635b; font-size:.9rem; }
+    .job .desc{ color:#355346; }
+    .job .actions{ display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
+    .input{
+      width:140px; max-width:100%;
+      padding:10px 10px; border-radius:10px; border:1px solid var(--line);
+      background:#fff; color:#0f2a1b; font-weight:800;
+    }
 
-    .error{ margin-top:12px; padding:10px 12px; border:1px solid #e7c5c5; background:#fff3f3; color:#7a1e1e; border-radius:12px; display:none; white-space:pre-wrap; }
-    .ok{ margin-top:12px; padding:10px 12px; border:1px solid #cde4d6; background:#f3fbf7; color:#134b33; border-radius:12px; display:none; }
-    a{ color:var(--sub); font-weight:900; }
+    /* Wallet components (adapted from your wallet.html) */
+    .balances{ display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-top:8px; }
+    @media(max-width:720px){ .balances{grid-template-columns:repeat(2,1fr);} }
+    .kpi{ background:linear-gradient(180deg,#fff,#f7fbf8); border:1px solid var(--line); border-radius:14px; padding:12px; }
+    .kpi .label{ font-size:.82rem; color:#4c5e55; }
+    .kpi .val{ font-weight:900; font-size:1.35rem; color:var(--forest); }
+    .kpi .sub{ font-size:.78rem; color:#6c7b75; }
+
+    .level{ display:flex; align-items:center; gap:10px; margin-top:12px; }
+    .level .barwrap{ flex:1; background:#ecf2ee; border-radius:999px; height:10px; overflow:hidden }
+    .level .bar{ height:100%; width:0; background:linear-gradient(90deg,var(--gold),#f0b500) }
+    .level .num{ font-weight:900; color:#7a5a00 }
+    .level small{ color:#51635b; font-weight:700; }
+
+    .badges{ display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-top:8px; }
+    @media(max-width:700px){ .badges{ grid-template-columns:repeat(3,1fr) } }
+    .badge{ display:grid; place-items:center; border:1px solid var(--line); border-radius:12px; padding:12px; background:#fff; text-align:center }
+    .badge .icon{ font-size:26px; display:grid; place-items:center }
+    .badge .label{ font-size:.82rem; margin-top:6px; font-weight:800; color:#173627; }
+    .badge.locked{ opacity:.5; filter:grayscale(1) }
+
+    .goals{ display:grid; grid-template-columns:1fr; gap:10px; margin-top:8px; }
+    @media(min-width:560px){ .goals{ grid-template-columns:1fr 1fr } }
+    .goal{ border:1px dashed rgba(0,0,0,.15); border-radius:14px; padding:12px; position:relative }
+    .goal .top{ display:flex; align-items:center; justify-content:space-between; gap:8px }
+    .goal .name{ font-weight:900; color:#173627; }
+    .progress{ height:10px; background:#eef3f0; border-radius:999px; overflow:hidden; margin-top:10px }
+    .progress .bar{ height:100%; width:0; background:linear-gradient(90deg, var(--forest), #0f6b42) }
+    .goal .meta{ font-size:.8rem; color:#51635b; margin-top:6px; display:flex; justify-content:space-between }
+
+    .sr-only{ position:absolute !important; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+    a{ color:var(--sub); font-weight:900; text-decoration:none; }
+    a:hover{ text-decoration:underline; }
+    code{ background:#f5f7f6; border:1px solid var(--line); padding:2px 6px; border-radius:8px; }
   </style>
 </head>
 
 <body>
-  <header>
-    <div class="topbar">
-      <a class="brand" href="/index.html" aria-label="Workish Home">
-        <img src="/images/worklogo.PNG" alt="Workish" />
+  <!-- Header -->
+  <header class="site-header" role="banner">
+    <div class="nav-wrap">
+      <a class="nav-brand" href="/index.html" aria-label="Workish Home">
+        <img src="/images/worklogo.PNG" alt="Workish" class="nav-logo">
       </a>
-      <div class="right">
-        <span class="pill" id="who">Not signed in</span>
-        <button class="btn" id="signOutBtn">Sign out</button>
-      </div>
+
+      <nav class="nav-main" aria-label="Primary">
+        <div class="nav-item has-submenu"></div>
+
+        <div class="nav-item has-submenu">
+          <button class="nav-link" aria-haspopup="true" aria-expanded="false">Join Workish</button>
+          <div class="submenu">
+            <a href="/taskers.html">For Taskers & Parents</a>
+            <a href="/customers.html">For Customers</a>
+            <a href="/safety.html">Safety & Oversight</a>
+          </div>
+        </div>
+
+        <div class="nav-item has-submenu">
+          <button class="nav-link" aria-haspopup="true" aria-expanded="false">About</button>
+          <div class="submenu">
+            <a href="/mission.html">Mission</a>
+            <a href="/trust.html">Trust & verification</a>
+            <a href="/faq.html">FAQ</a>
+          </div>
+        </div>
+
+        <div class="nav-item has-submenu">
+          <button class="nav-link" aria-haspopup="true" aria-expanded="false">Workish Wallet 💰</button>
+          <div class="submenu">
+            <a href="#" id="navWallet">Open Wallet</a>
+          </div>
+        </div>
+      </nav>
+
+      <button class="nav-burger" id="navBurger" aria-label="Open menu" aria-controls="mobilePanel" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+
+    <div id="mobilePanel" class="mobile-panel" hidden>
+      <details class="m-item"><summary>Join Workish</summary>
+        <a href="/taskers.html">For Taskers & Parents</a>
+        <a href="/customers.html">For Customers</a>
+        <a href="/safety.html">Safety & Oversight</a>
+      </details>
+      <details class="m-item"><summary>About</summary>
+        <a href="/mission.html">Mission</a>
+        <a href="/trust.html">Trust & Verification</a>
+        <a href="/faq.html">FAQ</a>
+      </details>
+      <details class="m-item"><summary>Workish Wallet 💰</summary>
+        <a href="#" id="mWallet">Open Wallet</a>
+      </details>
     </div>
   </header>
 
-  <main>
+  <!-- Main -->
+  <main class="shell">
     <section class="hero">
       <h1>Tasker Dashboard</h1>
-      <p class="muted">See customer tasks near your ZIP. Express interest to get matched.</p>
-      <div id="msgErr" class="error"></div>
-      <div id="msgOk" class="ok"></div>
+      <p id="heroLine">Loading your profile…</p>
+
+      <div class="tabs" role="tablist" aria-label="Dashboard tabs">
+        <button class="tab active" id="tabJobs" type="button" role="tab" aria-selected="true">Nearby Jobs</button>
+        <button class="tab" id="tabWallet" type="button" role="tab" aria-selected="false">Workish Wallet 💰</button>
+      </div>
     </section>
 
-    <section class="grid">
-      <!-- Left: profile + filters -->
-      <aside class="card">
-        <h2 class="section-title">Your profile</h2>
+    <div id="errTop" class="error"></div>
+    <div id="okTop" class="ok"></div>
 
-        <div class="meta" style="margin-top:4px">
-          ZIP: <strong id="zipTxt">—</strong><br/>
-          Nearby ZIPs: <strong id="nearTxt">—</strong>
+    <!-- ===== JOBS PANEL ===== -->
+    <section id="panelJobs" class="panel active" role="tabpanel" aria-labelledby="tabJobs">
+      <section class="grid">
+        <!-- Left: Jobs -->
+        <div class="card">
+          <div class="row" style="justify-content:space-between">
+            <div>
+              <h3 style="margin:0">Jobs near you</h3>
+              <div class="muted" id="zipLine" style="margin-top:4px">ZIP: —</div>
+            </div>
+            <button class="btn secondary" id="refreshJobs">Refresh</button>
+          </div>
+
+          <div class="note" style="margin-top:10px">
+            Showing <strong>open</strong> tasks in your ZIP (and nearby ZIPs for pilot).
+            Later, you’ll be able to bid/accept and message customers.
+          </div>
+
+          <div class="jobs" id="jobsList"></div>
         </div>
 
-        <label for="zipInput">Primary ZIP</label>
-        <div class="control">
-          <input id="zipInput" inputmode="numeric" maxlength="5" placeholder="e.g., 20169" />
+        <!-- Right: Profile / visibility -->
+        <aside class="card">
+          <h3>Your profile</h3>
+          <div class="muted" id="profileLine">—</div>
+
+          <div style="margin-top:10px" class="note">
+            <strong>Visibility score:</strong>
+            <span id="visScore">—</span>
+            <div class="muted" style="margin-top:6px">
+              This is a simple pilot score: jobs completed + badges + streaks. Higher score will later mean more visibility.
+            </div>
+          </div>
+
+          <details style="margin-top:12px">
+            <summary style="cursor:pointer; font-weight:900;">Demo actions (for testing)</summary>
+            <div style="margin-top:10px" class="muted">
+              These simulate what will happen when a customer marks a job complete and payment is recorded.
+            </div>
+            <div class="row" style="margin-top:10px">
+              <button class="btn secondary" id="demoCompleteJob">+ Complete Job ($60)</button>
+              <button class="btn secondary" id="demoPayout">+ Payout to Wallet ($50)</button>
+              <button class="btn secondary" id="demoSave10">Save $10 → Top Goal</button>
+              <button class="btn secondary" id="demoDonate5">Donate $5</button>
+            </div>
+          </details>
+
+          <div class="row" style="margin-top:12px">
+            <button class="btn primary" id="signOutBtn">Sign out</button>
+          </div>
+        </aside>
+      </section>
+    </section>
+
+    <!-- ===== WALLET PANEL ===== -->
+    <section id="panelWallet" class="panel" role="tabpanel" aria-labelledby="tabWallet">
+      <section class="grid" aria-label="Wallet dashboard">
+        <!-- Left: balances + level -->
+        <div class="card">
+          <h3>Balances</h3>
+          <div class="balances" id="balances"></div>
+
+          <div class="level">
+            <div>
+              <strong>Level</strong> <span id="levelNum" class="num">1</span>
+              <div><small>XP: <span id="xpNum">0</span>/100</small></div>
+            </div>
+            <div class="barwrap"><div id="levelBar" class="bar"></div></div>
+          </div>
+
+          <div class="note" style="margin-top:12px">
+            <strong>How you level up:</strong> complete jobs, save consistently, and earn badges.
+          </div>
         </div>
 
-        <label for="nearInput">Nearby ZIPs (comma separated)</label>
-        <div class="control">
-          <input id="nearInput" placeholder="e.g., 20155, 20136" />
+        <!-- Right: badges -->
+        <div class="card">
+          <h3>Badges</h3>
+          <div class="muted">Badges boost your visibility to customers.</div>
+          <div class="badges" id="badges"></div>
         </div>
 
-        <button class="btn primary" id="saveProfileBtn" style="margin-top:12px">Save profile</button>
-
-        <div style="margin-top:14px; border-top:1px solid var(--line); padding-top:12px;">
-          <h2 class="section-title">Your interests</h2>
-          <div class="chips" id="interestChips"></div>
-          <p class="muted" style="margin-top:10px;">
-            (MVP) Interests come from the parent consent approval. We can add editing later.
-          </p>
+        <!-- Row 2: goals -->
+        <div class="card" style="grid-column:1 / -1;">
+          <div class="row" style="justify-content:space-between">
+            <h3 style="margin:0">Savings Goals</h3>
+            <button class="btn secondary" id="addGoalBtn">+ Add goal</button>
+          </div>
+          <div class="goals" id="goals"></div>
         </div>
-      </aside>
-
-      <!-- Right: tasks -->
-      <section class="card">
-        <div style="display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap; align-items:center;">
-          <h2 class="section-title" style="margin:0;">Nearby tasks</h2>
-          <button class="btn" id="refreshBtn">Refresh</button>
-        </div>
-
-        <p class="muted" style="margin-top:6px">
-          Filtering: tasks where ZIP is in your ZIP list, status is open.
-        </p>
-
-        <div id="tasks" class="tasks" style="margin-top:12px"></div>
       </section>
     </section>
   </main>
+
+  <!-- Goal modal -->
+  <dialog id="goalModal">
+    <form method="dialog" class="card" style="padding:14px; max-width:520px">
+      <h3>New Goal</h3>
+      <label class="sr-only" for="goalName">Goal name</label>
+      <input id="goalName" name="goalName" placeholder="e.g., New guitar" style="width:100%;padding:10px;border-radius:12px;border:1px solid var(--line);margin-bottom:8px" required />
+      <div style="display:flex;gap:8px">
+        <div style="flex:1">
+          <label class="sr-only" for="goalTarget">Target amount</label>
+          <input id="goalTarget" name="goalTarget" type="number" min="1" step="1" placeholder="Target $" style="width:100%;padding:10px;border-radius:12px;border:1px solid var(--line)" required />
+        </div>
+        <div style="flex:1">
+          <label class="sr-only" for="goalSeed">Seed from balance</label>
+          <input id="goalSeed" name="goalSeed" type="number" min="0" step="1" placeholder="Seed $" style="width:100%;padding:10px;border-radius:12px;border:1px solid var(--line)" />
+        </div>
+      </div>
+      <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:12px">
+        <button class="btn secondary" value="cancel" type="submit">Cancel</button>
+        <button class="btn primary" value="ok" type="submit">Create</button>
+      </div>
+    </form>
+  </dialog>
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
     import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
     import {
-      getFirestore, doc, getDoc, setDoc, updateDoc,
-      collection, query, where, orderBy, limit, getDocs, addDoc, serverTimestamp
+      getFirestore, doc, getDoc, setDoc, updateDoc, serverTimestamp,
+      collection, query, where, orderBy, limit, getDocs
     } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
 
-    // ✅ Your Firebase config
+    // ===== Firebase config (yours) =====
     const firebaseConfig = {
       apiKey: "AIzaSyAsemgXgVrgclikdZbfNvaVaBWcvSQqQRY",
       authDomain: "workish-a70bb.firebaseapp.com",
@@ -166,201 +368,625 @@
     const auth = getAuth(app);
     const db = getFirestore(app);
 
-    const who = document.getElementById("who");
+    // ===== UI refs =====
+    const heroLine = document.getElementById("heroLine");
+    const zipLine = document.getElementById("zipLine");
+    const profileLine = document.getElementById("profileLine");
+    const jobsList = document.getElementById("jobsList");
+    const refreshJobs = document.getElementById("refreshJobs");
     const signOutBtn = document.getElementById("signOutBtn");
-    const msgErr = document.getElementById("msgErr");
-    const msgOk = document.getElementById("msgOk");
+    const errTop = document.getElementById("errTop");
+    const okTop = document.getElementById("okTop");
+    const visScoreEl = document.getElementById("visScore");
 
-    const zipTxt = document.getElementById("zipTxt");
-    const nearTxt = document.getElementById("nearTxt");
-    const zipInput = document.getElementById("zipInput");
-    const nearInput = document.getElementById("nearInput");
-    const interestChips = document.getElementById("interestChips");
-    const saveProfileBtn = document.getElementById("saveProfileBtn");
+    // Tabs
+    const tabJobs = document.getElementById("tabJobs");
+    const tabWallet = document.getElementById("tabWallet");
+    const panelJobs = document.getElementById("panelJobs");
+    const panelWallet = document.getElementById("panelWallet");
+    const navWallet = document.getElementById("navWallet");
+    const mWallet = document.getElementById("mWallet");
 
-    const tasksEl = document.getElementById("tasks");
-    const refreshBtn = document.getElementById("refreshBtn");
+    // Wallet UI
+    const balancesEl = document.getElementById("balances");
+    const levelNumEl = document.getElementById("levelNum");
+    const xpNumEl = document.getElementById("xpNum");
+    const levelBarEl = document.getElementById("levelBar");
+    const badgesEl = document.getElementById("badges");
+    const goalsEl = document.getElementById("goals");
+    const addGoalBtn = document.getElementById("addGoalBtn");
+    const goalModal = document.getElementById("goalModal");
+    const goalName = document.getElementById("goalName");
+    const goalTarget = document.getElementById("goalTarget");
+    const goalSeed = document.getElementById("goalSeed");
 
-    let currentUser = null;
-    let currentProfile = null;
+    // Demo actions
+    const demoCompleteJob = document.getElementById("demoCompleteJob");
+    const demoPayout = document.getElementById("demoPayout");
+    const demoSave10 = document.getElementById("demoSave10");
+    const demoDonate5 = document.getElementById("demoDonate5");
 
-    function showErr(t){ msgErr.textContent=t; msgErr.style.display="block"; msgOk.style.display="none"; }
-    function showOk(t){ msgOk.textContent=t; msgOk.style.display="block"; msgErr.style.display="none"; }
-
-    function parseZips(primary, nearbyStr){
-      const zips = new Set();
-      const p = (primary||"").trim();
-      if(/^[0-9]{5}$/.test(p)) zips.add(p);
-      (nearbyStr||"").split(",").map(s=>s.trim()).forEach(z=>{
-        if(/^[0-9]{5}$/.test(z)) zips.add(z);
-      });
-      return Array.from(zips);
+    function showErr(msg){
+      errTop.textContent = msg;
+      errTop.style.display = "block";
+      okTop.style.display = "none";
+    }
+    function showOk(msg){
+      okTop.textContent = msg;
+      okTop.style.display = "block";
+      errTop.style.display = "none";
+    }
+    function clearMsgs(){
+      errTop.style.display = "none";
+      okTop.style.display = "none";
     }
 
-    function renderInterests(list){
-      interestChips.innerHTML = "";
-      (list || []).forEach(i=>{
-        const el = document.createElement("span");
-        el.className = "chip";
-        el.textContent = i;
-        interestChips.appendChild(el);
+    // ===== Mobile header behavior =====
+    const burger=document.getElementById('navBurger');
+    const panel=document.getElementById('mobilePanel');
+    if(burger&&panel){
+      burger.addEventListener('click',()=>{
+        const open=panel.hasAttribute('hidden');
+        if(open) panel.removeAttribute('hidden'); else panel.setAttribute('hidden','');
+        burger.setAttribute('aria-expanded', String(open));
       });
-      if(!list || list.length===0){
-        const el = document.createElement("span");
-        el.className = "chip";
-        el.textContent = "No interests set";
-        interestChips.appendChild(el);
-      }
+    }
+    document.querySelectorAll('.has-submenu .nav-link').forEach(btn=>{
+      const menu=btn.parentElement.querySelector('.submenu');
+      btn.addEventListener('click',e=>{
+        const visible = menu && menu.style.display==='block';
+        document.querySelectorAll('.submenu').forEach(m=>m.style.display='none');
+        if(menu) menu.style.display = visible ? 'none' : 'block';
+        btn.setAttribute('aria-expanded', String(!visible));
+        e.stopPropagation();
+      });
+    });
+    document.addEventListener('click',()=>{
+      document.querySelectorAll('.submenu').forEach(m=>m.style.display='none');
+      document.querySelectorAll('.has-submenu .nav-link').forEach(b=>b.setAttribute('aria-expanded','false'));
+    });
+
+    // ===== Tabs =====
+    function openTab(which){
+      const isWallet = which === "wallet";
+      tabJobs.classList.toggle("active", !isWallet);
+      tabWallet.classList.toggle("active", isWallet);
+      tabJobs.setAttribute("aria-selected", String(!isWallet));
+      tabWallet.setAttribute("aria-selected", String(isWallet));
+      panelJobs.classList.toggle("active", !isWallet);
+      panelWallet.classList.toggle("active", isWallet);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+    tabJobs.addEventListener("click", ()=>openTab("jobs"));
+    tabWallet.addEventListener("click", ()=>openTab("wallet"));
+    navWallet?.addEventListener("click", (e)=>{ e.preventDefault(); openTab("wallet"); });
+    mWallet?.addEventListener("click", (e)=>{ e.preventDefault(); openTab("wallet"); });
+
+    // ===== Formatting helpers =====
+    function fmtMoney(n){
+      const v = Number(n || 0);
+      return "$" + v.toLocaleString(undefined, { maximumFractionDigits: 0 });
+    }
+    function safeStr(v){ return (v ?? "").toString(); }
+
+    // ===== Wallet state (stored in Firestore) =====
+    const defaultWallet = {
+      balanceAvailable: 0,
+      pendingPayouts: 0,
+      totalEarned: 0,
+      savedTotal: 0,
+      donatedTotal: 0,
+      goals: [
+        { id: "g1", name: "AirPods", target: 150, saved: 40 },
+        { id: "g2", name: "Bike Fund", target: 300, saved: 90 }
+      ],
+      jobsCompleted: 0,
+      weeklyStreak: 0,
+      lastStreakWeek: null,
+      level: 1,
+      levelXP: 0,
+      badges: {
+        firstJob: false,
+        hundredSaved: false,
+        tenJobs: false,
+        communityHero: false,
+        goalCrusher: false,
+        goalSetter: false
+      },
+      visibilityScore: 0,
+      updatedAt: null
+    };
+
+    function weekOf(ts){
+      const d=new Date(ts);
+      const first=new Date(d.getFullYear(),0,1);
+      return Math.floor((d-first)/(1000*60*60*24*7));
     }
 
-    async function loadProfile(){
-      const ref = doc(db, "taskers", currentUser.uid);
+    function recomputeWallet(w){
+      // Badges from stats
+      w.badges.firstJob = w.jobsCompleted >= 1;
+      w.badges.tenJobs = w.jobsCompleted >= 10;
+      w.badges.hundredSaved = w.savedTotal >= 100;
+      w.badges.communityHero = w.donatedTotal >= 5;
+      w.badges.goalSetter = (w.goals?.length || 0) >= 1;
+      w.badges.goalCrusher = (w.goals || []).some(g => (g.saved || 0) >= (g.target || 0) && (g.target || 0) > 0);
+
+      // XP model (simple pilot)
+      // +15 XP/job, +1 XP per $5 saved, +1 XP per $5 donated
+      const xpFromJobs = w.jobsCompleted * 15;
+      const xpFromSaving = Math.floor(w.savedTotal / 5);
+      const xpFromDonating = Math.floor(w.donatedTotal / 5);
+      const badgeCount = Object.values(w.badges).filter(Boolean).length;
+
+      const rawXP = xpFromJobs + xpFromSaving + xpFromDonating + (badgeCount * 10);
+
+      // Level: every 100 XP
+      w.level = Math.max(1, Math.floor(rawXP / 100) + 1);
+      w.levelXP = rawXP % 100;
+
+      // Visibility score (simple)
+      w.visibilityScore = (w.jobsCompleted * 10) + (badgeCount * 20) + (w.weeklyStreak * 5) + w.level;
+
+      return w;
+    }
+
+    async function loadWallet(uid){
+      const ref = doc(db, "taskers", uid, "wallet", "state");
       const snap = await getDoc(ref);
       if(!snap.exists()){
-        currentProfile = { zip:null, nearbyZips:[], interests:[] };
+        const fresh = recomputeWallet({ ...defaultWallet, updatedAt: serverTimestamp() });
+        await setDoc(ref, fresh, { merge: true });
+        return fresh;
+      }
+      const data = snap.data();
+      return recomputeWallet({
+        ...defaultWallet,
+        ...data,
+        goals: Array.isArray(data.goals) ? data.goals : defaultWallet.goals
+      });
+    }
+
+    async function saveWallet(uid, wallet){
+      const ref = doc(db, "taskers", uid, "wallet", "state");
+      const w = recomputeWallet({ ...wallet, updatedAt: serverTimestamp() });
+      await setDoc(ref, w, { merge: true });
+      return w;
+    }
+
+    // ===== Wallet rendering =====
+    function renderBalances(w){
+      balancesEl.innerHTML = "";
+      const items = [
+        { label: "Available", val: w.balanceAvailable, sub: "Spendable" },
+        { label: "Pending", val: w.pendingPayouts, sub: "Payouts due" },
+        { label: "Saved", val: w.savedTotal, sub: "Across goals" },
+        { label: "Total Earned", val: w.totalEarned, sub: "All time" }
+      ];
+      for(const it of items){
+        const el = document.createElement("div");
+        el.className = "kpi";
+        el.innerHTML = `
+          <div class="label">${it.label}</div>
+          <div class="val">${fmtMoney(it.val)}</div>
+          <div class="sub">${it.sub}</div>
+        `;
+        balancesEl.appendChild(el);
+      }
+
+      levelNumEl.textContent = w.level;
+      xpNumEl.textContent = w.levelXP;
+      levelBarEl.style.width = Math.min(100, Math.max(0, w.levelXP)) + "%";
+    }
+
+    function badgeIconSVG(kind){
+      if(kind==="goalSetter"){
+        return `
+          <svg width="28" height="28" viewBox="0 0 48 48" aria-hidden="true">
+            <circle cx="24" cy="24" r="22" fill="#fff7e0" stroke="#e6c24a"/>
+            <circle cx="24" cy="24" r="10" fill="#ffd66b" stroke="#b5962e"/>
+            <line x1="24" y1="6" x2="24" y2="10" stroke="#b5962e" stroke-width="2"/>
+            <line x1="24" y1="38" x2="24" y2="42" stroke="#b5962e" stroke-width="2"/>
+            <line x1="6" y1="24" x2="10" y2="24" stroke="#b5962e" stroke-width="2"/>
+            <line x1="38" y1="24" x2="42" y2="24" stroke="#b5962e" stroke-width="2"/>
+            <circle cx="24" cy="24" r="4" fill="#003924"/>
+          </svg>`;
+      }
+      const map = { firstJob:"💼", hundredSaved:"🏦", tenJobs:"🔟", communityHero:"🤝", goalCrusher:"🎯" };
+      const emo = map[kind] || "⭐";
+      return `<span style="font-size:26px;line-height:1">${emo}</span>`;
+    }
+
+    function renderBadges(w){
+      const all = [
+        { key:"firstJob", label:"First Job" },
+        { key:"tenJobs", label:"10 Jobs" },
+        { key:"hundredSaved", label:"$100 Saved" },
+        { key:"communityHero", label:"Give-Back" },
+        { key:"goalSetter", label:"Goal Setter" },
+        { key:"goalCrusher", label:"Goal Crusher" }
+      ];
+      badgesEl.innerHTML = "";
+      for(const b of all){
+        const el = document.createElement("div");
+        el.className = "badge" + (w.badges?.[b.key] ? "" : " locked");
+        el.innerHTML = `<div class="icon">${badgeIconSVG(b.key)}</div><div class="label">${b.label}</div>`;
+        badgesEl.appendChild(el);
+      }
+    }
+
+    function renderGoals(w){
+      goalsEl.innerHTML = "";
+      const goals = Array.isArray(w.goals) ? w.goals : [];
+      if(goals.length === 0){
+        const empty = document.createElement("div");
+        empty.className = "note";
+        empty.textContent = "No goals yet. Add your first goal to start saving!";
+        goalsEl.appendChild(empty);
         return;
       }
-      currentProfile = snap.data();
-    }
 
-    function syncProfileUI(){
-      const zip = currentProfile?.zip || "";
-      const near = (currentProfile?.nearbyZips || []).join(", ");
-      zipTxt.textContent = zip || "—";
-      nearTxt.textContent = near || "—";
-      zipInput.value = zip || "";
-      nearInput.value = near || "";
-      renderInterests(currentProfile?.interests || []);
-    }
-
-    function taskCard(t, id){
-      const div = document.createElement("div");
-      div.className = "task";
-
-      const title = t.title || t.category || "Task";
-      const zip = t.zip || "—";
-      const created = t.createdAt?.toDate ? t.createdAt.toDate().toLocaleString() : "";
-      const pay = t.budget ? `$${t.budget}` : (t.rate ? `$${t.rate}` : "");
-      const details = t.details || t.description || "";
-
-      div.innerHTML = `
-        <div class="task-top">
-          <div>
-            <h3>${escapeHtml(title)}</h3>
-            <div class="meta">ZIP ${escapeHtml(zip)} ${pay ? "• " + escapeHtml(pay) : ""} ${created ? "• " + escapeHtml(created) : ""}</div>
-            ${t.category ? `<span class="tag">${escapeHtml(t.category)}</span>` : ""}
+      goals.forEach((g, idx) => {
+        const pct = Math.min(100, ((g.saved || 0) / (g.target || 1)) * 100);
+        const el = document.createElement("div");
+        el.className = "goal";
+        el.innerHTML = `
+          <div class="top">
+            <div class="name">${safeStr(g.name)}</div>
+            <div class="pill">${fmtMoney(g.saved || 0)} / ${fmtMoney(g.target || 0)}</div>
           </div>
-        </div>
-        ${details ? `<div class="meta" style="margin-top:10px">${escapeHtml(details)}</div>` : ""}
-        <div class="row-btns">
-          <button class="btn primary" data-act="interest">Express interest</button>
-        </div>
-      `;
+          <div class="progress"><div class="bar" style="width:${pct}%"></div></div>
+          <div class="meta"><span>${pct.toFixed(0)}% funded</span><span>ID: ${safeStr(g.id || ("g"+(idx+1)))}</span></div>
+        `;
+        goalsEl.appendChild(el);
+      });
+    }
 
-      div.querySelector('[data-act="interest"]').addEventListener("click", async ()=>{
-        try{
-          // (MVP) store "interest" as a doc under tasks/{taskId}/interests
-          await addDoc(collection(db, "tasks", id, "interests"), {
-            taskId: id,
-            taskZip: t.zip || null,
-            taskerUid: currentUser.uid,
-            taskerEmail: currentUser.email || null,
-            createdAt: serverTimestamp()
-          });
-          showOk("Interest sent. (MVP) Next step: notify customer + messaging.");
-        }catch(e){
-          showErr(e?.message || String(e));
+    function renderVisibility(w){
+      visScoreEl.textContent = safeStr(w.visibilityScore ?? "—");
+    }
+
+    // ===== Nearby jobs =====
+    async function getNearbyZips(zip){
+      // If you’ve created zipAreas/{zip} with nearbyZips, use that.
+      // Otherwise fallback to just the teen zip.
+      if(!zip) return [];
+      try{
+        const snap = await getDoc(doc(db, "zipAreas", zip));
+        if(snap.exists()){
+          const z = snap.data()?.nearbyZips;
+          if(Array.isArray(z) && z.length) return z.slice(0, 10);
         }
+      }catch{}
+      return [zip];
+    }
+
+    async function loadJobsForZips(zips){
+      jobsList.innerHTML = "";
+      if(!zips || zips.length === 0){
+        jobsList.innerHTML = `<div class="note">No ZIP set on your profile yet. Ask your admin to ensure your invite contains a ZIP.</div>`;
+        return;
+      }
+
+      // Firestore: zip IN (<=10), status == open
+      // Note: orderBy can require an index depending on your fields.
+      const tasksRef = collection(db, "tasks");
+      let q;
+
+      // Prefer: status + createdAt ordering if you store createdAt
+      // If createdAt doesn't exist yet, we can still query without orderBy.
+      try{
+        q = query(
+          tasksRef,
+          where("status", "==", "open"),
+          where("zip", "in", zips),
+          orderBy("createdAt", "desc"),
+          limit(25)
+        );
+      }catch{
+        q = query(
+          tasksRef,
+          where("status", "==", "open"),
+          where("zip", "in", zips),
+          limit(25)
+        );
+      }
+
+      const snap = await getDocs(q);
+      if(snap.empty){
+        jobsList.innerHTML = `<div class="note">No open tasks found in your ZIP area yet.</div>`;
+        return;
+      }
+
+      snap.forEach(docSnap => {
+        const t = docSnap.data();
+        const id = docSnap.id;
+
+        const title = safeStr(t.type || t.title || "Task");
+        const zip = safeStr(t.zip || "—");
+        const pay = t.price != null ? fmtMoney(t.price) : (t.budget != null ? fmtMoney(t.budget) : "—");
+        const when = safeStr(t.when || t.date || "");
+        const desc = safeStr(t.details || t.description || "");
+
+        const el = document.createElement("div");
+        el.className = "job";
+        el.innerHTML = `
+          <div class="top">
+            <div>
+              <div class="title">${title}</div>
+              <div class="meta">
+                <span class="pill">ZIP ${zip}</span>
+                <span class="pill">Pay ${pay}</span>
+                ${when ? `<span class="pill">${when}</span>` : ``}
+              </div>
+            </div>
+            <div class="pill">ID: ${id}</div>
+          </div>
+          ${desc ? `<div class="desc">${desc}</div>` : ``}
+          <div class="actions">
+            <input class="input" type="number" min="0" step="1" placeholder="Bid $" data-bid="${id}">
+            <button class="btn secondary" data-bidbtn="${id}">Submit Bid</button>
+            <button class="btn primary" data-accept="${id}">Request to Accept</button>
+          </div>
+          <div class="muted" style="font-size:.88rem">
+            (Pilot note) Bids/accepts are logged for now; later we’ll route to customer + messaging.
+          </div>
+        `;
+        jobsList.appendChild(el);
+      });
+    }
+
+    // For now, we just log bids/accept requests to Firestore under taskBids
+    async function submitBid(uid, taskId, amount){
+      const bidId = `${taskId}_${uid}_${Date.now()}`;
+      await setDoc(doc(db, "taskBids", bidId), {
+        taskId,
+        taskZip: null,
+        taskType: null,
+        taskOwnerUid: null,
+        bidderUid: uid,
+        amount: Number(amount),
+        status: "submitted",
+        createdAt: serverTimestamp()
+      }, { merge: true });
+    }
+
+    async function requestAccept(uid, taskId){
+      const reqId = `${taskId}_${uid}_${Date.now()}`;
+      await setDoc(doc(db, "taskRequests", reqId), {
+        taskId,
+        requesterUid: uid,
+        status: "requested",
+        createdAt: serverTimestamp()
+      }, { merge: true });
+    }
+
+    // ===== Main app state =====
+    let currentUid = null;
+    let teenProfile = null;
+    let wallet = null;
+
+    function wireJobButtons(){
+      jobsList.querySelectorAll("button[data-bidbtn]").forEach(btn => {
+        btn.addEventListener("click", async ()=>{
+          clearMsgs();
+          const taskId = btn.getAttribute("data-bidbtn");
+          const input = jobsList.querySelector(`input[data-bid="${taskId}"]`);
+          const amount = Number(input?.value || 0);
+          if(!amount || amount <= 0) return showErr("Enter a bid amount first.");
+          btn.disabled = true; btn.textContent = "Submitting…";
+          try{
+            await submitBid(currentUid, taskId, amount);
+            showOk("Bid submitted (pilot log).");
+            input.value = "";
+          }catch(e){
+            showErr(e?.message || String(e));
+          }finally{
+            btn.disabled = false; btn.textContent = "Submit Bid";
+          }
+        });
       });
 
-      return div;
+      jobsList.querySelectorAll("button[data-accept]").forEach(btn => {
+        btn.addEventListener("click", async ()=>{
+          clearMsgs();
+          const taskId = btn.getAttribute("data-accept");
+          btn.disabled = true; btn.textContent = "Sending…";
+          try{
+            await requestAccept(currentUid, taskId);
+            showOk("Acceptance request sent (pilot log).");
+          }catch(e){
+            showErr(e?.message || String(e));
+          }finally{
+            btn.disabled = false; btn.textContent = "Request to Accept";
+          }
+        });
+      });
     }
 
-    function escapeHtml(s){
-      return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
-    }
+    async function refreshAll(){
+      clearMsgs();
+      if(!currentUid) return;
 
-    async function loadTasks(){
-      tasksEl.innerHTML = "";
-      msgErr.style.display="none"; msgOk.style.display="none";
-
-      const zips = parseZips(currentProfile?.zip, (currentProfile?.nearbyZips || []).join(","));
-      if(zips.length === 0){
-        tasksEl.innerHTML = `<div class="meta">Add your ZIP to see tasks.</div>`;
+      // Load teen profile
+      const profSnap = await getDoc(doc(db, "taskers", currentUid));
+      if(!profSnap.exists()){
+        heroLine.textContent = "No tasker profile found. Please complete signup via invite link.";
+        showErr("Missing tasker profile at taskers/{uid}.");
         return;
       }
+      teenProfile = profSnap.data();
+      const zip = teenProfile.zip || teenProfile.homeZip || null;
 
-      try{
-        // Firestore allows where-in up to 10 values (fine for MVP)
-        const qy = query(
-          collection(db, "tasks"),
-          where("zip", "in", zips.slice(0,10)),
-          where("status", "==", "open"),
-          orderBy("createdAt", "desc"),
-          limit(30)
-        );
+      heroLine.textContent = `Welcome, ${teenProfile.firstName || "Tasker"} — let’s earn badges and book safe, local jobs.`;
+      zipLine.textContent = `ZIP: ${zip || "—"} (pilot nearby ZIPs supported)`;
+      profileLine.textContent = `${teenProfile.email || ""} • Interests: ${(teenProfile.interests || []).join(", ") || "—"}`;
 
-        const snap = await getDocs(qy);
-        if(snap.empty){
-          tasksEl.innerHTML = `<div class="meta">No open tasks found in your ZIPs yet.</div>`;
-          return;
-        }
+      // Load wallet state
+      wallet = await loadWallet(currentUid);
+      renderBalances(wallet);
+      renderBadges(wallet);
+      renderGoals(wallet);
+      renderVisibility(wallet);
 
-        snap.forEach(docSnap=>{
-          tasksEl.appendChild(taskCard(docSnap.data(), docSnap.id));
-        });
-
-      }catch(e){
-        // If you need an index, Firestore will provide a link in the error message
-        showErr("Could not load tasks.\n\n" + (e?.message || String(e)));
-      }
+      // Nearby zips → load jobs
+      const zips = await getNearbyZips(zip);
+      const zipLabel = zips.length > 1 ? `${zip} (+${zips.length-1} nearby)` : `${zip || "—"}`;
+      zipLine.textContent = `ZIP: ${zipLabel}`;
+      await loadJobsForZips(zips);
+      wireJobButtons();
     }
 
-    saveProfileBtn.addEventListener("click", async ()=>{
-      msgErr.style.display="none"; msgOk.style.display="none";
-      const zip = zipInput.value.trim();
-      const nearbyZips = parseZips("", nearInput.value).filter(z => z !== zip);
-
-      if(zip && !/^[0-9]{5}$/.test(zip)) return showErr("Primary ZIP must be 5 digits.");
-      if(nearbyZips.some(z => !/^[0-9]{5}$/.test(z))) return showErr("Nearby ZIPs must be 5 digits.");
-
+    // ===== Wallet actions =====
+    async function applyWalletMutation(fn){
+      clearMsgs();
+      if(!currentUid || !wallet) return;
       try{
-        await setDoc(doc(db, "taskers", currentUser.uid), {
-          zip: zip || null,
-          nearbyZips,
-          updatedAt: serverTimestamp()
-        }, { merge:true });
-
-        await loadProfile();
-        syncProfileUI();
-        showOk("Profile saved.");
-        await loadTasks();
-
+        wallet = fn(wallet);
+        wallet = await saveWallet(currentUid, wallet);
+        renderBalances(wallet);
+        renderBadges(wallet);
+        renderGoals(wallet);
+        renderVisibility(wallet);
       }catch(e){
         showErr(e?.message || String(e));
       }
+    }
+
+    demoCompleteJob.addEventListener("click", ()=>{
+      applyWalletMutation(w => {
+        w.jobsCompleted += 1;
+        w.pendingPayouts += 60;
+        w.totalEarned += 60;
+
+        // streak: count a "save event" weekly, but for now tie to a job completion as activity
+        const wk = weekOf(Date.now());
+        if(w.lastStreakWeek == null){
+          w.weeklyStreak = 1;
+          w.lastStreakWeek = wk;
+        }else if(w.lastStreakWeek === wk){
+          // already counted this week
+        }else if(w.lastStreakWeek === wk - 1){
+          w.weeklyStreak += 1;
+          w.lastStreakWeek = wk;
+        }else{
+          w.weeklyStreak = 1;
+          w.lastStreakWeek = wk;
+        }
+        return w;
+      });
     });
 
-    refreshBtn.addEventListener("click", loadTasks);
+    demoPayout.addEventListener("click", ()=>{
+      applyWalletMutation(w => {
+        const amt = 50;
+        if(w.pendingPayouts < amt){
+          // allow payout anyway for demo
+          w.pendingPayouts = Math.max(0, w.pendingPayouts - amt);
+        }else{
+          w.pendingPayouts -= amt;
+        }
+        w.balanceAvailable += amt;
+        return w;
+      });
+    });
 
+    demoSave10.addEventListener("click", ()=>{
+      applyWalletMutation(w => {
+        const amt = 10;
+        if(w.balanceAvailable < amt){
+          throw new Error("Not enough Available balance. (Use Payout first.)");
+        }
+        if(!Array.isArray(w.goals) || w.goals.length === 0){
+          throw new Error("Add a goal first.");
+        }
+        w.balanceAvailable -= amt;
+        w.savedTotal += amt;
+        w.goals[0].saved = (w.goals[0].saved || 0) + amt;
+        if(w.goals[0].saved > w.goals[0].target) w.goals[0].saved = w.goals[0].target;
+        return w;
+      });
+    });
+
+    demoDonate5.addEventListener("click", ()=>{
+      applyWalletMutation(w => {
+        const amt = 5;
+        if(w.balanceAvailable < amt){
+          throw new Error("Not enough Available balance to donate. (Use Payout first.)");
+        }
+        w.balanceAvailable -= amt;
+        w.donatedTotal += amt;
+        return w;
+      });
+    });
+
+    // Goals
+    addGoalBtn.addEventListener("click", ()=>{
+      goalName.value = "";
+      goalTarget.value = "";
+      goalSeed.value = "";
+      goalModal.showModal();
+    });
+
+    goalModal.addEventListener("close", async ()=>{
+      if(goalModal.returnValue !== "ok") return;
+      const name = goalName.value.trim();
+      const target = Number(goalTarget.value || 0);
+      const seed = Number(goalSeed.value || 0);
+
+      if(!name) return showErr("Goal name required.");
+      if(!target || target <= 0) return showErr("Target must be > 0.");
+      if(seed < 0) return showErr("Seed cannot be negative.");
+
+      await applyWalletMutation(w => {
+        const id = "g" + (Date.now().toString(36)).toUpperCase();
+        w.goals = Array.isArray(w.goals) ? w.goals : [];
+        w.goals.unshift({ id, name, target, saved: 0 });
+
+        if(seed > 0){
+          if(w.balanceAvailable < seed){
+            throw new Error("Not enough Available balance to seed this goal.");
+          }
+          w.balanceAvailable -= seed;
+          w.savedTotal += seed;
+          w.goals[0].saved += seed;
+          if(w.goals[0].saved > w.goals[0].target) w.goals[0].saved = w.goals[0].target;
+        }
+        return w;
+      });
+    });
+
+    // Refresh jobs
+    refreshJobs.addEventListener("click", async ()=>{
+      refreshJobs.disabled = true;
+      refreshJobs.textContent = "Refreshing…";
+      try{
+        await refreshAll();
+        showOk("Refreshed.");
+      }catch(e){
+        showErr(e?.message || String(e));
+      }finally{
+        refreshJobs.disabled = false;
+        refreshJobs.textContent = "Refresh";
+      }
+    });
+
+    // Sign out
     signOutBtn.addEventListener("click", async ()=>{
       await signOut(auth);
-      window.location.href = "/index.html";
+      window.location.href = "/tasker-login.html";
     });
 
+    // ===== Auth gate =====
     onAuthStateChanged(auth, async (user)=>{
+      clearMsgs();
       if(!user){
-        // Not signed in: send them to signup (or a login page if you build one)
-        window.location.href = "/tasker-signup.html";
+        window.location.href = "/tasker-login.html";
         return;
       }
-      currentUser = user;
-      who.textContent = `Signed in: ${user.email || user.uid}`;
-
+      currentUid = user.uid;
       try{
-        await loadProfile();
-        syncProfileUI();
-        await loadTasks();
+        await refreshAll();
       }catch(e){
         showErr(e?.message || String(e));
       }
