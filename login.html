@@ -8,7 +8,7 @@
   <meta name="geo.region" content="US-VA">
   <meta name="geo.placename" content="Northern Virginia">
 
-  <!-- Optional CSRF placeholder (wire to backend later) -->
+  <!-- Optional CSRF placeholder (not used with Firebase Auth) -->
   <meta name="csrf-token" content="">
 
   <style>
@@ -119,6 +119,20 @@
     .bullets{ margin:10px 0 0; padding-left:18px; color:#173627; }
     .bullets li{ margin:6px 0; }
 
+    /* Small extra button for resend */
+    .secondary-btn{
+      width:100%;
+      margin-top:10px;
+      height:46px;
+      border-radius:14px;
+      font-weight:900;
+      border:1px solid var(--line);
+      background:#fff;
+      color:var(--forest);
+      cursor:pointer;
+      display:none;
+    }
+
     .sr-only{ position:absolute !important; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
   </style>
 </head>
@@ -180,28 +194,6 @@
     </div>
   </header>
 
-    <div id="mobilePanel" class="mobile-panel" hidden>
-      <details class="m-item"><summary>Join Workish</summary>
-        <a href="/taskers.html">For Taskers & Parents</a>
-        <a href="/customers.html">For Customers</a>
-        <a href="/safety.html">Safety & Oversight</a>
-      </details>
-      <details class="m-item"><summary>Why Workish</summary>
-        <a href="/mission.html">Mission</a>
-        <a href="/trust.html">Trust & Verification</a>
-        <a href="/faq.html">FAQ</a>
-      </details>
-      <details class="m-item"><summary>What’s new</summary>
-        <a href="/updates.html#pilot-news">Pilot updates</a>
-        <a href="/updates.html#roadmap">Roadmap</a>
-        <a href="/updates.html#changelog">Changelog</a>
-      </details>
-       <details class="m-item"><summary>Workish Wallet 💰</summary>
-        <a href="/wallet.html">Save with Workish</a>
-      </details>
-    </div>
-  </header>
-  
   <!-- Main -->
   <main class="shell">
     <section class="hero" aria-label="Intro">
@@ -246,6 +238,9 @@
             <span id="btnSpin" class="sr-only" aria-hidden="true">Loading…</span>
           </button>
 
+          <!-- Resend appears only if user logs in but isn't verified -->
+          <button class="secondary-btn" id="resendBtn" type="button">Resend verification email</button>
+
           <div id="err" class="error" role="alert"></div>
           <div id="ok" class="success" role="status"></div>
 
@@ -267,6 +262,7 @@
     </section>
   </main>
 
+  <!-- Keep this script NON-module for menus -->
   <script>
     // Mobile panel toggle (kept)
     const burger=document.getElementById('navBurger');
@@ -295,7 +291,50 @@
       document.querySelectorAll('.has-submenu .nav-link').forEach(b=>b.setAttribute('aria-expanded','false'));
     });
 
-    // Login form behavior
+    // Show/Hide password (kept)
+    const togglePw = document.getElementById('togglePw');
+    const password = document.getElementById('password');
+    if(togglePw && password){
+      togglePw.addEventListener('click', ()=>{
+        const isPw = password.getAttribute('type') === 'password';
+        password.setAttribute('type', isPw ? 'text' : 'password');
+        togglePw.textContent = isPw ? 'Hide' : 'Show';
+        togglePw.setAttribute('aria-pressed', String(isPw));
+        password.focus();
+      });
+    }
+  </script>
+
+  <!-- Firebase login logic -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
+    import {
+      getAuth,
+      setPersistence,
+      browserLocalPersistence,
+      browserSessionPersistence,
+      signInWithEmailAndPassword,
+      sendEmailVerification,
+      signOut,
+      reload,
+      onAuthStateChanged
+    } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
+
+    // Your Firebase config
+    const firebaseConfig = {
+      apiKey: "AIzaSyAsemgXgVrgclikdZbfNvaVaBWcvSQqQRY",
+      authDomain: "workish-a70bb.firebaseapp.com",
+      projectId: "workish-a70bb",
+      storageBucket: "workish-a70bb.firebasestorage.app",
+      messagingSenderId: "520376346783",
+      appId: "1:520376346783:web:3fcbcb08edf86dd7e79aaa",
+      measurementId: "G-CN0QH1BJEN"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    // Elements
     const form = document.getElementById('loginForm');
     const email = document.getElementById('email');
     const password = document.getElementById('password');
@@ -305,68 +344,128 @@
     const btnSpin = document.getElementById('btnSpin');
     const err = document.getElementById('err');
     const ok = document.getElementById('ok');
-    const togglePw = document.getElementById('togglePw');
+    const resendBtn = document.getElementById('resendBtn');
 
-    // Show/Hide password
-    togglePw.addEventListener('click', ()=>{
-      const isPw = password.getAttribute('type') === 'password';
-      password.setAttribute('type', isPw ? 'text' : 'password');
-      togglePw.textContent = isPw ? 'Hide' : 'Show';
-      togglePw.setAttribute('aria-pressed', String(isPw));
-      password.focus();
-    });
+    let lastAttemptUser = null;
 
-    // Basic email format check
-    function validEmail(v){
-      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
-    }
+    function validEmail(v){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); }
 
     function setBusy(isBusy){
       btn.disabled = isBusy;
       btnTxt.textContent = isBusy ? 'Signing in…' : 'Sign In';
       btnSpin.classList.toggle('sr-only', !isBusy);
+      if(resendBtn) resendBtn.disabled = isBusy;
     }
 
-    form.addEventListener('submit', async (e)=>{
+    function showError(msg){
+      err.textContent = msg;
+      err.style.display = 'block';
+      ok.style.display = 'none';
+    }
+
+    function showOk(msg){
+      ok.textContent = msg;
+      ok.style.display = 'block';
+      err.style.display = 'none';
+    }
+
+    function clearMsgs(){
+      err.style.display = 'none';
+      ok.style.display = 'none';
+    }
+
+    function showResend(show){
+      if(!resendBtn) return;
+      resendBtn.style.display = show ? 'inline-block' : 'none';
+    }
+
+    // If already signed in and verified, bounce straight to dashboard
+    onAuthStateChanged(auth, async (user) => {
+      if(!user) return;
+      await reload(user);
+      if(user.emailVerified){
+        window.location.href = "/customer-dashboard.html";
+      }
+    });
+
+    form.addEventListener('submit', async (e) => {
       e.preventDefault();
-      err.style.display='none'; ok.style.display='none';
+      clearMsgs();
+      showResend(false);
+
       const emailVal = email.value.trim().toLowerCase();
       const pwVal = password.value;
 
-      // Client-side validation
-      if(!validEmail(emailVal)){ err.textContent='Enter a valid email address.'; err.style.display='block'; email.focus(); return; }
-      if(pwVal.length < 8){ err.textContent='Password must be at least 8 characters.'; err.style.display='block'; password.focus(); return; }
+      if(!validEmail(emailVal)){ showError('Enter a valid email address.'); email.focus(); return; }
+      if(pwVal.length < 8){ showError('Password must be at least 8 characters.'); password.focus(); return; }
 
-      // Prepare request
       setBusy(true);
-      try{
-        const csrf = document.querySelector('meta[name="csrf-token"]')?.content || '';
-        const res = await fetch('/api/login', {
-          method:'POST',
-          headers:{ 'Content-Type':'application/json', 'X-CSRF-Token': csrf },
-          credentials:'include',
-          body: JSON.stringify({
-            email: emailVal,
-            password: pwVal,
-            remember: !!remember.checked
-          })
-        });
 
-        if(res.ok){
-          ok.textContent='Signed in. Redirecting…';
-          ok.style.display='block';
-          // Redirect to dashboard (adjust as needed)
-          setTimeout(()=>{ window.location.href = '/dashboard.html'; }, 600);
-        }else{
-          const data = await res.json().catch(()=>({}));
-          err.textContent = data?.message || 'Unable to sign in. Check your credentials and try again.';
-          err.style.display='block';
+      try{
+        // Remember-me: local (stays signed in) vs session (until browser closed)
+        await setPersistence(auth, remember?.checked ? browserLocalPersistence : browserSessionPersistence);
+
+        const cred = await signInWithEmailAndPassword(auth, emailVal, pwVal);
+        const user = cred.user;
+        lastAttemptUser = user;
+
+        // Make sure we have current verification state
+        await reload(user);
+
+        if(!user.emailVerified){
+          showError("Please verify your email before continuing. Check your inbox for Workish.");
+          showOk("After you click verify, come back here and sign in again.");
+          showResend(true);
+
+          // Optional: sign out so unverified users can’t proceed
+          await signOut(auth);
+          return;
         }
+
+        showOk("Signed in. Redirecting…");
+        setTimeout(()=>{ window.location.href = "/customer-dashboard.html"; }, 600);
+
       }catch(ex){
-        err.textContent='Network error. Please try again.';
-        err.style.display='block';
+        const code = ex?.code || '';
+        if(code === 'auth/invalid-credential') showError('Incorrect email or password.');
+        else if(code === 'auth/user-not-found') showError('No account found for that email.');
+        else if(code === 'auth/too-many-requests') showError('Too many attempts. Try again in a bit.');
+        else showError(ex?.message || 'Unable to sign in. Please try again.');
       }finally{
         setBusy(false);
+      }
+    });
+
+    // Resend verification email:
+    // We re-sign-in (with the form values) just long enough to send the email, then sign out.
+    resendBtn?.addEventListener('click', async () => {
+      clearMsgs();
+
+      const emailVal = email.value.trim().toLowerCase();
+      const pwVal = password.value;
+
+      if(!validEmail(emailVal)){ showError('Enter your email above first.'); email.focus(); return; }
+      if(!pwVal){ showError('Enter your password above first, then click resend.'); password.focus(); return; }
+
+      resendBtn.disabled = true;
+      resendBtn.textContent = "Sending…";
+
+      try{
+        await setPersistence(auth, browserSessionPersistence);
+        const cred = await signInWithEmailAndPassword(auth, emailVal, pwVal);
+        const user = cred.user;
+
+        await sendEmailVerification(user);
+        showOk("Verification email sent. Check your inbox (and spam).");
+
+        await signOut(auth);
+      }catch(ex){
+        const code = ex?.code || '';
+        if(code === 'auth/invalid-credential') showError('Incorrect email or password.');
+        else showError(ex?.message || "Could not resend verification email.");
+      }finally{
+        resendBtn.disabled = false;
+        resendBtn.textContent = "Resend verification email";
       }
     });
   </script>
