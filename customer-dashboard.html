@@ -4,13 +4,15 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Workish — Customer Dashboard</title>
-  <meta name="description" content="Post tasks and manage requests on Workish." />
+  <meta name="description" content="Post pilot tasks and manage your Workish jobs." />
+  <meta name="geo.region" content="US-VA">
+  <meta name="geo.placename" content="Northern Virginia">
 
   <style>
     :root{
       --forest:#003924; --ink:#0f2a1b; --sub:#224E3B; --cream:#F7F3EA; --off:#FAF8F2; --gold:#FFD66B;
       --line:rgba(0,0,0,.14); --font:Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans";
-      --shadow:0 10px 24px rgba(0,0,0,.10);
+      --shadow:0 10px 24px rgba(0,0,0,.10); --shadow-lg:0 16px 42px rgba(0,0,0,.18);
       --r:18px;
     }
     *{box-sizing:border-box}
@@ -23,10 +25,8 @@
     .nav-brand{ display:flex; align-items:center; text-decoration:none; }
     .nav-logo{ max-height:86px; width:auto; display:block; object-fit:contain; }
     .nav-actions{ margin-left:auto; display:flex; align-items:center; gap:10px; }
-    .btn{
-      border:none; cursor:pointer; font-weight:900;
-      border-radius:14px; padding:10px 14px;
-    }
+    .pill{ background:var(--off); border:1px solid var(--line); border-radius:999px; padding:8px 10px; font-weight:900; color:#1b2d23; max-width:420px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .btn{ border:none; cursor:pointer; font-weight:900; border-radius:14px; padding:10px 14px; }
     .btn-primary{ background:var(--forest); color:#fff; box-shadow:0 8px 20px rgba(0,0,0,.12); }
     .btn-ghost{ background:#fff; color:var(--forest); border:1px solid var(--line); }
 
@@ -35,23 +35,59 @@
     .hero h1{ margin:0; font-size:clamp(26px,4.6vw,40px); line-height:1.12; letter-spacing:-.02em; font-weight:900; }
     .hero p{ margin:8px 0 0; font-weight:700; opacity:.95; }
 
-    .grid{ display:grid; grid-template-columns: 1.2fr .8fr; gap:16px; }
+    .grid{ display:grid; grid-template-columns: 1.1fr .9fr; gap:16px; }
     @media(max-width:900px){ .grid{ grid-template-columns:1fr; } }
 
     .card{ background:#fff; border:1px solid var(--line); border-radius:var(--r); box-shadow:var(--shadow); padding:18px; }
-    .card h2{ margin:0 0 8px; font-size:1.25rem; letter-spacing:-.01em; }
+    .card h2{ margin:0 0 10px; font-size:1.25rem; letter-spacing:-.01em; }
     .muted{ color:#355245; }
+    .hide{ display:none !important; }
+
+    .field{ display:flex; flex-direction:column; gap:6px; margin-top:12px; }
+    .field label{ font-weight:900; color:#173627; }
+    .control{ display:flex; align-items:center; gap:8px; background:var(--off); border:1px solid var(--line); border-radius:12px; padding:12px 14px; color:#1b2d23; }
+    .control input, .control select, .control textarea{
+      border:none; outline:none; background:transparent; flex:1; font-size:15px; color:#1b2d23; width:100%;
+      font-family:var(--font);
+    }
+    .control textarea{ min-height:90px; resize:vertical; }
+    .row{ display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
+    .row-between{ display:flex; justify-content:space-between; gap:10px; align-items:center; flex-wrap:wrap; }
+
+    .cta{ width:100%; height:52px; margin-top:14px; border:none; border-radius:14px; font-weight:900; font-size:18px; color:#fff; background:var(--forest); cursor:pointer; box-shadow:0 8px 20px rgba(0,0,0,.12); }
+    .cta[disabled]{ opacity:.65; cursor:not-allowed; }
+
     .error{ margin-top:10px; padding:10px 12px; border:1px solid #e7c5c5; background:#fff3f3; color:#7a1e1e; border-radius:10px; display:none; }
     .success{ margin-top:10px; padding:10px 12px; border:1px solid #cde4d6; background:#f3fbf7; color:#134b33; border-radius:10px; display:none; }
 
-    .row{ display:flex; gap:10px; flex-wrap:wrap; margin-top:12px; }
-    .pill{ background:var(--off); border:1px solid var(--line); border-radius:999px; padding:8px 10px; font-weight:800; color:#1b2d23; }
+    .task-list{ display:grid; gap:10px; margin-top:10px; }
+    .task-item{ border:1px solid var(--line); border-radius:14px; padding:12px; background:#fff; }
+    .task-top{ display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap; align-items:flex-start; }
+    .badge{ display:inline-flex; align-items:center; gap:6px; padding:6px 10px; border-radius:999px; border:1px solid var(--line); background:var(--off); font-weight:900; color:#173627; font-size:.9rem; }
+    .task-title{ font-weight:900; font-size:1.02rem; margin:0; }
+    .task-meta{ margin-top:6px; color:#355245; font-size:.95rem; display:flex; gap:10px; flex-wrap:wrap; }
+    .small{ font-size:.92rem; color:#375445; }
 
-    .hide{ display:none !important; }
+    /* pills for nearby zips */
+    .zip-pills{ display:flex; flex-wrap:wrap; gap:8px; margin-top:8px; }
+    .zip-pill{
+      display:inline-flex; align-items:center; gap:8px;
+      border:1px solid var(--line);
+      background:var(--off);
+      border-radius:999px;
+      padding:6px 10px;
+      font-weight:900;
+      color:#173627;
+      font-size:.92rem;
+    }
+    .zip-pill button{
+      border:none; background:transparent; cursor:pointer; font-weight:900; color:#7a1e1e;
+    }
+    .divider{ height:1px; background:var(--line); margin:14px 0; }
   </style>
 </head>
-<body>
 
+<body>
   <header class="site-header">
     <div class="nav-wrap">
       <a class="nav-brand" href="/index.html" aria-label="Workish Home">
@@ -68,46 +104,131 @@
   <main class="shell">
     <section class="hero">
       <h1>Customer Dashboard</h1>
-      <p>Post tasks, track interest, and hire with confidence.</p>
+      <p>Post pilot tasks and reach nearby Workish taskers by ZIP.</p>
     </section>
 
-    <!-- Shown only if user is logged in but NOT verified -->
+    <!-- Not verified block -->
     <section class="card hide" id="verifyCard">
       <h2>Verify your email to continue</h2>
-      <p class="muted">
-        Please verify your email address to unlock task posting. Check your inbox for a message from <strong>Workish</strong>.
-      </p>
+      <p class="muted">Please verify your email to unlock task posting. Check your inbox for Workish.</p>
       <div class="row">
-        <button class="btn btn-primary" id="resendBtn" type="button">Resend verification email</button>
+        <button class="btn btn-primary" id="resendVerifyBtn" type="button">Resend verification email</button>
         <button class="btn btn-ghost" id="refreshBtn" type="button">I verified — refresh</button>
       </div>
       <div id="verifyOk" class="success"></div>
       <div id="verifyErr" class="error"></div>
     </section>
 
-    <!-- Shown only if user is verified -->
+    <!-- Main dashboard -->
     <section class="grid hide" id="dashboardGrid">
-      <section class="card">
-        <h2>Post a task (coming next)</h2>
-        <p class="muted">Next step: we’ll add a simple form here that saves tasks to Firestore.</p>
 
-        <div class="row">
-          <span class="pill">✅ Verified account</span>
-          <span class="pill">🧠 Safety checks (MVP)</span>
-          <span class="pill">📍 Local matching</span>
-        </div>
-      </section>
-
+      <!-- Left: post a task -->
       <section class="card">
-        <h2>Quick actions</h2>
-        <div class="row">
-          <a class="btn btn-primary" href="/customers.html" style="text-decoration:none; display:inline-block;">How Workish works</a>
-          <a class="btn btn-ghost" href="/faq.html" style="text-decoration:none; display:inline-block;">FAQ</a>
+        <div class="row-between">
+          <h2>Post a pilot task</h2>
+          <span class="badge">Pilot</span>
         </div>
-        <p class="muted" style="margin-top:12px;">
-          For your MVP, we’re focusing on: account → verify → post task → taskers can view.
+        <p class="muted">Choose a category, add details, and publish. This will show to taskers whose ZIP matches your selected ZIP(s).</p>
+
+        <!-- ZIP targeting -->
+        <div class="divider"></div>
+        <h3 style="margin:0 0 6px; font-size:1.05rem;">Where should taskers see this?</h3>
+        <p class="small" style="margin:0 0 8px;">
+          MVP: You pick a primary ZIP and (optionally) add nearby ZIPs. Later, we can replace this with “within X miles”.
         </p>
+
+        <div class="field" style="margin-top:0;">
+          <label for="homeZip">Primary ZIP (your area)</label>
+          <div class="control">
+            <input id="homeZip" type="text" inputmode="numeric" maxlength="5" placeholder="20169" />
+          </div>
+          <div class="small">We’ll save this to your Workish profile so future tasks default to it.</div>
+        </div>
+
+        <div class="field">
+          <label for="addZip">Add nearby ZIPs (optional)</label>
+          <div class="control">
+            <input id="addZip" type="text" inputmode="numeric" maxlength="5" placeholder="Add another ZIP, press Add" />
+            <button class="btn btn-ghost" id="addZipBtn" type="button" style="padding:8px 12px;">Add</button>
+          </div>
+          <div class="zip-pills" id="zipPills"></div>
+          <div class="small">Taskers with any of these ZIPs will see tasks posted to those ZIPs.</div>
+        </div>
+
+        <div class="divider"></div>
+
+        <form id="taskForm" novalidate>
+          <div class="field">
+            <label for="category">Task type</label>
+            <div class="control">
+              <select id="category" required>
+                <option value="" selected disabled>Select a pilot task…</option>
+                <option value="dog_walking">Dog walking</option>
+                <option value="lawn_mowing">Cutting grass / mowing</option>
+                <option value="raking_leaves">Raking leaves</option>
+                <option value="weeding">Weeding</option>
+                <option value="gardening">Gardening</option>
+                <option value="snow_shoveling">Snow shoveling</option>
+                <option value="pet_sitting">Pet sitting</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="title">Title</label>
+            <div class="control">
+              <input id="title" type="text" placeholder="Example: Rake front yard leaves (1–2 hrs)" maxlength="90" required />
+            </div>
+            <div class="small">Keep it short and clear.</div>
+          </div>
+
+          <div class="field">
+            <label for="when">When do you need it?</label>
+            <div class="control">
+              <input id="when" type="date" required />
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="pay">Pay (total)</label>
+            <div class="control">
+              <input id="pay" type="number" inputmode="decimal" min="0" step="1" placeholder="40" required />
+              <span class="small">$</span>
+            </div>
+            <div class="small">MVP: total job payout (not hourly).</div>
+          </div>
+
+          <div class="field">
+            <label for="details">Details</label>
+            <div class="control">
+              <textarea id="details" placeholder="Example: Please bring your own rake. Bags available. Front yard only." maxlength="800"></textarea>
+            </div>
+          </div>
+
+          <button class="cta" id="postBtn" type="submit">Post task</button>
+
+          <div id="postErr" class="error" role="alert"></div>
+          <div id="postOk" class="success" role="status"></div>
+          <p class="small" style="margin-top:10px;">
+            Safety note (MVP): keep tasks outdoors. No inside-the-home tasks in pilot.
+          </p>
+        </form>
       </section>
+
+      <!-- Right: your tasks -->
+      <aside class="card">
+        <div class="row-between">
+          <h2>Your posted tasks</h2>
+          <span class="badge" id="countBadge">0</span>
+        </div>
+        <p class="muted">Tasks you’ve posted from this account.</p>
+        <div class="task-list" id="taskList"></div>
+
+        <p class="small" style="margin-top:10px;">
+          Next: add “Tasker interest / bids” and messaging, filtered by ZIP.
+        </p>
+      </aside>
+
     </section>
   </main>
 
@@ -121,6 +242,22 @@
       reload
     } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
 
+    import {
+      getFirestore,
+      doc,
+      getDoc,
+      setDoc,
+      updateDoc,
+      collection,
+      addDoc,
+      serverTimestamp,
+      query,
+      where,
+      orderBy,
+      onSnapshot
+    } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
+
+    // Firebase config (your project)
     const firebaseConfig = {
       apiKey: "AIzaSyAsemgXgVrgclikdZbfNvaVaBWcvSQqQRY",
       authDomain: "workish-a70bb.firebaseapp.com",
@@ -133,60 +270,237 @@
 
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
+    const db = getFirestore(app);
 
+    // UI elements
     const whoami = document.getElementById('whoami');
     const signOutBtn = document.getElementById('signOutBtn');
 
     const verifyCard = document.getElementById('verifyCard');
     const dashboardGrid = document.getElementById('dashboardGrid');
-    const resendBtn = document.getElementById('resendBtn');
+    const resendVerifyBtn = document.getElementById('resendVerifyBtn');
     const refreshBtn = document.getElementById('refreshBtn');
     const verifyOk = document.getElementById('verifyOk');
     const verifyErr = document.getElementById('verifyErr');
 
+    const homeZip = document.getElementById('homeZip');
+    const addZip = document.getElementById('addZip');
+    const addZipBtn = document.getElementById('addZipBtn');
+    const zipPills = document.getElementById('zipPills');
+
+    const taskForm = document.getElementById('taskForm');
+    const category = document.getElementById('category');
+    const title = document.getElementById('title');
+    const when = document.getElementById('when');
+    const pay = document.getElementById('pay');
+    const details = document.getElementById('details');
+    const postBtn = document.getElementById('postBtn');
+    const postErr = document.getElementById('postErr');
+    const postOk = document.getElementById('postOk');
+
+    const taskList = document.getElementById('taskList');
+    const countBadge = document.getElementById('countBadge');
+
     function show(el){ el.classList.remove('hide'); }
     function hide(el){ el.classList.add('hide'); }
     function showMsg(el, msg){ el.textContent = msg; el.style.display = 'block'; }
-    function clearMsgs(){ verifyOk.style.display='none'; verifyErr.style.display='none'; }
+    function clearMsgs(){
+      verifyOk.style.display='none'; verifyErr.style.display='none';
+      postOk.style.display='none'; postErr.style.display='none';
+    }
+    function setPostBusy(b){
+      postBtn.disabled = b;
+      postBtn.textContent = b ? "Posting…" : "Post task";
+    }
 
+    // Task labels for display
+    const CATEGORY_LABEL = {
+      dog_walking: "Dog walking",
+      lawn_mowing: "Cutting grass / mowing",
+      raking_leaves: "Raking leaves",
+      weeding: "Weeding",
+      gardening: "Gardening",
+      snow_shoveling: "Snow shoveling",
+      pet_sitting: "Pet sitting"
+    };
+
+    function escapeHtml(str){
+      return String(str).replace(/[&<>"']/g, m => ({
+        "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
+      }[m]));
+    }
+
+    function isValidZip(v){ return /^[0-9]{5}$/.test(String(v || "").trim()); }
+
+    function uniqueZips(list){
+      const out = [];
+      for(const z of list){
+        const zz = String(z).trim();
+        if(isValidZip(zz) && !out.includes(zz)) out.push(zz);
+      }
+      return out;
+    }
+
+    // Nearby ZIP list state
+    let nearbyZips = [];
+
+    function renderZipPills(){
+      zipPills.innerHTML = "";
+      if(nearbyZips.length === 0){
+        zipPills.innerHTML = `<span class="small">No nearby ZIPs added yet.</span>`;
+        return;
+      }
+      for(const z of nearbyZips){
+        const pill = document.createElement('span');
+        pill.className = "zip-pill";
+        pill.innerHTML = `${escapeHtml(z)} <button type="button" aria-label="Remove ${escapeHtml(z)}">×</button>`;
+        pill.querySelector('button').addEventListener('click', () => {
+          nearbyZips = nearbyZips.filter(x => x !== z);
+          renderZipPills();
+          persistUserZips(); // best-effort
+        });
+        zipPills.appendChild(pill);
+      }
+    }
+
+    // Firestore: user profile
+    async function ensureUserProfile(user){
+      const ref = doc(db, "users", user.uid);
+      const snap = await getDoc(ref);
+      if(!snap.exists()){
+        await setDoc(ref, {
+          role: "customer",
+          email: user.email || "",
+          homeZip: "",
+          nearbyZips: [],
+          createdAt: serverTimestamp()
+        });
+        return { homeZip: "", nearbyZips: [] };
+      }
+      const d = snap.data() || {};
+      return {
+        homeZip: d.homeZip || "",
+        nearbyZips: Array.isArray(d.nearbyZips) ? uniqueZips(d.nearbyZips) : []
+      };
+    }
+
+    async function persistUserZips(){
+      const user = auth.currentUser;
+      if(!user) return;
+      const hz = String(homeZip.value || "").trim();
+      const payload = {
+        homeZip: isValidZip(hz) ? hz : "",
+        nearbyZips: uniqueZips(nearbyZips)
+      };
+      try{
+        await updateDoc(doc(db, "users", user.uid), payload);
+      }catch{
+        // ignore for MVP
+      }
+    }
+
+    // Your posted tasks listener
+    let unsubscribeTasks = null;
+
+    function renderTasks(tasks){
+      taskList.innerHTML = "";
+      countBadge.textContent = String(tasks.length);
+
+      if(tasks.length === 0){
+        taskList.innerHTML = `<div class="small">No tasks yet. Post your first pilot task on the left.</div>`;
+        return;
+      }
+
+      for(const t of tasks){
+        const cat = CATEGORY_LABEL[t.category] || t.category;
+        const date = t.when || "";
+        const payText = (typeof t.pay === "number") ? `$${t.pay}` : "";
+        const zips = Array.isArray(t.zips) ? t.zips : (t.zip ? [t.zip] : []);
+        const zipText = zips.length ? `ZIPs: ${zips.join(", ")}` : "";
+
+        const el = document.createElement('div');
+        el.className = "task-item";
+        el.innerHTML = `
+          <div class="task-top">
+            <div>
+              <p class="task-title">${escapeHtml(t.title || cat)}</p>
+              <div class="task-meta">
+                <span class="badge">${escapeHtml(cat)}</span>
+                ${date ? `<span class="badge">📅 ${escapeHtml(date)}</span>` : ""}
+                ${zipText ? `<span class="badge">📍 ${escapeHtml(zipText)}</span>` : ""}
+                ${payText ? `<span class="badge">💵 ${escapeHtml(payText)}</span>` : ""}
+              </div>
+            </div>
+            <span class="badge">${escapeHtml(t.status || "open")}</span>
+          </div>
+          ${t.details ? `<div class="small" style="margin-top:8px;">${escapeHtml(t.details)}</div>` : ""}
+        `;
+        taskList.appendChild(el);
+      }
+    }
+
+    // Auth gate
     onAuthStateChanged(auth, async (user) => {
       clearMsgs();
 
       if (!user) {
-        // Not signed in → send them to login page
         window.location.href = "/login.html";
         return;
       }
 
       whoami.textContent = user.email || "Signed in";
-
-      // Make sure we have the latest emailVerified status
       await reload(user);
 
-      if (user.emailVerified) {
-        hide(verifyCard);
-        show(dashboardGrid);
-      } else {
+      if (!user.emailVerified) {
         hide(dashboardGrid);
         show(verifyCard);
+        if (unsubscribeTasks) { unsubscribeTasks(); unsubscribeTasks = null; }
+        return;
       }
+
+      // Verified
+      hide(verifyCard);
+      show(dashboardGrid);
+
+      // Load / create user profile
+      const profile = await ensureUserProfile(user);
+      homeZip.value = profile.homeZip || "";
+      nearbyZips = profile.nearbyZips || [];
+      renderZipPills();
+
+      // Listen for customer's tasks
+      if (unsubscribeTasks) { unsubscribeTasks(); unsubscribeTasks = null; }
+      const tasksRef = collection(db, "tasks");
+      const q = query(
+        tasksRef,
+        where("ownerUid", "==", user.uid),
+        orderBy("createdAt", "desc")
+      );
+
+      unsubscribeTasks = onSnapshot(q, (snap) => {
+        const tasks = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        renderTasks(tasks);
+      }, (e) => {
+        taskList.innerHTML = `<div class="small">Could not load tasks. (${escapeHtml(e.message || "error")})</div>`;
+      });
     });
 
-    resendBtn?.addEventListener('click', async () => {
+    // Verify email helpers
+    resendVerifyBtn?.addEventListener('click', async () => {
       clearMsgs();
       const user = auth.currentUser;
       if (!user) return;
 
-      resendBtn.disabled = true;
-      resendBtn.textContent = "Sending…";
+      resendVerifyBtn.disabled = true;
+      resendVerifyBtn.textContent = "Sending…";
       try {
         await sendEmailVerification(user);
         showMsg(verifyOk, "Verification email sent. Check your inbox (and spam).");
       } catch (e) {
         showMsg(verifyErr, e?.message || "Could not send verification email.");
       } finally {
-        resendBtn.disabled = false;
-        resendBtn.textContent = "Resend verification email";
+        resendVerifyBtn.disabled = false;
+        resendVerifyBtn.textContent = "Resend verification email";
       }
     });
 
@@ -199,12 +513,8 @@
       refreshBtn.textContent = "Refreshing…";
       try {
         await reload(user);
-        if (user.emailVerified) {
-          hide(verifyCard);
-          show(dashboardGrid);
-        } else {
-          showMsg(verifyErr, "Still not verified yet. If you just clicked the email, wait 5–10 seconds and try again.");
-        }
+        if (user.emailVerified) window.location.reload();
+        else showMsg(verifyErr, "Still not verified yet. If you just clicked verify, wait a few seconds and try again.");
       } catch (e) {
         showMsg(verifyErr, e?.message || "Could not refresh verification status.");
       } finally {
@@ -213,9 +523,116 @@
       }
     });
 
+    // Sign out
     signOutBtn?.addEventListener('click', async () => {
       await signOut(auth);
       window.location.href = "/login.html";
+    });
+
+    // ZIP editing: save when they leave the primary zip field
+    homeZip?.addEventListener('blur', async () => {
+      const hz = String(homeZip.value || "").trim();
+      if(hz && !isValidZip(hz)){
+        showMsg(postErr, "Primary ZIP must be a valid 5-digit ZIP.");
+        homeZip.focus();
+        return;
+      }
+      await persistUserZips();
+    });
+
+    addZipBtn?.addEventListener('click', async () => {
+      const z = String(addZip.value || "").trim();
+      if(!isValidZip(z)){
+        showMsg(postErr, "Enter a valid 5-digit ZIP to add.");
+        addZip.focus();
+        return;
+      }
+      nearbyZips = uniqueZips([...nearbyZips, z]);
+      addZip.value = "";
+      renderZipPills();
+      await persistUserZips();
+    });
+
+    addZip?.addEventListener('keydown', async (e) => {
+      if(e.key === "Enter"){
+        e.preventDefault();
+        addZipBtn.click();
+      }
+    });
+
+    // Post task: write one task that targets multiple ZIPs via a "zips" array.
+    // Later, taskers query using: where("zips","array-contains", taskerZip)
+    taskForm?.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      clearMsgs();
+
+      const user = auth.currentUser;
+      if(!user){
+        showMsg(postErr, "You’re not signed in. Please sign in again.");
+        return;
+      }
+      await reload(user);
+      if(!user.emailVerified){
+        showMsg(postErr, "Please verify your email to post tasks.");
+        return;
+      }
+
+      const hz = String(homeZip.value || "").trim();
+      if(!isValidZip(hz)){
+        showMsg(postErr, "Set a valid Primary ZIP first (top of this page).");
+        homeZip.focus();
+        return;
+      }
+
+      const zipsTarget = uniqueZips([hz, ...nearbyZips]);
+      if(zipsTarget.length === 0){
+        showMsg(postErr, "Please provide at least one valid ZIP to target.");
+        return;
+      }
+
+      const cat = category.value;
+      const t = title.value.trim();
+      const w = when.value; // YYYY-MM-DD
+      const p = Number(pay.value);
+      const d = details.value.trim();
+
+      if(!cat){ showMsg(postErr, "Pick a pilot task type."); category.focus(); return; }
+      if(!t){ showMsg(postErr, "Add a short title."); title.focus(); return; }
+      if(!w){ showMsg(postErr, "Pick a date."); when.focus(); return; }
+      if(!Number.isFinite(p) || p <= 0){ showMsg(postErr, "Enter a pay amount greater than 0."); pay.focus(); return; }
+
+      setPostBusy(true);
+      try{
+        // Best-effort: keep user profile updated
+        await persistUserZips();
+
+        await addDoc(collection(db, "tasks"), {
+          ownerUid: user.uid,
+          ownerEmail: user.email || "",
+          status: "open",
+          category: cat,
+          title: t,
+          details: d,
+          // IMPORTANT: This is what taskers will query on:
+          zips: zipsTarget,                 // for array-contains queries
+          homeZip: hz,                      // useful for display/audit
+          when: w,
+          pay: Math.round(p),
+          createdAt: serverTimestamp()
+        });
+
+        showMsg(postOk, "Task posted! It will show to taskers in your selected ZIPs.");
+        // reset task form fields (keep zips)
+        category.value = "";
+        title.value = "";
+        when.value = "";
+        pay.value = "";
+        details.value = "";
+      }catch(ex){
+        showMsg(postErr, ex?.message || "Could not post task. Please try again.");
+      }finally{
+        setPostBusy(false);
+      }
     });
   </script>
 </body>
