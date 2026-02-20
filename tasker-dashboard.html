@@ -1,0 +1,370 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Workish — Tasker Dashboard</title>
+  <meta name="description" content="Find nearby customer tasks and express interest." />
+  <style>
+    :root{
+      --forest:#003924; --ink:#0f2a1b; --sub:#224E3B;
+      --cream:#F7F3EA; --off:#FAF8F2; --gold:#FFD66B;
+      --line:rgba(0,0,0,.14); --shadow:0 10px 24px rgba(0,0,0,.10);
+      --font:Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans";
+      --r:18px;
+    }
+    *{box-sizing:border-box}
+    body{ margin:0; font-family:var(--font); color:var(--ink); background:var(--cream); -webkit-font-smoothing:antialiased; }
+
+    header{
+      position:sticky; top:0; z-index:20;
+      background:#fff; border-bottom:1px solid var(--line);
+    }
+    .topbar{
+      max-width:1100px; margin:0 auto; padding:14px 16px;
+      display:flex; align-items:center; justify-content:space-between; gap:12px;
+    }
+    .brand{ display:flex; align-items:center; gap:10px; text-decoration:none; color:inherit; font-weight:900; }
+    .brand img{ height:44px; width:auto; display:block; }
+    .right{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; justify-content:flex-end; }
+    .pill{ background:var(--off); border:1px solid var(--line); padding:8px 10px; border-radius:999px; font-weight:800; }
+    .btn{
+      border:1px solid var(--line); background:#fff; padding:8px 12px; border-radius:999px;
+      font-weight:900; cursor:pointer;
+    }
+    .btn.primary{ background:var(--forest); color:#fff; border-color:transparent; }
+    .btn[disabled]{ opacity:.6; cursor:not-allowed; }
+
+    main{ max-width:1100px; margin:0 auto; padding:22px 16px 56px; }
+    .hero{
+      background:linear-gradient(180deg, rgba(0,57,36,.12), rgba(255,255,255,.0));
+      border:1px solid var(--line); border-radius:var(--r); box-shadow:var(--shadow);
+      padding:18px;
+    }
+    h1{ margin:0 0 6px; font-size:clamp(22px,3.4vw,34px); }
+    .muted{ color:#355346; margin:0; }
+
+    .grid{ display:grid; grid-template-columns: 1fr 2fr; gap:16px; margin-top:16px; }
+    @media(max-width:950px){ .grid{ grid-template-columns:1fr; } }
+
+    .card{ background:#fff; border:1px solid var(--line); border-radius:var(--r); box-shadow:var(--shadow); padding:16px; }
+    .section-title{ margin:0 0 10px; font-size:1.05rem; }
+    label{ font-weight:900; display:block; margin:10px 0 6px; color:#173627; }
+    .control{
+      display:flex; gap:8px; align-items:center; background:var(--off);
+      border:1px solid var(--line); border-radius:12px; padding:12px 14px;
+    }
+    .control input{ border:none; outline:none; background:transparent; flex:1; font-size:15px; }
+    .chips{ display:flex; flex-wrap:wrap; gap:8px; margin-top:10px; }
+    .chip{ background:var(--off); border:1px solid var(--line); padding:7px 10px; border-radius:999px; font-weight:800; }
+
+    .tasks{ display:grid; gap:12px; }
+    .task{
+      border:1px solid var(--line); border-radius:16px; padding:14px;
+      background:#fff;
+    }
+    .task-top{ display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap; align-items:flex-start; }
+    .task h3{ margin:0; }
+    .meta{ color:#355346; font-weight:700; font-size:.95rem; }
+    .tag{ display:inline-block; margin-top:8px; background:var(--off); border:1px solid var(--line); padding:6px 10px; border-radius:999px; font-weight:900; }
+    .row-btns{ display:flex; gap:10px; margin-top:12px; flex-wrap:wrap; }
+
+    .error{ margin-top:12px; padding:10px 12px; border:1px solid #e7c5c5; background:#fff3f3; color:#7a1e1e; border-radius:12px; display:none; white-space:pre-wrap; }
+    .ok{ margin-top:12px; padding:10px 12px; border:1px solid #cde4d6; background:#f3fbf7; color:#134b33; border-radius:12px; display:none; }
+    a{ color:var(--sub); font-weight:900; }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="topbar">
+      <a class="brand" href="/index.html" aria-label="Workish Home">
+        <img src="/images/worklogo.PNG" alt="Workish" />
+      </a>
+      <div class="right">
+        <span class="pill" id="who">Not signed in</span>
+        <button class="btn" id="signOutBtn">Sign out</button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <h1>Tasker Dashboard</h1>
+      <p class="muted">See customer tasks near your ZIP. Express interest to get matched.</p>
+      <div id="msgErr" class="error"></div>
+      <div id="msgOk" class="ok"></div>
+    </section>
+
+    <section class="grid">
+      <!-- Left: profile + filters -->
+      <aside class="card">
+        <h2 class="section-title">Your profile</h2>
+
+        <div class="meta" style="margin-top:4px">
+          ZIP: <strong id="zipTxt">—</strong><br/>
+          Nearby ZIPs: <strong id="nearTxt">—</strong>
+        </div>
+
+        <label for="zipInput">Primary ZIP</label>
+        <div class="control">
+          <input id="zipInput" inputmode="numeric" maxlength="5" placeholder="e.g., 20169" />
+        </div>
+
+        <label for="nearInput">Nearby ZIPs (comma separated)</label>
+        <div class="control">
+          <input id="nearInput" placeholder="e.g., 20155, 20136" />
+        </div>
+
+        <button class="btn primary" id="saveProfileBtn" style="margin-top:12px">Save profile</button>
+
+        <div style="margin-top:14px; border-top:1px solid var(--line); padding-top:12px;">
+          <h2 class="section-title">Your interests</h2>
+          <div class="chips" id="interestChips"></div>
+          <p class="muted" style="margin-top:10px;">
+            (MVP) Interests come from the parent consent approval. We can add editing later.
+          </p>
+        </div>
+      </aside>
+
+      <!-- Right: tasks -->
+      <section class="card">
+        <div style="display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap; align-items:center;">
+          <h2 class="section-title" style="margin:0;">Nearby tasks</h2>
+          <button class="btn" id="refreshBtn">Refresh</button>
+        </div>
+
+        <p class="muted" style="margin-top:6px">
+          Filtering: tasks where ZIP is in your ZIP list, status is open.
+        </p>
+
+        <div id="tasks" class="tasks" style="margin-top:12px"></div>
+      </section>
+    </section>
+  </main>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
+    import {
+      getFirestore, doc, getDoc, setDoc, updateDoc,
+      collection, query, where, orderBy, limit, getDocs, addDoc, serverTimestamp
+    } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
+
+    // ✅ Your Firebase config
+    const firebaseConfig = {
+      apiKey: "AIzaSyAsemgXgVrgclikdZbfNvaVaBWcvSQqQRY",
+      authDomain: "workish-a70bb.firebaseapp.com",
+      projectId: "workish-a70bb",
+      storageBucket: "workish-a70bb.firebasestorage.app",
+      messagingSenderId: "520376346783",
+      appId: "1:520376346783:web:3fcbcb08edf86dd7e79aaa",
+      measurementId: "G-CN0QH1BJEN"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    const who = document.getElementById("who");
+    const signOutBtn = document.getElementById("signOutBtn");
+    const msgErr = document.getElementById("msgErr");
+    const msgOk = document.getElementById("msgOk");
+
+    const zipTxt = document.getElementById("zipTxt");
+    const nearTxt = document.getElementById("nearTxt");
+    const zipInput = document.getElementById("zipInput");
+    const nearInput = document.getElementById("nearInput");
+    const interestChips = document.getElementById("interestChips");
+    const saveProfileBtn = document.getElementById("saveProfileBtn");
+
+    const tasksEl = document.getElementById("tasks");
+    const refreshBtn = document.getElementById("refreshBtn");
+
+    let currentUser = null;
+    let currentProfile = null;
+
+    function showErr(t){ msgErr.textContent=t; msgErr.style.display="block"; msgOk.style.display="none"; }
+    function showOk(t){ msgOk.textContent=t; msgOk.style.display="block"; msgErr.style.display="none"; }
+
+    function parseZips(primary, nearbyStr){
+      const zips = new Set();
+      const p = (primary||"").trim();
+      if(/^[0-9]{5}$/.test(p)) zips.add(p);
+      (nearbyStr||"").split(",").map(s=>s.trim()).forEach(z=>{
+        if(/^[0-9]{5}$/.test(z)) zips.add(z);
+      });
+      return Array.from(zips);
+    }
+
+    function renderInterests(list){
+      interestChips.innerHTML = "";
+      (list || []).forEach(i=>{
+        const el = document.createElement("span");
+        el.className = "chip";
+        el.textContent = i;
+        interestChips.appendChild(el);
+      });
+      if(!list || list.length===0){
+        const el = document.createElement("span");
+        el.className = "chip";
+        el.textContent = "No interests set";
+        interestChips.appendChild(el);
+      }
+    }
+
+    async function loadProfile(){
+      const ref = doc(db, "taskers", currentUser.uid);
+      const snap = await getDoc(ref);
+      if(!snap.exists()){
+        currentProfile = { zip:null, nearbyZips:[], interests:[] };
+        return;
+      }
+      currentProfile = snap.data();
+    }
+
+    function syncProfileUI(){
+      const zip = currentProfile?.zip || "";
+      const near = (currentProfile?.nearbyZips || []).join(", ");
+      zipTxt.textContent = zip || "—";
+      nearTxt.textContent = near || "—";
+      zipInput.value = zip || "";
+      nearInput.value = near || "";
+      renderInterests(currentProfile?.interests || []);
+    }
+
+    function taskCard(t, id){
+      const div = document.createElement("div");
+      div.className = "task";
+
+      const title = t.title || t.category || "Task";
+      const zip = t.zip || "—";
+      const created = t.createdAt?.toDate ? t.createdAt.toDate().toLocaleString() : "";
+      const pay = t.budget ? `$${t.budget}` : (t.rate ? `$${t.rate}` : "");
+      const details = t.details || t.description || "";
+
+      div.innerHTML = `
+        <div class="task-top">
+          <div>
+            <h3>${escapeHtml(title)}</h3>
+            <div class="meta">ZIP ${escapeHtml(zip)} ${pay ? "• " + escapeHtml(pay) : ""} ${created ? "• " + escapeHtml(created) : ""}</div>
+            ${t.category ? `<span class="tag">${escapeHtml(t.category)}</span>` : ""}
+          </div>
+        </div>
+        ${details ? `<div class="meta" style="margin-top:10px">${escapeHtml(details)}</div>` : ""}
+        <div class="row-btns">
+          <button class="btn primary" data-act="interest">Express interest</button>
+        </div>
+      `;
+
+      div.querySelector('[data-act="interest"]').addEventListener("click", async ()=>{
+        try{
+          // (MVP) store "interest" as a doc under tasks/{taskId}/interests
+          await addDoc(collection(db, "tasks", id, "interests"), {
+            taskId: id,
+            taskZip: t.zip || null,
+            taskerUid: currentUser.uid,
+            taskerEmail: currentUser.email || null,
+            createdAt: serverTimestamp()
+          });
+          showOk("Interest sent. (MVP) Next step: notify customer + messaging.");
+        }catch(e){
+          showErr(e?.message || String(e));
+        }
+      });
+
+      return div;
+    }
+
+    function escapeHtml(s){
+      return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+    }
+
+    async function loadTasks(){
+      tasksEl.innerHTML = "";
+      msgErr.style.display="none"; msgOk.style.display="none";
+
+      const zips = parseZips(currentProfile?.zip, (currentProfile?.nearbyZips || []).join(","));
+      if(zips.length === 0){
+        tasksEl.innerHTML = `<div class="meta">Add your ZIP to see tasks.</div>`;
+        return;
+      }
+
+      try{
+        // Firestore allows where-in up to 10 values (fine for MVP)
+        const qy = query(
+          collection(db, "tasks"),
+          where("zip", "in", zips.slice(0,10)),
+          where("status", "==", "open"),
+          orderBy("createdAt", "desc"),
+          limit(30)
+        );
+
+        const snap = await getDocs(qy);
+        if(snap.empty){
+          tasksEl.innerHTML = `<div class="meta">No open tasks found in your ZIPs yet.</div>`;
+          return;
+        }
+
+        snap.forEach(docSnap=>{
+          tasksEl.appendChild(taskCard(docSnap.data(), docSnap.id));
+        });
+
+      }catch(e){
+        // If you need an index, Firestore will provide a link in the error message
+        showErr("Could not load tasks.\n\n" + (e?.message || String(e)));
+      }
+    }
+
+    saveProfileBtn.addEventListener("click", async ()=>{
+      msgErr.style.display="none"; msgOk.style.display="none";
+      const zip = zipInput.value.trim();
+      const nearbyZips = parseZips("", nearInput.value).filter(z => z !== zip);
+
+      if(zip && !/^[0-9]{5}$/.test(zip)) return showErr("Primary ZIP must be 5 digits.");
+      if(nearbyZips.some(z => !/^[0-9]{5}$/.test(z))) return showErr("Nearby ZIPs must be 5 digits.");
+
+      try{
+        await setDoc(doc(db, "taskers", currentUser.uid), {
+          zip: zip || null,
+          nearbyZips,
+          updatedAt: serverTimestamp()
+        }, { merge:true });
+
+        await loadProfile();
+        syncProfileUI();
+        showOk("Profile saved.");
+        await loadTasks();
+
+      }catch(e){
+        showErr(e?.message || String(e));
+      }
+    });
+
+    refreshBtn.addEventListener("click", loadTasks);
+
+    signOutBtn.addEventListener("click", async ()=>{
+      await signOut(auth);
+      window.location.href = "/index.html";
+    });
+
+    onAuthStateChanged(auth, async (user)=>{
+      if(!user){
+        // Not signed in: send them to signup (or a login page if you build one)
+        window.location.href = "/tasker-signup.html";
+        return;
+      }
+      currentUser = user;
+      who.textContent = `Signed in: ${user.email || user.uid}`;
+
+      try{
+        await loadProfile();
+        syncProfileUI();
+        await loadTasks();
+      }catch(e){
+        showErr(e?.message || String(e));
+      }
+    });
+  </script>
+</body>
+</html>
