@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Workish — Customer Dashboard</title>
+  <meta name="description" content="Post tasks and manage requests on Workish." />
+
+  <style>
+    :root{
+      --forest:#003924; --ink:#0f2a1b; --sub:#224E3B; --cream:#F7F3EA; --off:#FAF8F2; --gold:#FFD66B;
+      --line:rgba(0,0,0,.14); --font:Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans";
+      --shadow:0 10px 24px rgba(0,0,0,.10);
+      --r:18px;
+    }
+    *{box-sizing:border-box}
+    body{ margin:0; font-family:var(--font); color:var(--ink); background:var(--cream); -webkit-font-smoothing:antialiased; }
+    body::before{ content:""; position:fixed; inset:0; z-index:-2; background:url("/images/customer.PNG") center/cover no-repeat; filter:brightness(.96) saturate(1.02) blur(.3px); }
+    body::after{ content:""; position:fixed; inset:0; z-index:-1; background:linear-gradient(180deg, rgba(0,57,36,.30) 0px, rgba(0,57,36,.24) 280px, rgba(247,243,234,.18) 60%, rgba(247,243,234,.22) 100%); pointer-events:none; }
+
+    .site-header{ position:sticky; top:0; z-index:50; background:#fff; border-bottom:1px solid var(--line); }
+    .nav-wrap{ height:84px; display:flex; align-items:center; gap:18px; max-width:1100px; margin:0 auto; padding:0 16px; }
+    .nav-brand{ display:flex; align-items:center; text-decoration:none; }
+    .nav-logo{ max-height:86px; width:auto; display:block; object-fit:contain; }
+    .nav-actions{ margin-left:auto; display:flex; align-items:center; gap:10px; }
+    .btn{
+      border:none; cursor:pointer; font-weight:900;
+      border-radius:14px; padding:10px 14px;
+    }
+    .btn-primary{ background:var(--forest); color:#fff; box-shadow:0 8px 20px rgba(0,0,0,.12); }
+    .btn-ghost{ background:#fff; color:var(--forest); border:1px solid var(--line); }
+
+    .shell{ max-width:1100px; margin:0 auto; padding:28px 16px 56px; }
+    .hero{ color:#fff; text-shadow:0 3px 6px rgba(0,0,0,.40); margin-bottom:18px; }
+    .hero h1{ margin:0; font-size:clamp(26px,4.6vw,40px); line-height:1.12; letter-spacing:-.02em; font-weight:900; }
+    .hero p{ margin:8px 0 0; font-weight:700; opacity:.95; }
+
+    .grid{ display:grid; grid-template-columns: 1.2fr .8fr; gap:16px; }
+    @media(max-width:900px){ .grid{ grid-template-columns:1fr; } }
+
+    .card{ background:#fff; border:1px solid var(--line); border-radius:var(--r); box-shadow:var(--shadow); padding:18px; }
+    .card h2{ margin:0 0 8px; font-size:1.25rem; letter-spacing:-.01em; }
+    .muted{ color:#355245; }
+    .error{ margin-top:10px; padding:10px 12px; border:1px solid #e7c5c5; background:#fff3f3; color:#7a1e1e; border-radius:10px; display:none; }
+    .success{ margin-top:10px; padding:10px 12px; border:1px solid #cde4d6; background:#f3fbf7; color:#134b33; border-radius:10px; display:none; }
+
+    .row{ display:flex; gap:10px; flex-wrap:wrap; margin-top:12px; }
+    .pill{ background:var(--off); border:1px solid var(--line); border-radius:999px; padding:8px 10px; font-weight:800; color:#1b2d23; }
+
+    .hide{ display:none !important; }
+  </style>
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="nav-wrap">
+      <a class="nav-brand" href="/index.html" aria-label="Workish Home">
+        <img src="/images/worklogo.PNG" alt="Workish" class="nav-logo">
+      </a>
+
+      <div class="nav-actions">
+        <span class="pill" id="whoami">Loading…</span>
+        <button class="btn btn-ghost" id="signOutBtn" type="button">Sign out</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="shell">
+    <section class="hero">
+      <h1>Customer Dashboard</h1>
+      <p>Post tasks, track interest, and hire with confidence.</p>
+    </section>
+
+    <!-- Shown only if user is logged in but NOT verified -->
+    <section class="card hide" id="verifyCard">
+      <h2>Verify your email to continue</h2>
+      <p class="muted">
+        Please verify your email address to unlock task posting. Check your inbox for a message from <strong>Workish</strong>.
+      </p>
+      <div class="row">
+        <button class="btn btn-primary" id="resendBtn" type="button">Resend verification email</button>
+        <button class="btn btn-ghost" id="refreshBtn" type="button">I verified — refresh</button>
+      </div>
+      <div id="verifyOk" class="success"></div>
+      <div id="verifyErr" class="error"></div>
+    </section>
+
+    <!-- Shown only if user is verified -->
+    <section class="grid hide" id="dashboardGrid">
+      <section class="card">
+        <h2>Post a task (coming next)</h2>
+        <p class="muted">Next step: we’ll add a simple form here that saves tasks to Firestore.</p>
+
+        <div class="row">
+          <span class="pill">✅ Verified account</span>
+          <span class="pill">🧠 Safety checks (MVP)</span>
+          <span class="pill">📍 Local matching</span>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Quick actions</h2>
+        <div class="row">
+          <a class="btn btn-primary" href="/customers.html" style="text-decoration:none; display:inline-block;">How Workish works</a>
+          <a class="btn btn-ghost" href="/faq.html" style="text-decoration:none; display:inline-block;">FAQ</a>
+        </div>
+        <p class="muted" style="margin-top:12px;">
+          For your MVP, we’re focusing on: account → verify → post task → taskers can view.
+        </p>
+      </section>
+    </section>
+  </main>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
+    import {
+      getAuth,
+      onAuthStateChanged,
+      signOut,
+      sendEmailVerification,
+      reload
+    } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAsemgXgVrgclikdZbfNvaVaBWcvSQqQRY",
+      authDomain: "workish-a70bb.firebaseapp.com",
+      projectId: "workish-a70bb",
+      storageBucket: "workish-a70bb.firebasestorage.app",
+      messagingSenderId: "520376346783",
+      appId: "1:520376346783:web:3fcbcb08edf86dd7e79aaa",
+      measurementId: "G-CN0QH1BJEN"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    const whoami = document.getElementById('whoami');
+    const signOutBtn = document.getElementById('signOutBtn');
+
+    const verifyCard = document.getElementById('verifyCard');
+    const dashboardGrid = document.getElementById('dashboardGrid');
+    const resendBtn = document.getElementById('resendBtn');
+    const refreshBtn = document.getElementById('refreshBtn');
+    const verifyOk = document.getElementById('verifyOk');
+    const verifyErr = document.getElementById('verifyErr');
+
+    function show(el){ el.classList.remove('hide'); }
+    function hide(el){ el.classList.add('hide'); }
+    function showMsg(el, msg){ el.textContent = msg; el.style.display = 'block'; }
+    function clearMsgs(){ verifyOk.style.display='none'; verifyErr.style.display='none'; }
+
+    onAuthStateChanged(auth, async (user) => {
+      clearMsgs();
+
+      if (!user) {
+        // Not signed in → send them to login page
+        window.location.href = "/login.html";
+        return;
+      }
+
+      whoami.textContent = user.email || "Signed in";
+
+      // Make sure we have the latest emailVerified status
+      await reload(user);
+
+      if (user.emailVerified) {
+        hide(verifyCard);
+        show(dashboardGrid);
+      } else {
+        hide(dashboardGrid);
+        show(verifyCard);
+      }
+    });
+
+    resendBtn?.addEventListener('click', async () => {
+      clearMsgs();
+      const user = auth.currentUser;
+      if (!user) return;
+
+      resendBtn.disabled = true;
+      resendBtn.textContent = "Sending…";
+      try {
+        await sendEmailVerification(user);
+        showMsg(verifyOk, "Verification email sent. Check your inbox (and spam).");
+      } catch (e) {
+        showMsg(verifyErr, e?.message || "Could not send verification email.");
+      } finally {
+        resendBtn.disabled = false;
+        resendBtn.textContent = "Resend verification email";
+      }
+    });
+
+    refreshBtn?.addEventListener('click', async () => {
+      clearMsgs();
+      const user = auth.currentUser;
+      if (!user) return;
+
+      refreshBtn.disabled = true;
+      refreshBtn.textContent = "Refreshing…";
+      try {
+        await reload(user);
+        if (user.emailVerified) {
+          hide(verifyCard);
+          show(dashboardGrid);
+        } else {
+          showMsg(verifyErr, "Still not verified yet. If you just clicked the email, wait 5–10 seconds and try again.");
+        }
+      } catch (e) {
+        showMsg(verifyErr, e?.message || "Could not refresh verification status.");
+      } finally {
+        refreshBtn.disabled = false;
+        refreshBtn.textContent = "I verified — refresh";
+      }
+    });
+
+    signOutBtn?.addEventListener('click', async () => {
+      await signOut(auth);
+      window.location.href = "/login.html";
+    });
+  </script>
+</body>
+</html>
