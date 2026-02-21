@@ -111,7 +111,7 @@
       font-weight:900;
     }
 
-    /* ===== Wallet strip (matches your screenshot) ===== */
+    /* ===== Wallet strip ===== */
     .wallet-strip{
       display:grid;
       grid-template-columns: 1fr 1fr;
@@ -335,6 +335,7 @@
           More completed jobs + badges = more visibility to customers.
         </div>
 
+        <!-- Jobs list (REAL DATA ONLY) -->
         <div id="jobsWrap" class="jobs" style="margin-top:14px;"></div>
 
         <div id="jobsEmpty" class="muted" style="display:none; margin-top:12px;">
@@ -421,7 +422,7 @@
     </section>
   </main>
 
-  <!-- Optional dock: quick refresh + wallet shortcut -->
+  <!-- Optional dock -->
   <div class="dock">
     <button class="btn" id="dockJobs">Jobs</button>
     <button class="btn" id="dockWallet">Wallet</button>
@@ -443,7 +444,6 @@
       doc,
       getDoc,
       setDoc,
-      updateDoc,
       collection,
       query,
       where,
@@ -539,13 +539,10 @@
         wallet: [tabWallet, viewWallet],
         profile: [tabProfile, viewProfile],
       };
-      // reset
       [tabJobs, tabWallet, tabProfile].forEach(t=>t.classList.remove("active"));
       [viewJobs, viewWallet, viewProfile].forEach(v=>v.style.display="none");
-      // set
       map[which][0].classList.add("active");
       map[which][1].style.display = "";
-      // aria
       tabJobs.setAttribute("aria-selected", String(which==="jobs"));
       tabWallet.setAttribute("aria-selected", String(which==="wallet"));
       tabProfile.setAttribute("aria-selected", String(which==="profile"));
@@ -578,7 +575,7 @@
       lastStreakWeek: null
     });
 
-    // ===================== Badges + Level + Visibility (core gamification) =====================
+    // ===================== Badges + Level + Visibility =====================
     function weekOf(ts){
       const d=new Date(ts);
       const first=new Date(d.getFullYear(),0,1);
@@ -605,18 +602,17 @@
     }
 
     function computeLevel(wallet){
-      // Simple XP model (tweak later)
       const jobs = Number(wallet.jobsCompleted||0);
       const saved = Number(wallet.savedTotal||0);
       const donated = Number(wallet.donatedTotal||0);
 
       const xp =
-        (jobs * 12) +              // jobs matter most
-        Math.floor(saved / 5) +    // saving matters
-        Math.floor(donated * 3);   // giving matters
+        (jobs * 12) +
+        Math.floor(saved / 5) +
+        Math.floor(donated * 3);
 
       const level = Math.max(1, Math.floor(xp / 100) + 1);
-      const pct = Math.min(100, xp % 100); // progress to next level
+      const pct = Math.min(100, xp % 100);
       return { level, pct, xp };
     }
 
@@ -716,7 +712,6 @@
       const ref = doc(db, "taskers", uid);
       const snap = await getDoc(ref);
       if(!snap.exists()){
-        // Create a minimal profile if missing (safe MVP)
         const email = currentUser?.email || null;
         const seed = {
           uid,
@@ -746,9 +741,6 @@
       const existing = taskerProfile?.wallet || defaultWallet();
       const next = { ...existing, ...walletPatch };
 
-      // Update streak if they "saved this week" (basic: saving triggers streak)
-      // We only adjust streak in demoSave20 for now.
-
       const vis = computeVisibility(next);
       await setDoc(doc(db, "taskers", uid), {
         wallet: next,
@@ -756,12 +748,25 @@
         updatedAt: serverTimestamp()
       }, { merge:true });
 
-      // reload local state
       taskerProfile = { ...taskerProfile, wallet: next, visibilityScore: vis };
       renderWalletEverywhere();
     }
 
-    // ===================== Jobs: query tasks by ZIP =====================
+    // ===================== Jobs: ONLY show AVAILABLE/OPEN jobs for tasker's ZIP =====================
+    // Supported "open" fields (we'll accept any of these if present):
+    // - status: "open" | "available"
+    // - open: true
+    // - isOpen: true
+    // - filled: false
+    function isJobOpen(t){
+      const status = String(t.status || "").toLowerCase().trim();
+      if(status === "open" || status === "available") return true;
+      if(t.open === true || t.isOpen === true) return true;
+      if(t.filled === false) return true;
+      // If no fields exist yet, treat as NOT open (so you don't accidentally show drafts/closed)
+      return false;
+    }
+
     async function loadJobs(){
       hide(jobsErr); hide(jobsOk);
       jobsWrap.innerHTML = "";
@@ -784,23 +789,46 @@
       }
 
       try{
-        // MVP: exact ZIP match. Next step: nearby ZIPs via a zip->lat/lng table or geohash.
-        const qy = query(
+        // Primary query: zip + status == "open"
+        // NOTE: This may require a composite index in Firestore if you keep the orderBy.
+        let taskDocs = [];
+
+        const qOpenByStatus = query(
           collection(db, "tasks"),
           where("zip", "==", zip),
+          where("status", "==", "open"),
           orderBy("createdAt", "desc"),
           limit(25)
         );
-        const snaps = await getDocs(qy);
-        const docs = [];
-        snaps.forEach(s=>docs.push({ id:s.id, ...s.data() }));
 
-        if(docs.length === 0){
+        try{
+          const snaps = await getDocs(qOpenByStatus);
+          snaps.forEach(s=>taskDocs.push({ id:s.id, ...s.data() }));
+        }catch(primaryErr){
+          // Fallback: zip-only query, then filter client-side for "open"/true flags.
+          // This avoids breaking your page if indexes/fields aren't ready yet.
+          const qZipOnly = query(
+            collection(db, "tasks"),
+            where("zip", "==", zip),
+            orderBy("createdAt", "desc"),
+            limit(50)
+          );
+          const snaps2 = await getDocs(qZipOnly);
+          snaps2.forEach(s=>taskDocs.push({ id:s.id, ...s.data() }));
+
+          taskDocs = taskDocs.filter(isJobOpen);
+
+          // If the primary failed due to missing index, give a helpful hint in the console.
+          console.warn("Primary open-jobs query failed; used fallback zip-only filter.", primaryErr);
+        }
+
+        if(taskDocs.length === 0){
           jobsEmpty.style.display = "";
+          jobsEmpty.textContent = "No open jobs found in your ZIP yet. Check back soon.";
           return;
         }
 
-        docs.forEach(t => renderJobCard(t));
+        taskDocs.forEach(t => renderJobCard(t));
       }catch(e){
         show(jobsErr, e?.message || String(e));
       }
@@ -845,7 +873,6 @@
         if(!currentUser) return show(jobsErr, "Please sign in first.");
 
         try{
-          // Minimal “interest” record (you can later upgrade to /tasks/{id}/bids)
           await addDoc(collection(db, "taskInterests"), {
             taskId: t.id,
             taskZip: t.zip || null,
@@ -873,7 +900,6 @@
     // ===================== Profile UI =====================
     async function paintProfileUI(){
       if(!currentUser || !taskerProfile) return;
-
       profEmail.value = currentUser.email || "";
       profZip.value = taskerProfile.zip || "";
       profInterests.value = Array.isArray(taskerProfile.interests) ? taskerProfile.interests.join(", ") : "";
@@ -926,7 +952,6 @@
       const w = taskerProfile?.wallet || defaultWallet();
       const nextJobs = Number(w.jobsCompleted||0) + 1;
 
-      // Completing a job adds pending payout + earned
       await saveWallet({
         jobsCompleted: nextJobs,
         pendingPayouts: Number(w.pendingPayouts||0) + 60,
@@ -961,10 +986,9 @@
       let weeklyStreak = Number(w.weeklyStreak||0);
       const last = w.lastStreakWeek;
 
-      // If saving for the first time this week, update streak
       if(last !== wk){
-        if(last === wk-1) weeklyStreak += 1;  // continue streak
-        else weeklyStreak = 1;                // start/reset streak
+        if(last === wk-1) weeklyStreak += 1;
+        else weeklyStreak = 1;
       }
 
       await saveWallet({
@@ -992,7 +1016,6 @@
 
     // ===================== Auth (simple prompt login for MVP) =====================
     signInBtn.addEventListener("click", async ()=>{
-      // Simple prompt flow for MVP. You can swap to a dedicated /tasker-login.html later.
       const email = prompt("Tasker email:");
       if(!email) return;
       const password = prompt("Password:");
@@ -1028,7 +1051,6 @@
         jobsEmpty.style.display = "";
         jobsEmpty.textContent = "Sign in to see jobs and wallet.";
 
-        // clear wallet UI
         balances1.innerHTML = ""; badges1.innerHTML = "";
         balances2.innerHTML = ""; badges2.innerHTML = "";
         levelNum1.textContent = "1"; levelBar1.style.width = "0%";
@@ -1043,17 +1065,14 @@
       try{
         taskerProfile = await loadTaskerProfile(user.uid);
 
-        // Ensure wallet exists
         if(!taskerProfile.wallet){
           taskerProfile.wallet = defaultWallet();
           await saveTaskerProfilePatch(user.uid, { wallet: taskerProfile.wallet });
         }
 
-        // Paint UI
         await paintProfileUI();
         renderWalletEverywhere();
 
-        // Show jobs by default
         setActiveTab("jobs");
         await loadJobs();
       }catch(e){
@@ -1061,7 +1080,7 @@
       }
     });
 
-    // Initial dock buttons state
+    // Initial
     setActiveTab("jobs");
   </script>
 </body>
