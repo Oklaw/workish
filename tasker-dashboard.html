@@ -446,7 +446,6 @@
       collection,
       query,
       where,
-      orderBy,
       limit,
       getDocs,
       serverTimestamp,
@@ -533,7 +532,7 @@
       tabWallet.setAttribute("aria-selected", String(which==="wallet"));
       tabProfile.setAttribute("aria-selected", String(which==="profile"));
 
-      // fix: maps needs resize when shown
+      // maps needs resize when shown
       if(which === "jobs"){
         setTimeout(()=>{
           if(window.__workishMap && window.google){
@@ -703,14 +702,6 @@
     }
 
     // ===================== Jobs =====================
-    function isJobOpen(t){
-      const status = String(t.status || "").toLowerCase().trim();
-      if(status === "open" || status === "available") return true;
-      if(t.open === true || t.isOpen === true) return true;
-      if(t.filled === false) return true;
-      return false;
-    }
-
     async function loadJobs(){
       hide(jobsErr); hide(jobsOk);
       jobsWrap.innerHTML = "";
@@ -735,29 +726,24 @@
       try{
         let taskDocs = [];
 
-        const qOpenByStatus = query(
+        // ✅ FIX: Match customer schema: tasks target ZIPs via `zips: [ ... ]`
+        // For MVP, avoid orderBy() to dodge composite index requirements.
+        const qOpenByZipArray = query(
           collection(db, "tasks"),
-          where("zip", "==", zip),
+          where("zips", "array-contains", zip),
           where("status", "==", "open"),
-          orderBy("createdAt", "desc"),
           limit(25)
         );
 
-        try{
-          const snaps = await getDocs(qOpenByStatus);
-          snaps.forEach(s=>taskDocs.push({ id:s.id, ...s.data() }));
-        }catch(primaryErr){
-          const qZipOnly = query(
-            collection(db, "tasks"),
-            where("zip", "==", zip),
-            orderBy("createdAt", "desc"),
-            limit(50)
-          );
-          const snaps2 = await getDocs(qZipOnly);
-          snaps2.forEach(s=>taskDocs.push({ id:s.id, ...s.data() }));
-          taskDocs = taskDocs.filter(isJobOpen);
-          console.warn("Primary open-jobs query failed; used fallback zip-only filter.", primaryErr);
-        }
+        const snaps = await getDocs(qOpenByZipArray);
+        snaps.forEach(s=>taskDocs.push({ id:s.id, ...s.data() }));
+
+        // Optional: sort client-side (no index needed)
+        taskDocs.sort((a,b)=>{
+          const at = a.createdAt?.toMillis ? a.createdAt.toMillis() : 0;
+          const bt = b.createdAt?.toMillis ? b.createdAt.toMillis() : 0;
+          return bt - at;
+        });
 
         if(taskDocs.length === 0){
           jobsEmpty.style.display = "";
@@ -776,7 +762,15 @@
     function renderJobCard(t){
       const title = safeStr(t.title || t.category || "Task");
       const pay = (t.pay != null) ? money(t.pay) : "—";
-      const zip = safeStr(t.zip || "—");
+
+      // ✅ FIX: customer uses homeZip + zips[], not zip
+      const zipDisplay = safeStr(
+        t.homeZip ||
+        (Array.isArray(t.zips) ? t.zips.join(", ") : "") ||
+        t.zip ||
+        "—"
+      );
+
       const when = t.createdAt?.toDate ? t.createdAt.toDate().toLocaleString() : "";
 
       const el = document.createElement("div");
@@ -787,7 +781,7 @@
           <div class="pill">Pay: ${pay}</div>
         </div>
         <div class="meta">
-          <span>ZIP: ${zip}</span>
+          <span>ZIP(s): ${zipDisplay}</span>
           ${when ? `<span>Posted: ${when}</span>` : ``}
         </div>
         <div class="desc">${safeStr(t.details || t.description || "No details provided.")}</div>
@@ -809,7 +803,7 @@
         try{
           await addDoc(collection(db, "taskInterests"), {
             taskId: t.id,
-            taskZip: t.zip || null,
+            taskZip: t.homeZip || (Array.isArray(t.zips) ? t.zips[0] : null) || t.zip || null,
             taskTitle: t.title || t.category || "Task",
             taskerUid: currentUser.uid,
             taskerEmail: currentUser.email || null,
