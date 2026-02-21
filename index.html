@@ -260,6 +260,9 @@
           </div>
 
           <button class="btn-primary" id="checkBtn" type="button">Check for Local Taskers</button>
+          <div class="tiny" id="geoHint" style="margin-top:10px;">
+            Tip: You can also <strong>share your location</strong> to zoom the map near you.
+          </div>
         </div>
 
         <div class="card map" style="margin-top:12px" aria-label="Nearby matches map">
@@ -352,8 +355,8 @@
       document.querySelectorAll('.has-submenu .nav-link').forEach(b=>b.setAttribute('aria-expanded','false'));
     });
 
-    // ===== Map + ZIP geocode behavior =====
-    let map, geocoder, lastMarker;
+    // ===== Map + ZIP geocode behavior + GEOLOCATE on load =====
+    let map, geocoder, lastMarker, lastCircle;
 
     function initMap(){
       map = new google.maps.Map(document.getElementById('map'), {
@@ -363,6 +366,83 @@
         streetViewControl: false,
       });
       geocoder = new google.maps.Geocoder();
+
+      // Ask for geolocation (browser prompt). If allowed, zoom to visitor.
+      requestGeolocateAndZoom();
+    }
+
+    function setMapToLatLng(lat, lng, accuracyMeters){
+      const pos = { lat, lng };
+
+      map.setCenter(pos);
+      map.setZoom(13);
+
+      if(lastMarker) lastMarker.setMap(null);
+      lastMarker = new google.maps.Marker({
+        map,
+        position: pos,
+        title: "Your location"
+      });
+
+      // optional accuracy circle
+      if(lastCircle) lastCircle.setMap(null);
+      if(typeof accuracyMeters === "number" && isFinite(accuracyMeters)){
+        lastCircle = new google.maps.Circle({
+          map,
+          center: pos,
+          radius: Math.min(Math.max(accuracyMeters, 25), 2500),
+          strokeOpacity: 0.25,
+          fillOpacity: 0.08
+        });
+        // Keep circle visible
+        map.fitBounds(lastCircle.getBounds());
+      }
+    }
+
+    function requestGeolocateAndZoom(){
+      const hint = document.getElementById('geoHint');
+
+      if(!navigator.geolocation){
+        if(hint) hint.textContent = "Your browser doesn't support location sharing.";
+        return;
+      }
+
+      // Optional: use Permissions API to avoid surprising prompt when explicitly denied.
+      // If unsupported, it falls back to direct geolocation call.
+      const doGeo = () => {
+        navigator.geolocation.getCurrentPosition(
+          (pos)=>{
+            const { latitude, longitude, accuracy } = pos.coords || {};
+            if(typeof latitude === "number" && typeof longitude === "number"){
+              setMapToLatLng(latitude, longitude, accuracy);
+              if(hint) hint.innerHTML = "📍 Showing the map near <strong>your location</strong>.";
+            }
+          },
+          (err)=>{
+            // If denied or failed, keep default DC view; no other changes.
+            if(hint){
+              hint.textContent =
+                (err && err.code === 1)
+                ? "Location permission denied — map will stay on the default area. (You can still enter a ZIP.)"
+                : "Couldn’t get your location — map will stay on the default area. (You can still enter a ZIP.)";
+            }
+          },
+          { enableHighAccuracy: false, timeout: 8000, maximumAge: 300000 }
+        );
+      };
+
+      if(navigator.permissions && navigator.permissions.query){
+        navigator.permissions.query({ name: "geolocation" }).then((status)=>{
+          // If already granted, just zoom. If prompt, it will prompt. If denied, don't prompt.
+          if(status.state === "denied"){
+            if(hint) hint.textContent = "Location sharing is blocked in your browser settings — enter a ZIP instead.";
+            return;
+          }
+          doGeo();
+        }).catch(()=>doGeo());
+      } else {
+        doGeo();
+      }
     }
 
     async function showZipOnMap(state, zip){
@@ -379,6 +459,7 @@
               map.setZoom(13);
             }
             if(lastMarker) lastMarker.setMap(null);
+            if(lastCircle) lastCircle.setMap(null);
             lastMarker = new google.maps.Marker({ map, position: r.geometry.location, title: `${zip}` });
             resolve(true);
           } else {
@@ -417,7 +498,8 @@
       await showZipOnMap(state, zip);
     });
   </script>
-  <!-- Google Maps API: replace with your real key -->
+
+  <!-- Google Maps API -->
   <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBoWDFtsT7GAhFqxEI91PlmzzUxoXUjhaU&callback=initMap"></script>
 </body>
 </html>
