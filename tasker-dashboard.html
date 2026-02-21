@@ -21,7 +21,7 @@
       -webkit-font-smoothing:antialiased;
     }
 
-    /* Background image + overlay (optional; matches your other pages) */
+    /* Background image + overlay */
     body::before{
       content:""; position:fixed; inset:0; z-index:-2;
       background:url("/images/tasker.PNG") center/cover no-repeat;
@@ -111,18 +111,7 @@
       font-weight:900;
     }
 
-    /* ===== Wallet strip ===== */
-    .wallet-strip{
-      display:grid;
-      grid-template-columns: 1fr 1fr;
-      gap:18px;
-      margin: 12px 0 18px;
-    }
-    @media(max-width: 980px){
-      .wallet-strip{ grid-template-columns: 1fr; }
-    }
-    .wallet-card{ padding:18px; }
-
+    /* Wallet */
     .balances{
       display:grid;
       grid-template-columns: repeat(4, 1fr);
@@ -162,6 +151,7 @@
       background: linear-gradient(90deg, var(--gold), #f0b500);
     }
 
+    /* Badges (Jobs view only) */
     .badges{
       display:grid;
       grid-template-columns: repeat(4, 1fr);
@@ -226,13 +216,16 @@
       border:none; outline:none; background:transparent; width:100%;
       font-size:15px; color:#1b2d23; font-weight:700;
     }
-    .control textarea{ min-height:90px; resize:vertical; }
 
     /* Alerts */
     .error{ margin-top:10px; padding:10px 12px; border:1px solid #e7c5c5; background:#fff3f3; color:#7a1e1e; border-radius:10px; display:none; white-space:pre-wrap; }
     .ok{ margin-top:10px; padding:10px 12px; border:1px solid #cde4d6; background:#f3fbf7; color:#134b33; border-radius:10px; display:none; white-space:pre-wrap; }
 
-    /* Footer-ish spacer for dock feel */
+    /* Map */
+    .map-card{ overflow:hidden; }
+    #map{ width:100%; height:320px; display:block; border-radius:18px; }
+
+    /* Footer dock */
     .dock{
       position:fixed; left:0; right:0; bottom:0;
       background:#fff; border-top:1px solid var(--line);
@@ -291,91 +284,67 @@
 
     <!-- ===== JOBS VIEW ===== -->
     <section id="viewJobs">
-      <div class="card">
-        <div style="display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap; align-items:center;">
-          <div>
-            <h2 style="margin:0;">Jobs near you</h2>
-            <div class="muted" id="zipLine">ZIP: —</div>
-          </div>
-          <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
-            <div class="pill">Visibility: <span id="visScore">—</span></div>
-            <button class="btn" id="refreshJobsBtn">Refresh</button>
-          </div>
-        </div>
-
-        <!-- ===== Top Wallet Strip (Balances + Badges) ===== -->
-        <section class="wallet-strip" aria-label="Wallet summary">
-          <div class="card wallet-card" style="box-shadow:none;">
-            <h3 style="margin:0 0 6px;">Balances</h3>
-            <div class="balances" id="balances"></div>
-
-            <div class="level-row">
-              <div class="level-left">
-                <strong>Level <span id="levelNum">1</span></strong>
-              </div>
-              <div class="level-track" aria-label="Level progress">
-                <div id="levelBar" class="level-fill" style="width:0%"></div>
-              </div>
+      <div class="grid">
+        <!-- Left: Jobs + Badges -->
+        <div class="card">
+          <div style="display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap; align-items:center;">
+            <div>
+              <h2 style="margin:0;">Jobs near you</h2>
+              <div class="muted" id="zipLine">ZIP: —</div>
+            </div>
+            <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
+              <div class="pill">Visibility: <span id="visScore">—</span></div>
+              <button class="btn" id="refreshJobsBtn">Refresh</button>
             </div>
           </div>
 
-          <div class="card wallet-card" style="box-shadow:none;">
+          <!-- Badges ONLY on Jobs -->
+          <div style="margin-top:14px;">
             <h3 style="margin:0 0 6px;">Badges</h3>
             <div class="badges" id="badges"></div>
+            <div class="muted" style="margin-top:8px;">
+              More completed jobs + badges = more visibility to customers.
+            </div>
           </div>
-        </section>
 
-        <div class="muted" style="margin-top:2px;">
-          More completed jobs + badges = more visibility to customers.
+          <!-- Jobs list (REAL DATA ONLY) -->
+          <div id="jobsWrap" class="jobs" style="margin-top:14px;"></div>
+
+          <div id="jobsEmpty" class="muted" style="display:none; margin-top:12px;">
+            No open jobs found in your ZIP yet. Check back soon.
+          </div>
+
+          <div id="jobsErr" class="error"></div>
+          <div id="jobsOk" class="ok"></div>
         </div>
 
-        <!-- Jobs list (REAL DATA ONLY) -->
-        <div id="jobsWrap" class="jobs" style="margin-top:14px;"></div>
-
-        <div id="jobsEmpty" class="muted" style="display:none; margin-top:12px;">
-          No open jobs found in your ZIP yet. Check back soon.
+        <!-- Right: Google Map -->
+        <div class="card map-card" aria-label="Nearby jobs map">
+          <h2 style="margin:0 0 10px;">Map</h2>
+          <div id="map" role="img" aria-label="Map preview of area"></div>
+          <div class="muted" style="margin-top:10px;">
+            Map centers on your Profile ZIP (or your browser location if ZIP isn't set yet).
+          </div>
         </div>
-
-        <div id="jobsErr" class="error"></div>
-        <div id="jobsOk" class="ok"></div>
       </div>
     </section>
 
-    <!-- ===== WALLET VIEW (full details / gamification) ===== -->
+    <!-- ===== WALLET VIEW (Balances + Level ONLY) ===== -->
     <section id="viewWallet" style="display:none;">
-      <div class="grid">
-        <div class="card">
-          <h2 style="margin:0 0 6px;">Workish Wallet</h2>
-          <div class="muted">Build habits, grow savings, learn real-world money skills.</div>
+      <div class="card">
+        <h2 style="margin:0 0 6px;">Workish Wallet</h2>
+        <div class="muted">Your balances and level progress.</div>
 
-          <div style="margin-top:12px;">
-            <div class="balances" id="balances2"></div>
-            <div class="level-row">
-              <div><strong>Level <span id="levelNum2">1</span></strong></div>
-              <div class="level-track"><div id="levelBar2" class="level-fill" style="width:0%"></div></div>
-            </div>
+        <div style="margin-top:12px;">
+          <div class="balances" id="balances2"></div>
+          <div class="level-row">
+            <div><strong>Level <span id="levelNum2">1</span></strong></div>
+            <div class="level-track"><div id="levelBar2" class="level-fill" style="width:0%"></div></div>
           </div>
-
-          <div class="ok" id="walletOk"></div>
-          <div class="error" id="walletErr"></div>
-
-          <details style="margin-top:12px;">
-            <summary style="cursor:pointer; font-weight:900;">Demo actions (for testing)</summary>
-            <div class="muted" style="margin-top:10px;">These simulate progress so you can see badges + visibility change.</div>
-            <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:10px;">
-              <button class="btn secondary" id="demoCompleteJob">$60 — Complete Job</button>
-              <button class="btn secondary" id="demoPayout">$50 — Payout to Wallet</button>
-              <button class="btn secondary" id="demoSave20">Save $20</button>
-              <button class="btn secondary" id="demoDonate5">Donate $5</button>
-            </div>
-          </details>
         </div>
 
-        <div class="card">
-          <h2 style="margin:0 0 6px;">Badges</h2>
-          <div class="muted">Unlock badges to increase visibility.</div>
-          <div class="badges" id="badges2"></div>
-        </div>
+        <div class="ok" id="walletOk"></div>
+        <div class="error" id="walletErr"></div>
       </div>
     </section>
 
@@ -425,7 +394,7 @@
   </div>
 
   <script type="module">
-    // ===================== Firebase (same project as your other pages) =====================
+    // ===================== Firebase =====================
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
     import {
       getAuth,
@@ -462,7 +431,7 @@
     const auth = getAuth(app);
     const db = getFirestore(app);
 
-    // ===================== UI helpers =====================
+    // ===================== UI refs =====================
     const whoChip = document.getElementById("whoChip");
     const signInBtn = document.getElementById("signInBtn");
     const signOutBtn = document.getElementById("signOutBtn");
@@ -499,28 +468,15 @@
     const walletOk = document.getElementById("walletOk");
     const walletErr = document.getElementById("walletErr");
 
-    // Wallet UI targets (Jobs view)
-    const balances1 = document.getElementById("balances");
-    const levelNum1 = document.getElementById("levelNum");
-    const levelBar1 = document.getElementById("levelBar");
-    const badges1 = document.getElementById("badges");
-
-    // Wallet UI targets (Wallet view)
+    // Wallet UI targets (Wallet view only now)
     const balances2 = document.getElementById("balances2");
     const levelNum2 = document.getElementById("levelNum2");
     const levelBar2 = document.getElementById("levelBar2");
-    const badges2 = document.getElementById("badges2");
 
-    // Demo buttons
-    const demoCompleteJob = document.getElementById("demoCompleteJob");
-    const demoPayout = document.getElementById("demoPayout");
-    const demoSave20 = document.getElementById("demoSave20");
-    const demoDonate5 = document.getElementById("demoDonate5");
+    // Badges UI targets (Jobs view only now)
+    const badges1 = document.getElementById("badges");
 
-    function show(el, msg){
-      el.textContent = msg;
-      el.style.display = "block";
-    }
+    function show(el, msg){ el.textContent = msg; el.style.display = "block"; }
     function hide(el){ el.style.display="none"; }
     function money(n){
       const v = Number(n || 0);
@@ -540,6 +496,9 @@
       tabJobs.setAttribute("aria-selected", String(which==="jobs"));
       tabWallet.setAttribute("aria-selected", String(which==="wallet"));
       tabProfile.setAttribute("aria-selected", String(which==="profile"));
+
+      // Map needs resize when its container is shown
+      if(which === "jobs") setTimeout(() => { if(window.__workishMap && window.google) google.maps.event.trigger(window.__workishMap, "resize"); }, 50);
     }
 
     tabJobs.addEventListener("click", ()=>setActiveTab("jobs"));
@@ -553,7 +512,6 @@
     let currentUser = null;
     let taskerProfile = null;
 
-    // Wallet state stored under taskers/{uid}.wallet
     const defaultWallet = () => ({
       balanceAvailable: 0,
       pendingPayouts: 0,
@@ -570,12 +528,6 @@
     });
 
     // ===================== Badges + Level + Visibility =====================
-    function weekOf(ts){
-      const d=new Date(ts);
-      const first=new Date(d.getFullYear(),0,1);
-      return Math.floor((d-first)/(1000*60*60*24*7));
-    }
-
     function computeBadges(wallet){
       const goals = Array.isArray(wallet.goals) ? wallet.goals : [];
       const anyGoal = goals.length > 0;
@@ -590,21 +542,13 @@
         goalCrusher: completedGoal
       };
     }
-
-    function badgeCount(b){
-      return Object.values(b).filter(Boolean).length;
-    }
+    function badgeCount(b){ return Object.values(b).filter(Boolean).length; }
 
     function computeLevel(wallet){
       const jobs = Number(wallet.jobsCompleted||0);
       const saved = Number(wallet.savedTotal||0);
       const donated = Number(wallet.donatedTotal||0);
-
-      const xp =
-        (jobs * 12) +
-        Math.floor(saved / 5) +
-        Math.floor(donated * 3);
-
+      const xp = (jobs * 12) + Math.floor(saved / 5) + Math.floor(donated * 3);
       const level = Math.max(1, Math.floor(xp / 100) + 1);
       const pct = Math.min(100, xp % 100);
       return { level, pct, xp };
@@ -617,12 +561,7 @@
       const jobs = Number(wallet.jobsCompleted||0);
       const streak = Number(wallet.weeklyStreak||0);
 
-      let score = 50
-        + (jobs * 2)
-        + (bc * 6)
-        + (level * 3)
-        + (streak * 4);
-
+      let score = 50 + (jobs * 2) + (bc * 6) + (level * 3) + (streak * 4);
       score = Math.max(0, Math.min(100, Math.round(score)));
       return score;
     }
@@ -681,27 +620,22 @@
       });
     }
 
-    function renderWalletEverywhere(){
+    function renderDashboard(){
       if(!taskerProfile) return;
       const wallet = taskerProfile.wallet || defaultWallet();
 
-      renderBalances(balances1, wallet);
-      renderBadges(badges1, wallet);
-
+      // Wallet tab (balances + level)
       renderBalances(balances2, wallet);
-      renderBadges(badges2, wallet);
-
       const { level, pct } = computeLevel(wallet);
-      levelNum1.textContent = String(level);
-      levelBar1.style.width = pct + "%";
       levelNum2.textContent = String(level);
       levelBar2.style.width = pct + "%";
 
-      const vis = computeVisibility(wallet);
-      visScoreEl.textContent = String(vis);
+      // Jobs tab (badges + visibility)
+      renderBadges(badges1, wallet);
+      visScoreEl.textContent = String(computeVisibility(wallet));
     }
 
-    // ===================== Firestore: load/save tasker profile =====================
+    // ===================== Firestore: profile =====================
     async function loadTaskerProfile(uid){
       const ref = doc(db, "taskers", uid);
       const snap = await getDoc(ref);
@@ -728,36 +662,12 @@
       await setDoc(ref, patch, { merge:true });
     }
 
-    async function saveWallet(walletPatch){
-      if(!currentUser) return;
-      const uid = currentUser.uid;
-
-      const existing = taskerProfile?.wallet || defaultWallet();
-      const next = { ...existing, ...walletPatch };
-
-      const vis = computeVisibility(next);
-      await setDoc(doc(db, "taskers", uid), {
-        wallet: next,
-        visibilityScore: vis,
-        updatedAt: serverTimestamp()
-      }, { merge:true });
-
-      taskerProfile = { ...taskerProfile, wallet: next, visibilityScore: vis };
-      renderWalletEverywhere();
-    }
-
-    // ===================== Jobs: ONLY show AVAILABLE/OPEN jobs for tasker's ZIP =====================
-    // Supported "open" fields (we'll accept any of these if present):
-    // - status: "open" | "available"
-    // - open: true
-    // - isOpen: true
-    // - filled: false
+    // ===================== Jobs =====================
     function isJobOpen(t){
       const status = String(t.status || "").toLowerCase().trim();
       if(status === "open" || status === "available") return true;
       if(t.open === true || t.isOpen === true) return true;
       if(t.filled === false) return true;
-      // If no fields exist yet, treat as NOT open (so you don't accidentally show drafts/closed)
       return false;
     }
 
@@ -783,8 +693,6 @@
       }
 
       try{
-        // Primary query: zip + status == "open"
-        // NOTE: This may require a composite index in Firestore if you keep the orderBy.
         let taskDocs = [];
 
         const qOpenByStatus = query(
@@ -799,8 +707,6 @@
           const snaps = await getDocs(qOpenByStatus);
           snaps.forEach(s=>taskDocs.push({ id:s.id, ...s.data() }));
         }catch(primaryErr){
-          // Fallback: zip-only query, then filter client-side for "open"/true flags.
-          // This avoids breaking your page if indexes/fields aren't ready yet.
           const qZipOnly = query(
             collection(db, "tasks"),
             where("zip", "==", zip),
@@ -809,10 +715,7 @@
           );
           const snaps2 = await getDocs(qZipOnly);
           snaps2.forEach(s=>taskDocs.push({ id:s.id, ...s.data() }));
-
           taskDocs = taskDocs.filter(isJobOpen);
-
-          // If the primary failed due to missing index, give a helpful hint in the console.
           console.warn("Primary open-jobs query failed; used fallback zip-only filter.", primaryErr);
         }
 
@@ -828,10 +731,7 @@
       }
     }
 
-    function safeStr(v){
-      if(v === null || v === undefined) return "";
-      return String(v);
-    }
+    function safeStr(v){ return (v === null || v === undefined) ? "" : String(v); }
 
     function renderJobCard(t){
       const title = safeStr(t.title || t.category || "Task");
@@ -889,7 +789,7 @@
     }
 
     refreshJobsBtn.addEventListener("click", loadJobs);
-    dockRefresh.addEventListener("click", loadJobs);
+    dockRefresh.addEventListener("click", ()=>{ setActiveTab("jobs"); loadJobs(); });
 
     // ===================== Profile UI =====================
     async function paintProfileUI(){
@@ -905,8 +805,9 @@
       try{
         taskerProfile = await loadTaskerProfile(currentUser.uid);
         await paintProfileUI();
-        renderWalletEverywhere();
+        renderDashboard();
         await loadJobs();
+        await centerMapFromProfileOrGeo();
         show(profOk, "Profile reloaded.");
       }catch(e){
         show(profErr, e?.message || String(e));
@@ -933,82 +834,13 @@
         zipLine.textContent = "ZIP: " + (zip || "— (set your ZIP in Profile)");
         show(profOk, "Saved.");
         await loadJobs();
+        await centerMapFromProfileOrGeo();
       }catch(e){
         show(profErr, e?.message || String(e));
       }
     });
 
-    // ===================== Demo actions (wallet + badges) =====================
-    demoCompleteJob.addEventListener("click", async ()=>{
-      hide(walletOk); hide(walletErr);
-      if(!currentUser) return show(walletErr, "Sign in first.");
-
-      const w = taskerProfile?.wallet || defaultWallet();
-      const nextJobs = Number(w.jobsCompleted||0) + 1;
-
-      await saveWallet({
-        jobsCompleted: nextJobs,
-        pendingPayouts: Number(w.pendingPayouts||0) + 60,
-        totalEarned: Number(w.totalEarned||0) + 60
-      });
-      show(walletOk, "Job completed + $60 pending payout added.");
-    });
-
-    demoPayout.addEventListener("click", async ()=>{
-      hide(walletOk); hide(walletErr);
-      if(!currentUser) return show(walletErr, "Sign in first.");
-
-      const w = taskerProfile?.wallet || defaultWallet();
-      const payout = Math.min(50, Number(w.pendingPayouts||0));
-      if(payout <= 0) return show(walletErr, "No pending payouts to move.");
-
-      await saveWallet({
-        pendingPayouts: Number(w.pendingPayouts||0) - payout,
-        balanceAvailable: Number(w.balanceAvailable||0) + payout
-      });
-      show(walletOk, `Moved ${money(payout)} from pending to available.`);
-    });
-
-    demoSave20.addEventListener("click", async ()=>{
-      hide(walletOk); hide(walletErr);
-      if(!currentUser) return show(walletErr, "Sign in first.");
-
-      const w = taskerProfile?.wallet || defaultWallet();
-      if(Number(w.balanceAvailable||0) < 20) return show(walletErr, "Not enough available balance. (Try payout first.)");
-
-      const wk = weekOf(Date.now());
-      let weeklyStreak = Number(w.weeklyStreak||0);
-      const last = w.lastStreakWeek;
-
-      if(last !== wk){
-        if(last === wk-1) weeklyStreak += 1;
-        else weeklyStreak = 1;
-      }
-
-      await saveWallet({
-        balanceAvailable: Number(w.balanceAvailable||0) - 20,
-        savedTotal: Number(w.savedTotal||0) + 20,
-        weeklyStreak,
-        lastStreakWeek: wk
-      });
-      show(walletOk, "Saved $20. Streak updated.");
-    });
-
-    demoDonate5.addEventListener("click", async ()=>{
-      hide(walletOk); hide(walletErr);
-      if(!currentUser) return show(walletErr, "Sign in first.");
-
-      const w = taskerProfile?.wallet || defaultWallet();
-      if(Number(w.balanceAvailable||0) < 5) return show(walletErr, "Not enough available balance.");
-
-      await saveWallet({
-        balanceAvailable: Number(w.balanceAvailable||0) - 5,
-        donatedTotal: Number(w.donatedTotal||0) + 5
-      });
-      show(walletOk, "Donated $5. Community Hero unlocks at $5+.");
-    });
-
-    // ===================== Auth (simple prompt login for MVP) =====================
+    // ===================== Auth (prompt login MVP) =====================
     signInBtn.addEventListener("click", async ()=>{
       const email = prompt("Tasker email:");
       if(!email) return;
@@ -1043,12 +875,13 @@
         visScoreEl.textContent = "—";
         jobsWrap.innerHTML = "";
         jobsEmpty.style.display = "";
-        jobsEmpty.textContent = "Sign in to see jobs and wallet.";
+        jobsEmpty.textContent = "Sign in to see jobs.";
 
-        balances1.innerHTML = ""; badges1.innerHTML = "";
-        balances2.innerHTML = ""; badges2.innerHTML = "";
-        levelNum1.textContent = "1"; levelBar1.style.width = "0%";
-        levelNum2.textContent = "1"; levelBar2.style.width = "0%";
+        balances2.innerHTML = "";
+        levelNum2.textContent = "1";
+        levelBar2.style.width = "0%";
+        badges1.innerHTML = "";
+        await centerMapDefault();
         return;
       }
 
@@ -1058,17 +891,17 @@
 
       try{
         taskerProfile = await loadTaskerProfile(user.uid);
-
         if(!taskerProfile.wallet){
           taskerProfile.wallet = defaultWallet();
           await saveTaskerProfilePatch(user.uid, { wallet: taskerProfile.wallet });
         }
 
         await paintProfileUI();
-        renderWalletEverywhere();
+        renderDashboard();
 
         setActiveTab("jobs");
         await loadJobs();
+        await centerMapFromProfileOrGeo();
       }catch(e){
         show(jobsErr, e?.message || String(e));
       }
@@ -1076,6 +909,93 @@
 
     // Initial
     setActiveTab("jobs");
+
+    // ===================== Google Maps helpers (calls global initMap) =====================
+    function validZip(v){ return /^\d{5}$/.test(v); }
+
+    async function centerMapDefault(){
+      // DC-ish default
+      if(window.__workishMap){
+        window.__workishMap.setCenter({ lat: 38.9072, lng: -77.0369 });
+        window.__workishMap.setZoom(8);
+      }
+    }
+
+    async function showZipOnMap(zip){
+      if(!window.__workishGeocoder || !window.__workishMap) return false;
+      if(!validZip(zip)) return false;
+
+      // Zip-only geocode works in most cases
+      const address = `${zip}, USA`;
+      return new Promise((resolve)=>{
+        window.__workishGeocoder.geocode({ address }, (results, status)=>{
+          if(status === "OK" && results && results[0]){
+            const r = results[0];
+            if(r.geometry && r.geometry.viewport){
+              window.__workishMap.fitBounds(r.geometry.viewport);
+            } else if(r.geometry && r.geometry.location){
+              window.__workishMap.setCenter(r.geometry.location);
+              window.__workishMap.setZoom(13);
+            }
+            if(window.__workishMarker) window.__workishMarker.setMap(null);
+            window.__workishMarker = new google.maps.Marker({ map: window.__workishMap, position: r.geometry.location, title: zip });
+            resolve(true);
+          } else {
+            resolve(false);
+          }
+        });
+      });
+    }
+
+    async function centerMapFromProfileOrGeo(){
+      const zip = (taskerProfile?.zip || "").trim();
+      if(zip){
+        const ok = await showZipOnMap(zip);
+        if(ok) return;
+      }
+
+      // Fallback to browser geolocation
+      if(navigator.geolocation && window.__workishMap){
+        navigator.geolocation.getCurrentPosition((pos)=>{
+          const { latitude, longitude } = pos.coords;
+          const loc = { lat: latitude, lng: longitude };
+          window.__workishMap.setCenter(loc);
+          window.__workishMap.setZoom(12);
+          if(window.__workishMarker) window.__workishMarker.setMap(null);
+          window.__workishMarker = new google.maps.Marker({ map: window.__workishMap, position: loc, title: "You are here" });
+        }, ()=>centerMapDefault(), { enableHighAccuracy:false, timeout:4000 });
+      } else {
+        await centerMapDefault();
+      }
+    }
+
+    // Expose so global initMap can call it after API loads
+    window.__workishCenterMapFromProfileOrGeo = centerMapFromProfileOrGeo;
   </script>
+
+  <!-- Google Maps init (global, like your landing page) -->
+  <script>
+    function initMap(){
+      const el = document.getElementById('map');
+      if(!el || !window.google || !google.maps) return;
+
+      window.__workishMap = new google.maps.Map(el, {
+        center: { lat: 38.9072, lng: -77.0369 },
+        zoom: 8,
+        mapTypeControl: false,
+        streetViewControl: false,
+      });
+      window.__workishGeocoder = new google.maps.Geocoder();
+      window.__workishMarker = null;
+
+      // After map loads, center it based on profile ZIP (if any) or geolocation.
+      if(window.__workishCenterMapFromProfileOrGeo){
+        window.__workishCenterMapFromProfileOrGeo();
+      }
+    }
+  </script>
+
+  <!-- Google Maps API (your key from the landing page snippet) -->
+  <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBoWDFtsT7GAhFqxEI91PlmzzUxoXUjhaU&callback=initMap"></script>
 </body>
 </html>
